@@ -1,4 +1,7 @@
-# iTELL Content Authoring Guide
+75% of storage used … 
+If you run out of space, you can't save to Drive or use Gmail.
+
+﻿# iTELL Content Authoring Guide
 
 ## What is iTELL?
 
@@ -6,125 +9,348 @@ Intelligent Texts for Enhanced Language Learning (iTELL) is a computational fram
 
 ## Introduction to the Content Authoring Guide
 
-This is the official format guide for iTELL volumes published by LEAR Lab. This guide will show you how to create and edit an iTELL volume using iTELL's content management system (CMS). Adhering to this guide will ensure that your text conforms to iTELL standards for style and formatting.
+This is the official format guide for iTELL volumes published by LEAR Lab. This guide will show you how to create and edit an iTELL volume using the iTELL JSON format. Adhering to this guide will ensure that your text conforms to iTELL standards for style and formatting.
 
-## The iTELL Library Structure
+## Quick Reference: Key Decisions for JSON Generation
 
-The iTELL library is a collection of volumes. Volumes may be an entire textbook or a single-page document. Each volume will have its own URL and iTELL web app associated with it. All volumes are part of the iTELL library.
+### Volume-Level Fields (REQUIRED)
 
-A collection of volumes belonging to a single organization is a **stack**.
+- **Title**: Volume title (required)
+- **Description**: 1-2 sentence description (required)
+- **VolumeSummary**: 4-8 sentence comprehensive summary synthesizing all pages (required)
+- **Pages**: Array of page objects (required)
+
+### Page-Level Fields (REQUIRED)
+
+- **Title**: Page title in Title Case (required)
+- **ReferenceSummary**: Reproduce the page summary if one is provided in the source material (optional)
+- **Content**: Array of chunk objects (required)
+
+### Chunk Types
+
+1. **page.chunk** - Standard chunks with learning activities
+   - Required fields: `__component`, `Header`, `Text`, `Question`, `ConstructedResponse`, `KeyPhrase`
+   - Use for: Main content sections (200-400 words)
+
+2. **page.plain-chunk** - Chunks without learning activities
+   - Required fields: `__component`, `Header`, `Text`
+   - Use for: Learning Objectives, References, Key Takeaways, short sections
+
+### HTML Formatting Quick Reference
+
+- Paragraphs: `<p>...</p>`
+- Bold: `<b>`
+- Italics: `<i>`
+- Ampersands: `&amp;`
+- Learning Objectives: `<section class="Info"><h3 class="InfoTitle">Learning Objectives</h3><p class="InfoContent">...</p></section>`
+- Math inline: `<span class="math-tex">\( ... \)</span>`
+- Math block: `<span class="math-tex">\[ ... \]</span>`
+
+### Generation Best Practices
+
+1. Always include Title, Description, VolumeSummary at volume level
+2. Use Title Case for all headers
+3. Keep chunks 200-400 words
+4. Keyphrases: 3-5 terms, comma-separated, from the chunk text
+5. Questions: An open-ended reading comprehension question
+6. ConstructedResponse: A reference answer that will be used to score student responses
+7. Balance chunk types: plain-chunk for supplementary, chunk for main content
 
 ## Structure of iTELL Volume
 
-Volumes can optionally be divided into modules and chapters. The core organizational unit is the **page**, which can be thought of conventionally as a chapter section (i.e. one page could be section 12.3 of chapter 12). Each page belongs to a volume.
+The core organizational unit is the **page**, which usually corresponds to an organization unit in the source text such as the chapter or a chapter section, and is not related to page boundaries in the printed source text. Each page belongs to a volume.
 
-Pages are divided into **chunks**. Chunks are short segments of content (about 1-3 paragraphs) that typically have a header. They come in three flavors: the **text chunk**, the **plain chunk**, and the **video chunk**. The text chunk has learning activities associated with it such as constructed responses. A plain chunk is a text chunk without learning activities and is appropriate for supplementary material such as a keyword list or appendices. A video chunk also has learning activities associated with it and typically consists of a single YouTube video.
+Pages are divided into **chunks**. Chunks are short segments of content (about 1-3 paragraphs) that typically have a header. They come in two flavors: the **text chunk** and the **plain chunk**. The text chunk has learning activities associated with it such as constructed responses. A plain chunk is a text chunk without learning activities and is appropriate for supplementary material such as learning objectives, a keyword list, or appendices.
 
 ## Adapting the Structure of the Source Material for iTELL
 
-Content authors should aim for a volume that is open-source and functions well in iTELL (i.e., contains enough text or videos and has a conventional structure). iTELL volumes are typically based on pre-existing learning materials. Content authors have broad editorial power to change the organizational structure of a text when adapting it for iTELL, including removing or adding content as needed.
-
-### Things That Cannot Be Changed
-
-- The core structure of iTELL volumes
-- Mandatory fields must be populated
-- Pre-defined styles and branding guidelines
+Content authors have broad editorial power to change the organizational structure of a text when adapting it for iTELL, including removing or adding content as needed.
 
 ### Things You Can Modify
 
-- Organization of content within chapters, pages, and sections (chunks in iTELL)
+- Organization of content within chapters, pages, and chunks
 - Formatting of text
-- Inclusion of multimedia elements like images and videos
 
 ### Things You Should Always Modify
 
-- Ensure that all content is up-to-date and accurately reflects the source material
+- Multimedia elements like images should be excluded
 - Adapt the content to fit the interactive and digital format of iTELL
 - Check for and correct any grammatical or typographical errors
 
-## Style Guide
-
-### Title Case Capitalization
+## Title Case Style
 
 Headers and titles should use title case, with major words capitalized and minor words lowercase.
 
-### Page Titles
+## JSON Structure Overview
 
-- **Clear and Descriptive**
-- **Consistent Formatting**: Use title case and ensure consistent formatting across all chapters
+Each iTELL volume is represented as a single JSON file with the following top-level structure:
 
-## How to Split a Page into Chunks
+```json
+{
+  "Title": "Volume Title",
+  "Description": "Brief volume description",
+  "VolumeSummary": "Comprehensive summary of volume content",
+  "Pages": [
+    {
+      "Title": "Page Title",
+      "ReferenceSummary": "The summary of the page content as it appears in the source material",
+      "Content": [...]
+    }
+  ]
+}
+```
 
-### Lengthwise (not suggested):
-**1-4 Paragraphs**: Each chunk should contain 1 to 4 paragraphs. Learning activities will be generated for each chunk, and iTELL works best when learning activities are frequent.
+**Important**: Title, Description, and VolumeSummary are **required fields** at the volume level and must be included in every JSON file.
 
-### Content-wise (suggested):
-- Select text chunks of around 500 words.
-- Select chunks that form a coherent and cohesive passage about a topic or subdivision of the topic. This topic should be reflected in the header.
-- Consider splitting long, original paragraphs into multiple paragraphs.
-- When adapting from source material, you may split a section into multiple chunks. You will likely need to create a new header when subdividing an organization unit into multiple chunks.
-- You may number the chunks as in `[Original Header]` and `[Original Header] II`
-- You can hide the second chunk title by setting `[Original Header] II` ShowHeader field to False.
-- Alternatively, you may create a new header for one or both chunks based on the content.
+## Volume
+
+A volume in iTELL has several main fields that must be populated:
+
+- **Title**: The title of the volume.
+- **Description**: A brief (one to two sentences) description of the volume. This will describe the goals of the volume and the target audience. 
+- **VolumeSummary**: A comprehensive summary of the volume content that synthesizes all pages.
+
+### How to Generate a Volume Summary
+
+The volume summary should be a comprehensive overview (typically 4-8 sentences) that synthesizes the main topics and themes covered across all pages in the volume. It should provide enough information to give readers a clear understanding of what to expect from the volume without going into excessive detail. The summary should:
+
+- Cover the main topics from all pages in the volume
+- Flow logically from one concept to the next
+- Be written in complete, well-structured sentences
+- Avoid bullet points or lists
+- Capture the essence and scope of the entire volume
 
 ## Page
 
-Pages must always have a relation to an iTELL volume. This can be done by selecting the volume from the drop down menu. The volume must be created first. The process is the same for adding chapter relations. Chapters may be further organized into modules.
+Pages in iTELL have three main fields that must be populated:
 
 - **Title**: Used as the heading for the page. It appears at the beginning of the page and in the table of contents on the left.
-- **ReferenceSummary**: A reference or model summary of the page content. If the source text includes a summary, include it here. Otherwise, leave this blank. This should not be used except for experimental design.
-- **Content**: In the CMS, this is called a "DynamicZone." It can be populated with chunks.
+- **ReferenceSummary**: If the source text includes a summary for the page content, include it here.
+- **Content**: This will be an array of chunks (objects with __component, Header, Text, and potentially Question, ConstructedResponse, KeyPhrase).
+
+### Page Structure Example
+
+```json
+{
+  "Title": "18.1 Intercultural Communication",
+  "Content": [
+    {
+      "__component": "page.plain-chunk",
+      "Header": "Learning Objectives",
+      "Text": "<section class=\"Info\">...</section>"
+    },
+    {
+      "__component": "page.chunk",
+      "Header": "What is Intercultural Communication?",
+      "Text": "<p>Communication is the sharing of understanding...</p>",
+      "Question": "What is culture according to Donald Klopf?",
+      "ConstructedResponse": "Culture is described as 'that part of the environment made by humans.'",
+      "KeyPhrase": "intercultural communication, culture, psychological aspects of culture"
+    }
+  ]
+}
+```
+
+### How to Split Page Content into Chunks
+
+- Select text chunks of around 300 words (can range from 200-400 words depending on natural breaks).
+- Select chunks that form a coherent and cohesive passage about a topic or subdivision of the topic. This topic should be reflected in the header.
+- Consider splitting long, original paragraphs into multiple paragraphs.
+- When adapting from source material, you may split a subsection into multiple chunks. You will likely need to create a new header when subdividing an organization unit into multiple chunks.
+- You may number the chunks as in `[Original Header]` and `[Original Header] II`
+- Alternatively, you may create a new header for one or both chunks based on the content.
+- Each chunk should have a clear, descriptive header in Title Case.
 
 ## Chunk
 
-There are three types of chunks:
-- **Chunks** are used for most content and include interactive feedback features.
-- **Plain-Chunks** are used for text content without interactive features. Use these for content such as learning objectives.
-- **Video chunks** consist of a single YouTube video and include interactive feedback features.
+There are two types of chunks:
+
+- **Chunks** (`page.chunk`) are used for most content and include interactive feedback features.
+- **Plain-Chunks** (`page.plain-chunk`) are used for text content without interactive features. Use these for content such as learning objectives, references, and short introductory sections.  
 
 ### Components of a Chunk
 
-| Component | Description |
-|-----------|-------------|
-| **Header** | Use title case capitalization (e.g., "Introduction to Macroeconomics") |
-| Slug | A URL-friendly version. Hit the 'Regenerate' button after filling out the Header field. |
-| ShowHeader boolean | Indicates whether the header should be displayed. |
-| Text Content | The main body of text, images, videos, or other multimedia within the chunk, formatted as HTML. |
+| Field | Description | Required for page.chunk | Required for page.plain-chunk |
+|---|---|---|---|
+| `__component` | The type of chunk: "page.chunk" or "page.plain-chunk" | ✓ | ✓ |
+| Header | Use title case capitalization (e.g., "Introduction to Macroeconomics") | ✓ | ✓ |
+| Text | The main body of text formatted as HTML | ✓ | ✓ |
+| Question | A question related to the chunk content, used for generating constructed responses | ✓ | ✗ |
+| ConstructedResponse | A model answer for the question, used for scoring constructed responses | ✓ | ✗ |
+| KeyPhrase | Important terms or concepts from the chunk content, comma-separated | ✓ | ✗ |
+
+### Complete Chunk Examples
+
+#### Example 1: Normal Chunk (page.chunk)
+
+```json
+{
+  "__component": "page.chunk",
+  "Header": "What is Intercultural Communication?",
+  "Text": "<p>Communication is the sharing of understanding and meaning (Pearson, J. and Nelson, P., 2000), but what is intercultural communication? If you answered, \"The sharing of understanding and meaning across cultures,\" you'd be close, but the definition requires more attention.</p><p>What is a culture? Where does one culture stop and another start? How are cultures created, maintained, and dissolved? Donald Klopf described culture as \"that part of the environment made by humans\" (Klopf, D., 1991). From the building we erect that represents design values to the fences we install that delineate borders, our environment is a representation of culture, but it is not all that is culture.</p>",
+  "Question": "What is culture according to Donald Klopf?",
+  "ConstructedResponse": "Culture is described as 'that part of the environment made by humans.'",
+  "KeyPhrase": "intercultural communication, culture definition, psychological aspects of culture, communication context, nonverbal feedback"
+}
+```
+
+#### Example 2: Plain Chunk for Learning Objectives (page.plain-chunk)
+
+```json
+{
+  "__component": "page.plain-chunk",
+  "Header": "Learning Objectives",
+  "Text": "<section class=\"Info\"><h3 class=\"InfoTitle\">Learning Objectives</h3><p class=\"InfoContent\">1. Define and discuss how to facilitate intercultural communication.</p><p class=\"InfoContent\">2. Define and discuss the effects of ethnocentrism.</p></section>"
+}
+```
+
+#### Example 3: Plain Chunk for References (page.plain-chunk)
+
+```json
+{
+  "__component": "page.plain-chunk",
+  "Header": "References",
+  "Text": "<p>Klopf, D. (1991). <i>Intercultural encounters: The fundamentals of intercultural communication</i> (2nd ed.). Inglewood, CA: Morton Publishing Company.</p><p>Pearson, J., &amp; Nelson, P. (2000). <i>An introduction to human communication: Understanding and sharing.</i> Boston, MA: McGraw-Hill.</p>"
+}
+```
 
 ### When should the normal chunk be used?
+
 Normal chunks are used for standard content sections that require keyphrase extraction and constructed responses.
 
 ### When should the "plain chunk" be used?
+
 Plain chunks are different from normal chunks because they do not have keyphrases extracted or constructed responses. A chunk with minimal text in paragraph form should be added as a Plain-Chunk.
 
 Use plain chunks for content like abstracts and references in research papers or content where sections are too short for quality keyphrases and constructed responses. Examples:
+
 - Learning Objectives
-- Introductions
 - Abstracts
 - References
-- Content with only tables
+- Chunks with only tables
 
-### When should the video chunk be used?
-Video chunks are used for content that includes a single YouTube video and requires associated learning activities. Use this for tutorial videos or lectures with accompanying questions and activities.
+### How to generate Keyphrases for normal chunks?
 
-For example, if the page being worked on includes or is accompanied by a Youtube video that expands on the concepts mentioned in the previous chunk, authors should create a separate video chunk to include the video.
+The keyphrases should be 3 to 5 terms that are pulled from the chunk. The keyphrases should represent important concepts in the chunk. A good keyphrase will be concise, and will likely be a noun phrase, like "patent infringement" or "epistemological belief." A bad keyphrase will be wordy and vague, like "extend the idea of scope," or will end mid-sentence like "defective condition unreasonably dangerous." Make sure the keyphrases do not overlap. For example, "sale" and "contract for sale" should not both be provided as keyphrases. The keyphrases will be a single line of terms each separated by a comma.
 
-### How to add content into chunks
-- Add the text
-- Adjust formatting (capitalization, bold, italics, underline) as needed
-- Add tables with appropriate captions
-- Add images with appropriate alt text, but use a placeholder url
+### How to write a question and constructed response for normal chunks?
+
+The question and constructed response should be a question/answer pair that addresses a main idea in the chunk text. The constructed response will serve as a reference answer for evaluating student responses to the question. The constructed response should be a concise answer, usually a phrase or a single sentence. The question should have a clear, correct answer that can be found in the chunk text. Avoid yes/no questions.
 
 ## Special Formatting Options
 
-iTELL includes several custom components that can be used to offset or emphasize content within a chunk. Each iTELL volume may use these elements slightly differently, but make sure they are used consistently within a volume.
+iTELL provides several custom components that can be used to enhance content presentation and create interactive learning experiences. These components should be used strategically to emphasize important information, provide supplementary context, and engage learners.
+
+### Callouts
+
+Callouts are boxed sections that visually offset content from the main text. They come in three variants:
+
+**Best Practices for Callouts:**
+
+- Use callouts sparingly—too many can disrupt reading flow
+- Keep callout content concise (typically a list or a short paragraph)
+- Ensure the callout content is directly relevant to the surrounding text
+
+#### Info Callouts
+
+Info callouts should be used for supplementary information that supports the main content, such as learning objectives, definitions, or key concepts.
+
+```html
+<section  class="Info">
+
+<h3  class="InfoTitle">Learning Objectives</h3>
+
+<p  class="InfoContent">Your content here in HTML format</p>
+
+</section>
+```
+
+**When to use:**
+
+- Learning objectives at the beginning of a page
+- Key definitions or terminology
+- Important background information
+- Helpful tips or reminders
+
+#### Warning Callouts
+
+Warning callouts should be used to alert learners to common mistakes, misconceptions, or important cautions.
+
+```html
+<section  class="Warning">
+
+<p>Your warning content here in HTML format</p>
+
+</section>
+```
+
+**When to use:**
+
+- Common errors or misconceptions
+- Important limitations or exceptions
+- Critical safety or ethical considerations
+- Prerequisites that must be met
+
+### General Callouts
+
+General callouts can be used for any content that should be visually distinguished but doesn't fit the info or warning categories.
+
+```html
+<section class="Callout">
+
+<p>Your content here in HTML format</p>
+
+</section>
+```
+
+**When to use:**
+
+- Examples or case studies
+- Historical context or interesting facts
+- Additional explanations or clarifications
+
+### Math Equations
+
+iTELL supports LaTeX-style mathematical notation for both inline and block equations.
+
+**Inline Math:**
+
+Use inline math for equations within text, like `The formula <span class="math-tex">\( E = mc^2 \)</span> demonstrates mass-energy equivalence.`
+
+```html
+<span class="math-tex">\( E = mc^2 \)</span>
+```
+
+**Block Math:**
+
+Use block math for displayed equations that should appear on their own line.
+
+```html
+<span class="math-tex">\[ \int_{0}^{\infty} e^{-x^2} dx = \frac{\sqrt{\pi}}{2} \]</span>
+```
+
+**Best Practices for Math:**
+
+- Use inline math (`\( ... \)`) for simple expressions and variables within sentences
+- Use block math (`\[ ... \]`) for complex equations that deserve emphasis
+- Ensure LaTeX syntax is correct and properly escaped
+- Define variables and notation before or immediately after introducing them
+- Number important equations if you need to reference them later
+
+### General Formatting Guidelines
+
+- **Valid HTML**: All content within custom components must use valid HTML structure, plus the custom H
+- **Consistency**: Use formatting elements consistently throughout the volume
+- **Purpose**: Each special formatting element should serve a clear pedagogical purpose—don't use them solely for visual variety
+- **Class Names**: Use exact class names as specified--they are case-sensitive and required for proper rendering
 
 ## Which Content Should We Exclude
 
-iTELL automatically generates learning activities with automated assessments. These include constructed response items and an end-of-page summary writing activity. However, some texts may include reflection questions, end-of-chapter summaries, and other activities. These should generally be excluded when adapting source material for iTELL to avoid redundancy. Examples of common elements that should be excluded are "Summary," "Key Takeaway," and "Review Questions". Questions in the form of math or coding exercises, however, should and are encouraged to be included in the page.
+Some texts may include reflection questions, end-of-chapter summaries, and other activities. These should generally be excluded when adapting source material for iTELL to avoid redundancy. Examples of common elements that should be excluded are "Summary," "Key Takeaway," and "Review Questions". Questions in the form of math exercises, however, should be included in the page.
 
-- Exclude chunks that might contain summary of the text.
-- Exclude chunks that have review questions which have the same functions as iTELL's Question and Reference Answer pair.
+- Exclude any summaries of the page (include in the ReferenceSummary instead).
+- Exclude images.
+- Exclude chunks that have review questions which have the same functions as iTELL's Question and ConstructedResponse pair.
 
 ## Headers
 
@@ -133,8 +359,31 @@ iTELL automatically generates learning activities with automated assessments. Th
 - **Capitalization**: Use Title Case for all headers. Example: '1. Introduction to Macroeconomics'.
 - **Logical Sequence**: Ensure that the headers follow a logical sequence and accurately reflect the content hierarchy.
 
-## Frequently Asked Questions
-
-**What should I do if the source material does not include a header?**
+### What Should I Do if the Source Material Does Not Include a Header?
 
 Read the content and write a header yourself that matches the content as well as the style and tone of other headers in the text.
+
+## Best Practices for iTELL JSON
+
+1. **Always include all required fields**: Title, Description, VolumeSummary at volume level; all chunk fields for page.chunk
+2. **Use proper HTML encoding**: &amp; for &, &lt; for <, &gt; for >, preserve quotes as \"
+3. **Maintain consistent structure**: All pages in Pages array, all chunks in Content array
+4. **Apply Title Case consistently**: All headers and titles should use Title Case
+5. **Balance chunk types**: Use page.plain-chunk for supplementary material (objectives, references), page.chunk for main content
+6. **Keep chunks focused**: 200-400 words per chunk, centered on a single topic
+7. **Write natural keyphrases**: Pull directly from text, use noun phrases
+8. **Create clear Q&A pairs**: Questions should be specific, answers should be concise (1-2 sentences)
+9. **Validate JSON structure**: Ensure proper nesting, commas, and brackets
+
+## Common Mistakes to Avoid
+
+1. **Missing required fields**: Every page.chunk must have Question, ConstructedResponse, and KeyPhrase
+2. **Incorrect __component values**: Must be exactly "page.chunk" or "page.plain-chunk"
+3. **Malformed HTML**: Missing closing tags, unencoded special characters
+4. **Overly long chunks**: Keep chunks under 500 words
+5. **Generic keyphrases**: Avoid vague terms like "important concepts" or "key ideas"
+6. **Yes/no questions**: Questions should require substantive answers
+7. **Missing Title/Description/VolumeSummary**: These are required at volume level
+8. **Inconsistent capitalization**: Use Title Case for all headers
+9. **Bullet points in VolumeSummary**: Use complete, flowing sentences instead
+
