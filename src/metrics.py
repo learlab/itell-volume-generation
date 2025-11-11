@@ -8,6 +8,7 @@ from typing import Dict, Any, List, Tuple, Optional
 
 try:
     import evaluate
+
     BLEURT_AVAILABLE = True
     print("BLEURT loaded successfully!")
 except Exception as e:
@@ -17,6 +18,7 @@ except Exception as e:
 try:
     from bs4 import BeautifulSoup
     from rapidfuzz import process, fuzz
+
     FUZZY_AVAILABLE = True
     print("rapidfuzz loaded successfully!")
 except Exception as e:
@@ -87,7 +89,9 @@ def strip_html(text: str) -> str:
     return text
 
 
-def preprocess_page_levenshtein(title: str, content_items: List[Dict[str, Any]], lowercase: bool = True) -> str:
+def preprocess_page_levenshtein(
+    title: str, content_items: List[Dict[str, Any]], lowercase: bool = True
+) -> str:
     parts: List[str] = [title or ""]
     for item in content_items or []:
         text = item.get("Text", "")
@@ -101,12 +105,18 @@ def preprocess_page_levenshtein(title: str, content_items: List[Dict[str, Any]],
     return cleaned
 
 
-def build_pages_map_levenshtein(data_obj: Optional[Dict[str, Any]], lowercase: bool = True) -> Dict[int, Tuple[str, str]]:
+def build_pages_map_levenshtein(
+    data_obj: Optional[Dict[str, Any]], lowercase: bool = True
+) -> Dict[int, Tuple[str, str]]:
     pages: Dict[int, Tuple[str, str]] = {}
     if data_obj is None:
         return pages
     # Check for different possible key names
-    page_list = data_obj.get("data", []) or data_obj.get("pages", []) or data_obj.get("Pages", [])
+    page_list = (
+        data_obj.get("data", [])
+        or data_obj.get("pages", [])
+        or data_obj.get("Pages", [])
+    )
 
     for idx, page in enumerate(page_list):
         order = page.get("Order")
@@ -129,7 +139,7 @@ def rouge_l_f_score(ref: str, hyp: str) -> float:
         if not text:
             return []
         return WS_RE.split(text.strip())
-    
+
     def _lcs_length(a: List[str], b: List[str]) -> int:
         if not a or not b:
             return 0
@@ -148,7 +158,7 @@ def rouge_l_f_score(ref: str, hyp: str) -> float:
                     cur.append(max(prev[j], cur[-1]))
             prev = cur
         return prev[-1]
-    
+
     ref_toks = _tokenize(ref)
     hyp_toks = _tokenize(hyp)
     if not ref_toks or not hyp_toks:
@@ -167,7 +177,7 @@ def bleu_sentence(ref: str, hyp: str, max_n: int = 4) -> float:
         if not text:
             return []
         return WS_RE.split(text.strip())
-    
+
     def _ngram_counts(tokens: List[str], n: int) -> Dict[Tuple[str, ...], int]:
         counts: Dict[Tuple[str, ...], int] = {}
         if n <= 0 or len(tokens) < n:
@@ -176,7 +186,7 @@ def bleu_sentence(ref: str, hyp: str, max_n: int = 4) -> float:
             ngram = tuple(tokens[i : i + n])
             counts[ngram] = counts.get(ngram, 0) + 1
         return counts
-    
+
     ref_tokens = _tokenize(ref)
     hyp_tokens = _tokenize(hyp)
     if not ref_tokens or not hyp_tokens:
@@ -205,9 +215,11 @@ def bleu_sentence(ref: str, hyp: str, max_n: int = 4) -> float:
         bp = 1.0
     else:
         from math import exp
+
         bp = exp(1 - r / c)
 
     from math import log, exp
+
     score = bp * exp(sum((1.0 / max_n) * log(p) for p in precisions))
     return float(score)
 
@@ -238,12 +250,18 @@ def normalize_title_for_csv(title: str, ch: int) -> str:
     return t if t.lower().startswith(f"chapter {ch}") else f"Chapter {ch}: {t}"
 
 
-def collect_chapter_texts(data_obj: Optional[Dict[str, Any]], use_raw_title: bool = False) -> Tuple[List[str], List[str]]:
+def collect_chapter_texts(
+    data_obj: Optional[Dict[str, Any]], use_raw_title: bool = False
+) -> Tuple[List[str], List[str]]:
     texts = ["", "", "", ""]
     titles: List[Optional[str]] = [None, None, None, None]
     if data_obj is not None:
         # Check for different possible key names - same as build_pages_map_levenshtein
-        page_list = data_obj.get("data", []) or data_obj.get("pages", []) or data_obj.get("Pages", [])
+        page_list = (
+            data_obj.get("data", [])
+            or data_obj.get("pages", [])
+            or data_obj.get("Pages", [])
+        )
         for p in page_list:
             title = p.get("Title", "")
             ch = extract_chapter_index(title)
@@ -259,10 +277,14 @@ def collect_chapter_texts(data_obj: Optional[Dict[str, Any]], use_raw_title: boo
                 i = ch - 1
                 texts[i] = (texts[i] + " " + combined).strip()
                 if titles[i] is None:
-                    titles[i] = title.strip() if use_raw_title else normalize_title_for_csv(title, ch)
+                    titles[i] = (
+                        title.strip()
+                        if use_raw_title
+                        else normalize_title_for_csv(title, ch)
+                    )
     for i in range(4):
         if titles[i] is None:
-            titles[i] = f"Chapter {i+1}"
+            titles[i] = f"Chapter {i + 1}"
     return texts, [t for t in titles]
 
 
@@ -272,14 +294,14 @@ def bleurt_preprocess_piece(title: str, text: str, lowercase: bool = False) -> s
             return clean_text(s or "")
         s = html.unescape(s or "")
         return BeautifulSoup(s, "lxml").get_text(separator=" ")
-    
+
     def normalize_ws_punct(s: str) -> str:
         s = unicodedata.normalize("NFKC", s)
         s = re.sub(r"[ \t]+", " ", s)
         s = re.sub(r"\s*\n\s*", "\n", s)
         s = re.sub(r"\s{2,}", " ", s)
         return s.strip()
-    
+
     t = f"{title}\n\n{text}" if title else (text or "")
     t = strip_html_bs4(t)
     t = normalize_ws_punct(t)
@@ -290,12 +312,14 @@ def bleurt_preprocess_piece(title: str, text: str, lowercase: bool = False) -> s
 
 def title_key(s: str) -> str:
     """Normalize title for matching"""
+
     def normalize_ws_punct(s: str) -> str:
         s = unicodedata.normalize("NFKC", s)
         s = re.sub(r"[ \t]+", " ", s)
         s = re.sub(r"\s*\n\s*", "\n", s)
         s = re.sub(r"\s{2,}", " ", s)
         return s.strip()
+
     return normalize_ws_punct(s).lower()
 
 
@@ -317,16 +341,24 @@ def align_by_title_fuzzy(keys_ref: List[str], keys_other: List[str]) -> Dict[str
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--original", required=True, help="Original/reference JSON file")
-    ap.add_argument("--models", nargs="+", required=True, help="One or more model JSON files to compare")
+    ap.add_argument(
+        "--models",
+        nargs="+",
+        required=True,
+        help="One or more model JSON files to compare",
+    )
     ap.add_argument("--out", default="master.csv")
     ap.add_argument("--case-insensitive", action="store_true")
     ap.add_argument("--no-rouge", action="store_true", help="Disable ROUGE computation")
     ap.add_argument("--no-bleu", action="store_true", help="Disable BLEU computation")
-    ap.add_argument("--no-bleurt", action="store_true", help="Disable BLEURT computation")
+    ap.add_argument(
+        "--no-bleurt", action="store_true", help="Disable BLEURT computation"
+    )
     args = ap.parse_args()
 
     # Extract source name from original file path
     import os
+
     source_name = os.path.splitext(os.path.basename(args.original))[0]
 
     # Load original data
@@ -337,12 +369,14 @@ def main() -> None:
     for model_path in args.models:
         model_name = os.path.splitext(os.path.basename(model_path))[0]
         model_data = load_json(model_path)
-        models_info.append({
-            "name": model_name,
-            "path": model_path,
-            "data": model_data,
-            "valid": model_data is not None
-        })
+        models_info.append(
+            {
+                "name": model_name,
+                "path": model_path,
+                "data": model_data,
+                "valid": model_data is not None,
+            }
+        )
 
     print(f"Source: {source_name}")
     print(f"Models: {[m['name'] for m in models_info]}")
@@ -375,7 +409,7 @@ def main() -> None:
     # print(f"BLEU chapter text lengths:")
     # print(f"  Reference: {[len(t) for t in ref_texts]}")
     # for i, model_info in enumerate(models_info):
-        # print(f"  {model_info['name']}: {[len(t) for t in models_texts[i]]}")
+    # print(f"  {model_info['name']}: {[len(t) for t in models_texts[i]]}")
 
     # BLEURT setup
     bleurt_metric = None
@@ -457,6 +491,7 @@ def main() -> None:
 
     # Load existing CSV if it exists for append/update mode
     import pandas as pd
+
     existing_df = None
     if os.path.exists(args.out):
         try:
@@ -491,12 +526,12 @@ def main() -> None:
         # First, identify rows in existing_df that should be replaced
         mask = existing_df.apply(
             lambda row: any(
-                row['Reference JSON'] == new_row['Reference JSON'] and
-                row['Content'] == new_row['Content'] and
-                row['Model'] == new_row['Model']
+                row["Reference JSON"] == new_row["Reference JSON"]
+                and row["Content"] == new_row["Content"]
+                and row["Model"] == new_row["Model"]
                 for new_row in new_rows
             ),
-            axis=1
+            axis=1,
         )
         # Keep rows that don't match any new rows
         kept_df = existing_df[~mask]
@@ -525,7 +560,9 @@ def main() -> None:
             if pages is None and isinstance(struct, list):
                 pages = struct
             if pages is None:
-                raise ValueError("Unrecognized JSON shape. Expected list or dict with 'data' or 'pages'.")
+                raise ValueError(
+                    "Unrecognized JSON shape. Expected list or dict with 'data' or 'pages'."
+                )
 
             out = []
             for idx, p in enumerate(pages):
@@ -551,9 +588,15 @@ def main() -> None:
             if struct is None:
                 return result
             for rec in extract_pages(struct):
-                pre = bleurt_preprocess_piece(rec["Title"], rec["Text"], lowercase=False)
+                pre = bleurt_preprocess_piece(
+                    rec["Title"], rec["Text"], lowercase=False
+                )
                 key = title_key(rec["Title"])
-                result[key] = {"Title": rec["Title"], "Text": pre, "Order": rec["Order"]}
+                result[key] = {
+                    "Title": rec["Title"],
+                    "Text": pre,
+                    "Order": rec["Order"],
+                }
             return result
 
         def align_by_title_fuzzy_local(keys_ref, keys_other):
@@ -586,7 +629,9 @@ def main() -> None:
         # Build mappings for all models
         models_mappings = []
         for i, model_info in enumerate(models_info):
-            mapping = align_by_title_fuzzy_local(keys_orig, list(models_page_maps[i].keys()))
+            mapping = align_by_title_fuzzy_local(
+                keys_orig, list(models_page_maps[i].keys())
+            )
             models_mappings.append(mapping)
             # print(f"  {model_info['name']} to Original mapping: {mapping}")
 
@@ -613,7 +658,9 @@ def main() -> None:
                 model_score = None
                 if model_valid and model_text:
                     try:
-                        res = bleurt_metric.compute(predictions=[model_text], references=[orig_text])
+                        res = bleurt_metric.compute(
+                            predictions=[model_text], references=[orig_text]
+                        )
                         model_score = res["scores"][0]
                     except Exception:
                         pass
@@ -621,7 +668,9 @@ def main() -> None:
                 # Update the all_scores dictionary
                 all_scores[order]["bleurt"][model_name] = model_score
 
-        print(f"  Computed BLEURT for {len(all_scores)} pages across {len(models_info)} models")
+        print(
+            f"  Computed BLEURT for {len(all_scores)} pages across {len(models_info)} models"
+        )
 
         # Rewrite the CSV with updated BLEURT scores
         df = pd.read_csv(args.out)
@@ -629,9 +678,9 @@ def main() -> None:
 
         # Update BLEURT column in the dataframe
         for idx, row in df.iterrows():
-            ref_json = row['Reference JSON']
-            content = row['Content']
-            model = row['Model']
+            ref_json = row["Reference JSON"]
+            content = row["Content"]
+            model = row["Model"]
 
             # Only update rows that match current source
             if ref_json == source_name:
@@ -639,7 +688,7 @@ def main() -> None:
                 for order in orders_sorted:
                     if all_scores[order]["title"] == content:
                         if model in all_scores[order]["bleurt"]:
-                            df.at[idx, 'bleurt'] = all_scores[order]["bleurt"][model]
+                            df.at[idx, "bleurt"] = all_scores[order]["bleurt"][model]
                         break
 
         df.to_csv(args.out, index=False)
