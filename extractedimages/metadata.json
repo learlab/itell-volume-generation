@@ -1,0 +1,93 @@
+[
+  {
+    "filepath": "extractedimages/page_1_img_1.jpeg",
+    "filename": "page_1_img_1.jpeg",
+    "page_num": 1,
+    "image_id": "image_page_1_1",
+    "position": "top-left",
+    "bbox": {
+      "x0": -1.0334949493408203,
+      "y0": -1.05029296875,
+      "x1": 612.0,
+      "y1": 166.66748046875
+    },
+    "size": {
+      "width_pct": "50.1%",
+      "height_pct": "21.2%",
+      "pixels": "2555x699"
+    },
+    "caption": "CHAPTER 2\nTHELEGISLATIVEBRANCH(CONGRESS)",
+    "nearby_text": {
+      "above": [],
+      "below": [
+        "CHAPTER 2\nTHELEGISLATIVEBRANCH(CONGRESS)"
+      ],
+      "left": [],
+      "right": []
+    }
+  },
+  {
+    "filepath": "extractedimages/page_2_img_1.jpeg",
+    "filename": "page_2_img_1.jpeg",
+    "page_num": 2,
+    "image_id": "image_page_2_1",
+    "position": "middle-center",
+    "bbox": {
+      "x0": 402.885986328125,
+      "y0": 65.650390625,
+      "x1": 577.1212158203125,
+      "y1": 340.55950927734375
+    },
+    "size": {
+      "width_pct": "14.2%",
+      "height_pct": "34.7%",
+      "pixels": "726x1146"
+    },
+    "caption": null,
+    "nearby_text": {
+      "above": [],
+      "below": [],
+      "left": [
+        "e at \nal",
+        "et",
+        "al",
+        "r"
+      ],
+      "right": []
+    }
+  },
+  {
+    "filepath": "extractedimages/page_3_img_1.png",
+    "filename": "page_3_img_1.png",
+    "page_num": 3,
+    "image_id": "image_page_3_1",
+    "position": "middle-center",
+    "bbox": {
+      "x0": 311.76519775390625,
+      "y0": 458.76690673828125,
+      "x1": 576.0,
+      "y1": 683.127197265625
+    },
+    "size": {
+      "width_pct": "21.6%",
+      "height_pct": "28.3%",
+      "pixels": "994x844"
+    },
+    "caption": "The Oval Of\ufb01ce of the White House. Photo by Cecil Stoughton.\nCourtesy of the John F. Kennedy Presidential Library and Museum.",
+    "nearby_text": {
+      "above": [
+        "e bill is"
+      ],
+      "below": [
+        "The Oval Of\ufb01ce of the White House. Photo by Cecil Stoughton.\nCourtesy of the John F. Kennedy Presidential Library and Museum."
+      ],
+      "left": [
+        "sident \nveryone",
+        "ident",
+        "hen",
+        "\u201cveto\u201d \n. Then"
+      ],
+      "right": []
+    }
+  }
+]

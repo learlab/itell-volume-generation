@@ -84,41 +84,36 @@ def select_reference_example(reference_json: Dict[str, Any], example_title: Opti
 
 
 def format_image_metadata(image_metadata: Sequence[Dict[str, Any]]) -> str:
-    """Convert extracted image metadata into inline <image> tags for the LLM prompt."""
     if not image_metadata:
         return ""
 
-    tag_lines = []
+    lines = ["Image Reference Guide:"]
+
     for entry in image_metadata:
-        image_id = entry.get("image_id") or Path(entry.get("filepath", "")).stem or "image"
-        page_num = entry.get("page_num", "?")
-        bbox = entry.get("bbox") or {}
-        coords = {
-            "x0": bbox.get("x0", 0),
-            "y0": bbox.get("y0", 0),
-            "x1": bbox.get("x1", 0),
-            "y1": bbox.get("y1", 0),
-        }
-        x0 = coords["x0"]
-        y0 = coords["y0"]
-        x1 = coords["x1"]
-        y1 = coords["y1"]
-        filepath = entry.get("filepath", "")
-        tag_lines.append(
-            "<image "
-            f'id="{image_id}" '
-            f'page="{page_num}" '
-            f'x0="{x0:.2f}" '
-            f'y0="{y0:.2f}" '
-            f'x1="{x1:.2f}" '
-            f'y1="{y1:.2f}" '
-            f'filepath="{filepath}"'
-            " />"
-        )
-    tag_lines.append(
-        "Use the image id attribute when referencing a figure within the iTELL JSON so downstream consumers can map coordinates to assets."
-    )
-    return "\n".join(tag_lines)
+        desc = f"\n- {entry.get('filename')} (id: {entry.get('image_id')}): {entry.get('position')} of page {entry.get('page_num')}"
+
+        width_pct = float(entry.get("size", {}).get("width_pct", "0%").rstrip('%'))
+        if width_pct > 80:
+            desc += ", spanning nearly full width"
+        elif width_pct < 30:
+            desc += ", small inline image"
+
+        if caption := entry.get("caption"):
+            desc += f'\n  Caption: "{caption}"'
+
+        nearby = entry.get("nearby_text", {})
+        context_parts = [f'{pos}: "{nearby[pos][0][:60]}..."' for pos in ['above', 'below'] if nearby.get(pos)]
+        if context_parts:
+            desc += f"\n  Context ({', '.join(context_parts)})"
+
+        lines.append(desc)
+
+    lines.append("\n**Instructions for Image Placement:**")
+    lines.append("- Use the 'Context' field to match each image to its correct location in the content")
+    lines.append("- Insert image placeholders in the HTML where they appear in the PDF")
+    lines.append("- Use this format: {{image_id}}")
+    lines.append("- Example: {{image_page_1_1}}")
+    return "\n".join(lines)
 
 
 def build_conversion_prompt(guide_text: str, example_json: Any, image_metadata_text: Optional[str] = None) -> str:
@@ -146,9 +141,7 @@ def build_conversion_prompt(guide_text: str, example_json: Any, image_metadata_t
     if image_metadata_text:
         template += f"""
 
-    IMAGE TAGS WITH COORDINATES:
+    EXTRACTED IMAGES WITH CONTEXT:
     {image_metadata_text}
-
-    Each <image> tag identifies a figure extracted from the PDF along with its coordinates. When embedding or describing a figure in the JSON, include the referenced image id so downstream systems can match it to the extracted asset.
         """
     return textwrap.dedent(template).strip()

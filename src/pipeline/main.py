@@ -34,7 +34,7 @@ except ImportError:  # pragma: no cover - allows running as a script without mod
     )
 
 
-DEFAULT_GUIDE_PATH = Path("src/resources/guide.docx")
+DEFAULT_GUIDE_PATH = Path("src/resources/guide.md")
 DEFAULT_REFERENCE_PATH = Path("src/resources/reference.json")
 DEFAULT_PDF_PATH = Path("src/resources/input.pdf")
 DEFAULT_IMAGE_DIR = Path("results/extracted-images")
@@ -98,6 +98,7 @@ def main(argv: Optional[Sequence[str]] = None) -> str:
     if not args.skip_image_extraction:
         extractor = ExtractImages(str(args.pdf), str(args.image_dir))
         image_metadata = extractor.extract_img(str(args.pdf))
+        extractor.save_metadata(str(args.image_dir / "metadata.json"))
         image_metadata_text = format_image_metadata(image_metadata) or None
 
     prompt = build_conversion_prompt(guide_text, example_json, image_metadata_text=image_metadata_text)
