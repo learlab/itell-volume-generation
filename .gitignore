@@ -1,8 +1,13 @@
 **/*.ipynb_checkpoints/
+__pycache__/
+*.pyc
+*.pyo
 .env
 data/
 bin/
 results/
+extractedimages/
+src/resources/*.pdf
 src/__*
 venv/
 .claude
