@@ -1,6 +1,3 @@
-75% of storage used … 
-If you run out of space, you can't save to Drive or use Gmail.
-
 ﻿# iTELL Content Authoring Guide
 
 ## What is iTELL?
@@ -386,4 +383,3 @@ Read the content and write a header yourself that matches the content as well as
 7. **Missing Title/Description/VolumeSummary**: These are required at volume level
 8. **Inconsistent capitalization**: Use Title Case for all headers
 9. **Bullet points in VolumeSummary**: Use complete, flowing sentences instead
-

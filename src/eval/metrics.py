@@ -367,7 +367,7 @@ def main() -> None:
     # Load all model data and extract names
     models_info = []
     for model_path in args.models:
-        model_name = os.path.splitext(os.path.basename(model_path))[0]
+        model_name = "google/gemini-2.5-flash-preview-09-2025"
         model_data = load_json(model_path)
         models_info.append(
             {
