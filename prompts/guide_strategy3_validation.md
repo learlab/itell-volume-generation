@@ -7,6 +7,7 @@ Generate JSON that passes all validation rules, then self-check your output befo
 ## JSON Schema Requirements
 
 ### Required Structure
+
 ```
 Volume
 ├── Title (string, required)
@@ -47,14 +48,16 @@ Volume
 ### Chunk-Level Validation
 
 #### Universal Chunk Rules (both types)
-- [ ] **Rule C1**: Every chunk has __component field
-- [ ] **Rule C2**: __component value is exactly "page.chunk" or "page.plain-chunk" (no typos)
+
+- [ ] **Rule C1**: Every chunk has \_\_component field
+- [ ] **Rule C2**: \_\_component value is exactly "page.chunk" or "page.plain-chunk" (no typos)
 - [ ] **Rule C3**: Every chunk has Header field (string, Title Case)
 - [ ] **Rule C4**: Every chunk has Text field (string, valid Markdown)
-- [ ] **Rule C5**: Text field contains only valid Markdown (paragraphs separated by blank lines, **bold**, *italic*)
+- [ ] **Rule C5**: Text field contains only valid Markdown (paragraphs separated by blank lines, **bold**, _italic_)
 - [ ] **Rule C6**: Chunk word count is 150-500 words
 
 #### page.chunk Specific Rules
+
 - [ ] **Rule C7**: Every page.chunk has Question field (non-empty string)
 - [ ] **Rule C8**: Every page.chunk has ConstructedResponse field (non-empty string)
 - [ ] **Rule C9**: Every page.chunk has KeyPhrase field (non-empty string)
@@ -64,6 +67,7 @@ Volume
 - [ ] **Rule C13**: KeyPhrase terms are noun phrases from the text
 
 #### page.plain-chunk Specific Rules
+
 - [ ] **Rule C14**: page.plain-chunk does NOT have Question field
 - [ ] **Rule C15**: page.plain-chunk does NOT have ConstructedResponse field
 - [ ] **Rule C16**: page.plain-chunk does NOT have KeyPhrase field
@@ -77,11 +81,13 @@ Volume
 - [ ] **Rule M5**: Math uses `$...$` for inline
 - [ ] **Rule M6**: Math uses `$$...$$` for block equations
 - [ ] **Rule M7**: Info callouts use blockquote structure:
+
 ```markdown
 > **Title**
 >
 > Content
 ```
+
 - [ ] **Rule M8**: Images use markdown syntax: `![description](image_id)`
 - [ ] **Rule M9**: Image paths match image_id from metadata (format: `image_page_X_Y`)
 - [ ] **Rule M10**: Image alt text (in brackets) contains caption or meaningful description
@@ -89,12 +95,12 @@ Volume
 ### Image Validation Rules (If Metadata Provided)
 
 - [ ] **Rule I1**: All images from metadata are included in the JSON
-- [ ] **Rule I2**: Each image has correct `image_id` as src attribute
+- [ ] **Rule I2**: Each image uses correct `image_id` in Markdown format: `![description](image_id)`
 - [ ] **Rule I3**: Images are placed in logical positions within text
-- [ ] **Rule I4**: Images with captions use caption as alt text
-- [ ] **Rule I5**: Images without captions have descriptive alt text
+- [ ] **Rule I4**: Images with captions use caption as alt text (in brackets)
+- [ ] **Rule I5**: Images without captions have descriptive alt text (in brackets)
 - [ ] **Rule I6**: No placeholder text like "[IMAGE]" remains in output
-- [ ] **Rule I7**: Image tags are self-closing with space before `/>`
+- [ ] **Rule I7**: Images use Markdown syntax `![alt text](image_id)`, not HTML tags
 
 ### Content Quality Rules
 
@@ -125,7 +131,9 @@ Apply these rules in order when converting source text to Markdown:
 ## Common Errors with Corrections
 
 ### Error 1: Missing Required Fields for page.chunk
+
 **INVALID:**
+
 ```json
 {
   "__component": "page.chunk",
@@ -133,8 +141,10 @@ Apply these rules in order when converting source text to Markdown:
   "Text": "Content here"
 }
 ```
+
 **Violated Rules:** C7, C8, C9
 **VALID:**
+
 ```json
 {
   "__component": "page.chunk",
@@ -147,14 +157,18 @@ Apply these rules in order when converting source text to Markdown:
 ```
 
 ### Error 2: Citation Markers in Text
+
 **INVALID:**
+
 ```json
 {
   "Text": "[cite_start]The Constitution was written in 1787[cite: 19]."
 }
 ```
+
 **Violated Rules:** Q1
 **VALID:**
+
 ```json
 {
   "Text": "The Constitution was written in 1787."
@@ -162,22 +176,28 @@ Apply these rules in order when converting source text to Markdown:
 ```
 
 ### Error 3: Ampersand Handling
+
 **INVALID:**
+
 ```json
 {
   "Text": "Research &amp; Development"
 }
 ```
+
 **Violated Rules:** M2
 **VALID:**
+
 ```json
 {
   "Text": "Research & Development"
 }
 ```
 
-### Error 4: Wrong __component Value
+### Error 4: Wrong \_\_component Value
+
 **INVALID:**
+
 ```json
 {
   "__component": "chunk",
@@ -185,8 +205,10 @@ Apply these rules in order when converting source text to Markdown:
   "Text": "Content"
 }
 ```
+
 **Violated Rules:** C2
 **VALID:**
+
 ```json
 {
   "__component": "page.chunk",
@@ -199,14 +221,18 @@ Apply these rules in order when converting source text to Markdown:
 ```
 
 ### Error 5: Yes/No Question
+
 **INVALID:**
+
 ```json
 {
   "Question": "Is psychology a science?"
 }
 ```
+
 **Violated Rules:** C10
 **VALID:**
+
 ```json
 {
   "Question": "Why is psychology considered a science?"
@@ -214,14 +240,18 @@ Apply these rules in order when converting source text to Markdown:
 ```
 
 ### Error 6: Vague KeyPhrases Not From Text
+
 **INVALID:**
+
 ```json
 {
   "KeyPhrase": "important concepts, key ideas, main points"
 }
 ```
+
 **Violated Rules:** Q5
 **VALID:**
+
 ```json
 {
   "KeyPhrase": "systematic observation, empirical research, scientific method"
@@ -229,14 +259,18 @@ Apply these rules in order when converting source text to Markdown:
 ```
 
 ### Error 7: Lowercase Header
+
 **INVALID:**
+
 ```json
 {
   "Header": "introduction to psychology"
 }
 ```
+
 **Violated Rules:** C3, P4
 **VALID:**
+
 ```json
 {
   "Header": "Introduction to Psychology"
@@ -244,7 +278,9 @@ Apply these rules in order when converting source text to Markdown:
 ```
 
 ### Error 8: Extra Fields on page.plain-chunk
+
 **INVALID:**
+
 ```json
 {
   "__component": "page.plain-chunk",
@@ -255,8 +291,10 @@ Apply these rules in order when converting source text to Markdown:
   "KeyPhrase": "references, citations"
 }
 ```
+
 **Violated Rules:** C14, C15, C16
 **VALID:**
+
 ```json
 {
   "__component": "page.plain-chunk",
@@ -266,7 +304,9 @@ Apply these rules in order when converting source text to Markdown:
 ```
 
 ### Error 9: Missing Volume Summary
+
 **INVALID:**
+
 ```json
 {
   "Title": "Psychology Textbook",
@@ -274,8 +314,10 @@ Apply these rules in order when converting source text to Markdown:
   "Pages": [...]
 }
 ```
+
 **Violated Rules:** V3
 **VALID:**
+
 ```json
 {
   "Title": "Psychology Textbook",
@@ -286,14 +328,18 @@ Apply these rules in order when converting source text to Markdown:
 ```
 
 ### Error 10: Improper Markdown Formatting
+
 **INVALID:**
+
 ```json
 {
   "Text": "Psychology is the **scientific study** of *behavior*.- Observation\n- Experimentation\n- Analysis"
 }
 ```
+
 **Violated Rules:** C5, M1
 **VALID:**
+
 ```json
 {
   "Text": "Psychology is the **scientific study** of *behavior*.\n\nObservation, experimentation, and analysis are key methods."
@@ -301,15 +347,19 @@ Apply these rules in order when converting source text to Markdown:
 ```
 
 ### Error 11: Missing Image from Metadata
+
 **INVALID:**
+
 ```json
 {
   "Text": "The cell membrane controls what enters and exits the cell.\n\nThis selective permeability is essential for cell function."
 }
 ```
+
 **Context:** Metadata provided image_page_3_1 with caption "Figure 2: Cell membrane structure"
 **Violated Rules:** I1, T5
 **VALID:**
+
 ```json
 {
   "Text": "The cell membrane controls what enters and exits the cell.\n\n![Figure 2: Cell membrane structure](image_page_3_1)\n\nThis selective permeability is essential for cell function."
@@ -317,14 +367,18 @@ Apply these rules in order when converting source text to Markdown:
 ```
 
 ### Error 12: Wrong Image Format
+
 **INVALID:**
+
 ```json
 {
   "Text": "See the diagram below.\n\n<img src='image_page_2_1'>\n\nThis shows the process."
 }
 ```
+
 **Violated Rules:** M8, I7
 **VALID:**
+
 ```json
 {
   "Text": "See the diagram below.\n\n![Process diagram](image_page_2_1)\n\nThis shows the process."
@@ -332,14 +386,18 @@ Apply these rules in order when converting source text to Markdown:
 ```
 
 ### Error 13: Image Placeholder Not Replaced
+
 **INVALID:**
+
 ```json
 {
   "Text": "Photosynthesis occurs in chloroplasts.\n\n[IMAGE: Chloroplast diagram]\n\nThe process involves light and dark reactions."
 }
 ```
+
 **Violated Rules:** I6, T5
 **VALID:**
+
 ```json
 {
   "Text": "Photosynthesis occurs in chloroplasts.\n\n![Chloroplast diagram](image_page_5_1)\n\nThe process involves light and dark reactions."
@@ -347,14 +405,18 @@ Apply these rules in order when converting source text to Markdown:
 ```
 
 ### Error 14: Wrong Image ID Format
+
 **INVALID:**
+
 ```json
 {
   "Text": "Cell structure is complex.\n\n![Cell diagram](page_3_img_1.png)"
 }
 ```
+
 **Violated Rules:** M9, I2
 **VALID:**
+
 ```json
 {
   "Text": "Cell structure is complex.\n\n![Cell diagram](image_page_3_1)"
@@ -362,14 +424,18 @@ Apply these rules in order when converting source text to Markdown:
 ```
 
 ### Error 15: Missing Alt Text
+
 **INVALID:**
+
 ```json
 {
   "Text": "The diagram shows the cycle.\n\n[](image_page_7_2)"
 }
 ```
+
 **Violated Rules:** M10, I4 or I5
 **VALID:**
+
 ```json
 {
   "Text": "The diagram shows the cycle.\n\n![Diagram of the water cycle](image_page_7_2)"
@@ -381,24 +447,28 @@ Apply these rules in order when converting source text to Markdown:
 Before outputting JSON, verify each category:
 
 ### Structure Validation
+
 - [ ] All required volume fields present (V1-V6)
 - [ ] All required page fields present (P1-P4)
 - [ ] All required chunk fields present (C1-C16)
-- [ ] Correct __component values used (C2)
+- [ ] Correct \_\_component values used (C2)
 
 ### Markdown Validation
+
 - [ ] All Markdown properly formed (M1-M10)
 - [ ] Paragraphs separated by blank lines (M1)
 - [ ] Correct bold and italic syntax (M3-M4)
 - [ ] Images use correct format (M8-M10)
 
 ### Content Validation
+
 - [ ] No citation markers (Q1)
 - [ ] No image placeholders like "[IMAGE]" (Q2, I6)
 - [ ] Questions are open-ended (C10)
 - [ ] KeyPhrases from actual text (Q5)
 
 ### Image Validation (If Metadata Provided)
+
 - [ ] All images from metadata included (I1)
 - [ ] Correct image_id format used (I2, M9)
 - [ ] All images have alt text (M10, I4, I5)
@@ -406,6 +476,7 @@ Before outputting JSON, verify each category:
 - [ ] No placeholder text remains (I6)
 
 ### JSON Syntax Validation
+
 - [ ] All objects properly nested
 - [ ] Commas between array elements
 - [ ] Commas between object properties
