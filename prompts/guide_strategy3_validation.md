@@ -20,7 +20,7 @@ Volume
             └── Chunk
                 ├── __component (string, required, exactly "page.chunk" or "page.plain-chunk")
                 ├── Header (string, required, Title Case)
-                ├── Text (string, required, valid HTML)
+                ├── Text (string, required, valid Markdown)
                 ├── Question (string, required for page.chunk only)
                 ├── ConstructedResponse (string, required for page.chunk only)
                 └── KeyPhrase (string, required for page.chunk only)
@@ -50,8 +50,8 @@ Volume
 - [ ] **Rule C1**: Every chunk has __component field
 - [ ] **Rule C2**: __component value is exactly "page.chunk" or "page.plain-chunk" (no typos)
 - [ ] **Rule C3**: Every chunk has Header field (string, Title Case)
-- [ ] **Rule C4**: Every chunk has Text field (string, valid HTML)
-- [ ] **Rule C5**: Text field contains only valid HTML (no markdown)
+- [ ] **Rule C4**: Every chunk has Text field (string, valid Markdown)
+- [ ] **Rule C5**: Text field contains only valid Markdown (paragraphs separated by blank lines, **bold**, *italic*)
 - [ ] **Rule C6**: Chunk word count is 150-500 words
 
 #### page.chunk Specific Rules
@@ -68,27 +68,23 @@ Volume
 - [ ] **Rule C15**: page.plain-chunk does NOT have ConstructedResponse field
 - [ ] **Rule C16**: page.plain-chunk does NOT have KeyPhrase field
 
-### HTML Validation Rules
+### Markdown Validation Rules
 
-- [ ] **Rule H1**: All HTML tags are properly closed
-- [ ] **Rule H2**: Ampersands are encoded as `&amp;`
-- [ ] **Rule H3**: Less-than signs are encoded as `&lt;` (if present)
-- [ ] **Rule H4**: Greater-than signs are encoded as `&gt;` (if present)
-- [ ] **Rule H5**: Paragraphs use `<p>` tags (not markdown)
-- [ ] **Rule H6**: Bold uses `<b>` tags (not `**` or `<strong>`)
-- [ ] **Rule H7**: Italics use `<i>` tags (not `*` or `<em>`)
-- [ ] **Rule H8**: Math uses `<span class="math-tex">\( ... \)</span>` for inline
-- [ ] **Rule H9**: Math uses `<span class="math-tex">\[ ... \]</span>` for blocks
-- [ ] **Rule H10**: Info callouts use exact structure:
-```html
-<section class="Info">
-<h3 class="InfoTitle">Title</h3>
-<p class="InfoContent">Content</p>
-</section>
+- [ ] **Rule M1**: Paragraphs are separated by blank lines
+- [ ] **Rule M2**: Ampersands use `&` as-is (no encoding needed)
+- [ ] **Rule M3**: Bold uses `**text**` syntax
+- [ ] **Rule M4**: Italics use `*text*` syntax
+- [ ] **Rule M5**: Math uses `$...$` for inline
+- [ ] **Rule M6**: Math uses `$$...$$` for block equations
+- [ ] **Rule M7**: Info callouts use blockquote structure:
+```markdown
+> **Title**
+>
+> Content
 ```
-- [ ] **Rule H11**: Images use self-closing tag: `<img src="image_id" alt="description" />`
-- [ ] **Rule H12**: Image src attributes match image_id from metadata (format: `image_page_X_Y`)
-- [ ] **Rule H13**: Image alt attributes contain caption or meaningful description
+- [ ] **Rule M8**: Images use markdown syntax: `![description](image_id)`
+- [ ] **Rule M9**: Image paths match image_id from metadata (format: `image_page_X_Y`)
+- [ ] **Rule M10**: Image alt text (in brackets) contains caption or meaningful description
 
 ### Image Validation Rules (If Metadata Provided)
 
@@ -109,22 +105,22 @@ Volume
 - [ ] **Rule Q5**: KeyPhrases are actual phrases from the chunk text
 - [ ] **Rule Q6**: No duplicate KeyPhrases within a chunk
 
-## HTML Transformation Rules
+## Markdown Transformation Rules
 
-Apply these rules in order when converting source text to HTML:
+Apply these rules in order when converting source text to Markdown:
 
-1. **Rule T1**: Wrap each paragraph in `<p>` and `</p>` tags
-2. **Rule T2**: Replace all `&` with `&amp;`
-3. **Rule T3**: Replace `**text**` or __text__ with `<b>text</b>`
-4. **Rule T4**: Replace `*text*` or _text_ with `<i>text</i>`
-5. **Rule T5**: Convert image references to `<img src="image_id" alt="caption or description" />`
+1. **Rule T1**: Separate paragraphs with blank lines
+2. **Rule T2**: Keep ampersands as `&` (no encoding needed)
+3. **Rule T3**: Convert bold text to `**text**`
+4. **Rule T4**: Convert italic text to `*text*`
+5. **Rule T5**: Convert image references to `![caption or description](image_id)`
 6. **Rule T6**: Remove all `[cite_start]` and `[cite: N]` markers
-7. **Rule T7**: Convert book/journal titles to `<i>Title</i>`
-8. **Rule T8**: Convert inline math to `<span class="math-tex">\( formula \)</span>`
-9. **Rule T9**: Convert block math to `<span class="math-tex">\[ formula \]</span>`
-10. **Rule T10**: Convert Learning Objectives sections to Info callout structure
+7. **Rule T7**: Convert book/journal titles to `*Title*`
+8. **Rule T8**: Convert inline math to `$formula$`
+9. **Rule T9**: Convert block math to `$$formula$$`
+10. **Rule T10**: Convert Learning Objectives sections to blockquote structure with bold header
 11. **Rule T11**: Match each image to its metadata using page_num and position information
-12. **Rule T12**: Place images between paragraphs, not mid-sentence
+12. **Rule T12**: Place images between paragraphs with blank lines, not mid-sentence
 
 ## Common Errors with Corrections
 
@@ -134,7 +130,7 @@ Apply these rules in order when converting source text to HTML:
 {
   "__component": "page.chunk",
   "Header": "Introduction",
-  "Text": "<p>Content here</p>"
+  "Text": "Content here"
 }
 ```
 **Violated Rules:** C7, C8, C9
@@ -143,7 +139,7 @@ Apply these rules in order when converting source text to HTML:
 {
   "__component": "page.chunk",
   "Header": "Introduction",
-  "Text": "<p>Content here</p>",
+  "Text": "Content here",
   "Question": "What is introduced in this section?",
   "ConstructedResponse": "This section introduces...",
   "KeyPhrase": "key term, main concept, important idea"
@@ -154,29 +150,29 @@ Apply these rules in order when converting source text to HTML:
 **INVALID:**
 ```json
 {
-  "Text": "[cite_start]<p>The Constitution was written in 1787[cite: 19].</p>"
+  "Text": "[cite_start]The Constitution was written in 1787[cite: 19]."
 }
 ```
 **Violated Rules:** Q1
 **VALID:**
 ```json
 {
-  "Text": "<p>The Constitution was written in 1787.</p>"
+  "Text": "The Constitution was written in 1787."
 }
 ```
 
-### Error 3: Unencoded Ampersand
+### Error 3: Ampersand Handling
 **INVALID:**
 ```json
 {
-  "Text": "<p>Research & Development</p>"
+  "Text": "Research &amp; Development"
 }
 ```
-**Violated Rules:** H2
+**Violated Rules:** M2
 **VALID:**
 ```json
 {
-  "Text": "<p>Research &amp; Development</p>"
+  "Text": "Research & Development"
 }
 ```
 
@@ -186,7 +182,7 @@ Apply these rules in order when converting source text to HTML:
 {
   "__component": "chunk",
   "Header": "Title",
-  "Text": "<p>Content</p>"
+  "Text": "Content"
 }
 ```
 **Violated Rules:** C2
@@ -195,7 +191,7 @@ Apply these rules in order when converting source text to HTML:
 {
   "__component": "page.chunk",
   "Header": "Title",
-  "Text": "<p>Content</p>",
+  "Text": "Content",
   "Question": "...",
   "ConstructedResponse": "...",
   "KeyPhrase": "..."
@@ -253,7 +249,7 @@ Apply these rules in order when converting source text to HTML:
 {
   "__component": "page.plain-chunk",
   "Header": "References",
-  "Text": "<p>Citations here</p>",
+  "Text": "Citations here",
   "Question": "What sources were cited?",
   "ConstructedResponse": "Multiple sources...",
   "KeyPhrase": "references, citations"
@@ -265,7 +261,7 @@ Apply these rules in order when converting source text to HTML:
 {
   "__component": "page.plain-chunk",
   "Header": "References",
-  "Text": "<p>Citations here</p>"
+  "Text": "Citations here"
 }
 ```
 
@@ -289,18 +285,18 @@ Apply these rules in order when converting source text to HTML:
 }
 ```
 
-### Error 10: Markdown Instead of HTML
+### Error 10: Improper Markdown Formatting
 **INVALID:**
 ```json
 {
-  "Text": "Psychology is the **scientific study** of *behavior*.\n\n- Observation\n- Experimentation\n- Analysis"
+  "Text": "Psychology is the **scientific study** of *behavior*.- Observation\n- Experimentation\n- Analysis"
 }
 ```
-**Violated Rules:** C5, H5, H6, H7
+**Violated Rules:** C5, M1
 **VALID:**
 ```json
 {
-  "Text": "<p>Psychology is the <b>scientific study</b> of <i>behavior</i>.</p><p>Observation, experimentation, and analysis are key methods.</p>"
+  "Text": "Psychology is the **scientific study** of *behavior*.\n\nObservation, experimentation, and analysis are key methods."
 }
 ```
 
@@ -308,7 +304,7 @@ Apply these rules in order when converting source text to HTML:
 **INVALID:**
 ```json
 {
-  "Text": "<p>The cell membrane controls what enters and exits the cell.</p><p>This selective permeability is essential for cell function.</p>"
+  "Text": "The cell membrane controls what enters and exits the cell.\n\nThis selective permeability is essential for cell function."
 }
 ```
 **Context:** Metadata provided image_page_3_1 with caption "Figure 2: Cell membrane structure"
@@ -316,22 +312,22 @@ Apply these rules in order when converting source text to HTML:
 **VALID:**
 ```json
 {
-  "Text": "<p>The cell membrane controls what enters and exits the cell.</p><img src=\"image_page_3_1\" alt=\"Figure 2: Cell membrane structure\" /><p>This selective permeability is essential for cell function.</p>"
+  "Text": "The cell membrane controls what enters and exits the cell.\n\n![Figure 2: Cell membrane structure](image_page_3_1)\n\nThis selective permeability is essential for cell function."
 }
 ```
 
-### Error 12: Wrong Image Tag Format
+### Error 12: Wrong Image Format
 **INVALID:**
 ```json
 {
-  "Text": "<p>See the diagram below.</p><img src='image_page_2_1'><p>This shows the process.</p>"
+  "Text": "See the diagram below.\n\n<img src='image_page_2_1'>\n\nThis shows the process."
 }
 ```
-**Violated Rules:** H11, I7
+**Violated Rules:** M8, I7
 **VALID:**
 ```json
 {
-  "Text": "<p>See the diagram below.</p><img src=\"image_page_2_1\" alt=\"Process diagram\" /><p>This shows the process.</p>"
+  "Text": "See the diagram below.\n\n![Process diagram](image_page_2_1)\n\nThis shows the process."
 }
 ```
 
@@ -339,14 +335,14 @@ Apply these rules in order when converting source text to HTML:
 **INVALID:**
 ```json
 {
-  "Text": "<p>Photosynthesis occurs in chloroplasts.</p><p>[IMAGE: Chloroplast diagram]</p><p>The process involves light and dark reactions.</p>"
+  "Text": "Photosynthesis occurs in chloroplasts.\n\n[IMAGE: Chloroplast diagram]\n\nThe process involves light and dark reactions."
 }
 ```
 **Violated Rules:** I6, T5
 **VALID:**
 ```json
 {
-  "Text": "<p>Photosynthesis occurs in chloroplasts.</p><img src=\"image_page_5_1\" alt=\"Chloroplast diagram\" /><p>The process involves light and dark reactions.</p>"
+  "Text": "Photosynthesis occurs in chloroplasts.\n\n![Chloroplast diagram](image_page_5_1)\n\nThe process involves light and dark reactions."
 }
 ```
 
@@ -354,14 +350,14 @@ Apply these rules in order when converting source text to HTML:
 **INVALID:**
 ```json
 {
-  "Text": "<p>Cell structure is complex.</p><img src=\"page_3_img_1.png\" alt=\"Cell diagram\" />"
+  "Text": "Cell structure is complex.\n\n![Cell diagram](page_3_img_1.png)"
 }
 ```
-**Violated Rules:** H12, I2
+**Violated Rules:** M9, I2
 **VALID:**
 ```json
 {
-  "Text": "<p>Cell structure is complex.</p><img src=\"image_page_3_1\" alt=\"Cell diagram\" />"
+  "Text": "Cell structure is complex.\n\n![Cell diagram](image_page_3_1)"
 }
 ```
 
@@ -369,14 +365,14 @@ Apply these rules in order when converting source text to HTML:
 **INVALID:**
 ```json
 {
-  "Text": "<p>The diagram shows the cycle.</p><img src=\"image_page_7_2\" />"
+  "Text": "The diagram shows the cycle.\n\n[](image_page_7_2)"
 }
 ```
-**Violated Rules:** H13, I4 or I5
+**Violated Rules:** M10, I4 or I5
 **VALID:**
 ```json
 {
-  "Text": "<p>The diagram shows the cycle.</p><img src=\"image_page_7_2\" alt=\"Diagram of the water cycle\" />"
+  "Text": "The diagram shows the cycle.\n\n![Diagram of the water cycle](image_page_7_2)"
 }
 ```
 
@@ -390,11 +386,11 @@ Before outputting JSON, verify each category:
 - [ ] All required chunk fields present (C1-C16)
 - [ ] Correct __component values used (C2)
 
-### HTML Validation
-- [ ] All HTML properly formed (H1-H13)
-- [ ] Special characters encoded (H2-H4)
-- [ ] No markdown syntax (H5-H7)
-- [ ] Images use correct format (H11-H13)
+### Markdown Validation
+- [ ] All Markdown properly formed (M1-M10)
+- [ ] Paragraphs separated by blank lines (M1)
+- [ ] Correct bold and italic syntax (M3-M4)
+- [ ] Images use correct format (M8-M10)
 
 ### Content Validation
 - [ ] No citation markers (Q1)
@@ -404,8 +400,8 @@ Before outputting JSON, verify each category:
 
 ### Image Validation (If Metadata Provided)
 - [ ] All images from metadata included (I1)
-- [ ] Correct image_id format used (I2, H12)
-- [ ] All images have alt text (H13, I4, I5)
+- [ ] Correct image_id format used (I2, M9)
+- [ ] All images have alt text (M10, I4, I5)
 - [ ] Images placed logically in text (I3)
 - [ ] No placeholder text remains (I6)
 

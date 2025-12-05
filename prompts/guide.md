@@ -1,4 +1,4 @@
-﻿# iTELL Content Authoring Guide
+# iTELL Content Authoring Guide
 
 ## What is iTELL?
 
@@ -33,15 +33,15 @@ This is the official format guide for iTELL volumes published by LEAR Lab. This 
    - Required fields: `__component`, `Header`, `Text`
    - Use for: Learning Objectives, References, Key Takeaways, short sections
 
-### HTML Formatting Quick Reference
+### Markdown Formatting Quick Reference
 
-- Paragraphs: `<p>...</p>`
-- Bold: `<b>`
-- Italics: `<i>`
-- Ampersands: `&amp;`
-- Learning Objectives: `<section class="Info"><h3 class="InfoTitle">Learning Objectives</h3><p class="InfoContent">...</p></section>`
-- Math inline: `<span class="math-tex">\( ... \)</span>`
-- Math block: `<span class="math-tex">\[ ... \]</span>`
+- Paragraphs: Separate with blank lines
+- Bold: `**text**`
+- Italics: `*text*`
+- Ampersands: `&` (use as-is)
+- Learning Objectives: Blockquote with bold header
+- Math inline: `$...$`
+- Math block: `$$...$$`
 
 ### Generation Best Practices
 
@@ -70,7 +70,7 @@ Content authors have broad editorial power to change the organizational structur
 
 ### Things You Should Always Modify
 
-- Multimedia elements like images should be excluded
+- Multimedia elements like images should be represented using markdown image syntax
 - Adapt the content to fit the interactive and digital format of iTELL
 - Check for and correct any grammatical or typographical errors
 
@@ -128,24 +128,24 @@ Pages in iTELL have three main fields that must be populated:
 ### Page Structure Example
 
 ```json
-{
-  "Title": "18.1 Intercultural Communication",
-  "Content": [
     {
-      "__component": "page.plain-chunk",
-      "Header": "Learning Objectives",
-      "Text": "<section class=\"Info\">...</section>"
-    },
-    {
-      "__component": "page.chunk",
-      "Header": "What is Intercultural Communication?",
-      "Text": "<p>Communication is the sharing of understanding...</p>",
-      "Question": "What is culture according to Donald Klopf?",
-      "ConstructedResponse": "Culture is described as 'that part of the environment made by humans.'",
-      "KeyPhrase": "intercultural communication, culture, psychological aspects of culture"
+      "Title": "18.1 Intercultural Communication",
+      "Content": [
+        {
+          "__component": "page.plain-chunk",
+          "Header": "Learning Objectives",
+          "Text": "> **Learning Objectives**\n>\n> Content here"
+        },
+        {
+          "__component": "page.chunk",
+          "Header": "What is Intercultural Communication?",
+          "Text": "Communication is the sharing of understanding...",
+          "Question": "What is culture according to Donald Klopf?",
+          "ConstructedResponse": "Culture is described as 'that part of the environment made by humans.'",
+          "KeyPhrase": "intercultural communication, culture, psychological aspects of culture"
+        }
+      ]
     }
-  ]
-}
 ```
 
 ### How to Split Page Content into Chunks
@@ -171,7 +171,7 @@ There are two types of chunks:
 |---|---|---|---|
 | `__component` | The type of chunk: "page.chunk" or "page.plain-chunk" | ✓ | ✓ |
 | Header | Use title case capitalization (e.g., "Introduction to Macroeconomics") | ✓ | ✓ |
-| Text | The main body of text formatted as HTML | ✓ | ✓ |
+| Text | The main body of text formatted as Markdown | ✓ | ✓ |
 | Question | A question related to the chunk content, used for generating constructed responses | ✓ | ✗ |
 | ConstructedResponse | A model answer for the question, used for scoring constructed responses | ✓ | ✗ |
 | KeyPhrase | Important terms or concepts from the chunk content, comma-separated | ✓ | ✗ |
@@ -184,7 +184,7 @@ There are two types of chunks:
 {
   "__component": "page.chunk",
   "Header": "What is Intercultural Communication?",
-  "Text": "<p>Communication is the sharing of understanding and meaning (Pearson, J. and Nelson, P., 2000), but what is intercultural communication? If you answered, \"The sharing of understanding and meaning across cultures,\" you'd be close, but the definition requires more attention.</p><p>What is a culture? Where does one culture stop and another start? How are cultures created, maintained, and dissolved? Donald Klopf described culture as \"that part of the environment made by humans\" (Klopf, D., 1991). From the building we erect that represents design values to the fences we install that delineate borders, our environment is a representation of culture, but it is not all that is culture.</p>",
+  "Text": "Communication is the sharing of understanding and meaning (Pearson, J. and Nelson, P., 2000), but what is intercultural communication? If you answered, \"The sharing of understanding and meaning across cultures,\" you'd be close, but the definition requires more attention.\n\nWhat is a culture? Where does one culture stop and another start? How are cultures created, maintained, and dissolved? Donald Klopf described culture as \"that part of the environment made by humans\" (Klopf, D., 1991). From the building we erect that represents design values to the fences we install that delineate borders, our environment is a representation of culture, but it is not all that is culture.",
   "Question": "What is culture according to Donald Klopf?",
   "ConstructedResponse": "Culture is described as 'that part of the environment made by humans.'",
   "KeyPhrase": "intercultural communication, culture definition, psychological aspects of culture, communication context, nonverbal feedback"
@@ -197,7 +197,7 @@ There are two types of chunks:
 {
   "__component": "page.plain-chunk",
   "Header": "Learning Objectives",
-  "Text": "<section class=\"Info\"><h3 class=\"InfoTitle\">Learning Objectives</h3><p class=\"InfoContent\">1. Define and discuss how to facilitate intercultural communication.</p><p class=\"InfoContent\">2. Define and discuss the effects of ethnocentrism.</p></section>"
+  "Text": "> **Learning Objectives**\n>\n> 1. Define and discuss how to facilitate intercultural communication.\n> 2. Define and discuss the effects of ethnocentrism."
 }
 ```
 
@@ -207,7 +207,7 @@ There are two types of chunks:
 {
   "__component": "page.plain-chunk",
   "Header": "References",
-  "Text": "<p>Klopf, D. (1991). <i>Intercultural encounters: The fundamentals of intercultural communication</i> (2nd ed.). Inglewood, CA: Morton Publishing Company.</p><p>Pearson, J., &amp; Nelson, P. (2000). <i>An introduction to human communication: Understanding and sharing.</i> Boston, MA: McGraw-Hill.</p>"
+  "Text": "Klopf, D. (1991). *Intercultural encounters: The fundamentals of intercultural communication* (2nd ed.). Inglewood, CA: Morton Publishing Company.\n\nPearson, J., & Nelson, P. (2000). *An introduction to human communication: Understanding and sharing.* Boston, MA: McGraw-Hill."
 }
 ```
 
@@ -240,7 +240,7 @@ iTELL provides several custom components that can be used to enhance content pre
 
 ### Callouts
 
-Callouts are boxed sections that visually offset content from the main text. They come in three variants:
+Callouts are boxed sections that visually offset content from the main text. Use blockquotes to create callouts.
 
 **Best Practices for Callouts:**
 
@@ -252,14 +252,10 @@ Callouts are boxed sections that visually offset content from the main text. The
 
 Info callouts should be used for supplementary information that supports the main content, such as learning objectives, definitions, or key concepts.
 
-```html
-<section  class="Info">
-
-<h3  class="InfoTitle">Learning Objectives</h3>
-
-<p  class="InfoContent">Your content here in HTML format</p>
-
-</section>
+```markdown
+> **Learning Objectives**
+>
+> Your content here with markdown formatting
 ```
 
 **When to use:**
@@ -273,12 +269,10 @@ Info callouts should be used for supplementary information that supports the mai
 
 Warning callouts should be used to alert learners to common mistakes, misconceptions, or important cautions.
 
-```html
-<section  class="Warning">
-
-<p>Your warning content here in HTML format</p>
-
-</section>
+```markdown
+> **Warning**
+>
+> Your warning content here with markdown formatting
 ```
 
 **When to use:**
@@ -292,12 +286,8 @@ Warning callouts should be used to alert learners to common mistakes, misconcept
 
 General callouts can be used for any content that should be visually distinguished but doesn't fit the info or warning categories.
 
-```html
-<section class="Callout">
-
-<p>Your content here in HTML format</p>
-
-</section>
+```markdown
+> Your content here with markdown formatting
 ```
 
 **When to use:**
@@ -312,41 +302,41 @@ iTELL supports LaTeX-style mathematical notation for both inline and block equat
 
 **Inline Math:**
 
-Use inline math for equations within text, like `The formula <span class="math-tex">\( E = mc^2 \)</span> demonstrates mass-energy equivalence.`
+Use inline math for equations within text, like `The formula $E = mc^2$ demonstrates mass-energy equivalence.`
 
-```html
-<span class="math-tex">\( E = mc^2 \)</span>
+```markdown
+$E = mc^2$
 ```
 
 **Block Math:**
 
 Use block math for displayed equations that should appear on their own line.
 
-```html
-<span class="math-tex">\[ \int_{0}^{\infty} e^{-x^2} dx = \frac{\sqrt{\pi}}{2} \]</span>
+```markdown
+$$\int_{0}^{\infty} e^{-x^2} dx = \frac{\sqrt{\pi}}{2}$$
 ```
 
 **Best Practices for Math:**
 
-- Use inline math (`\( ... \)`) for simple expressions and variables within sentences
-- Use block math (`\[ ... \]`) for complex equations that deserve emphasis
-- Ensure LaTeX syntax is correct and properly escaped
+- Use inline math (`$...$`) for simple expressions and variables within sentences
+- Use block math (`$$...$$`) for complex equations that deserve emphasis
+- Ensure LaTeX syntax is correct
 - Define variables and notation before or immediately after introducing them
 - Number important equations if you need to reference them later
 
 ### General Formatting Guidelines
 
-- **Valid HTML**: All content within custom components must use valid HTML structure, plus the custom H
+- **Valid Markdown**: All content within custom components must use valid Markdown structure
 - **Consistency**: Use formatting elements consistently throughout the volume
 - **Purpose**: Each special formatting element should serve a clear pedagogical purpose—don't use them solely for visual variety
-- **Class Names**: Use exact class names as specified--they are case-sensitive and required for proper rendering
+- **Blockquotes**: Use blockquotes (>) for callout sections
 
 ## Which Content Should We Exclude
 
 Some texts may include reflection questions, end-of-chapter summaries, and other activities. These should generally be excluded when adapting source material for iTELL to avoid redundancy. Examples of common elements that should be excluded are "Summary," "Key Takeaway," and "Review Questions". Questions in the form of math exercises, however, should be included in the page.
 
 - Exclude any summaries of the page (include in the ReferenceSummary instead).
-- Exclude images.
+- Include images using markdown image syntax when provided in metadata.
 - Exclude chunks that have review questions which have the same functions as iTELL's Question and ConstructedResponse pair.
 
 ## Headers
@@ -363,7 +353,7 @@ Read the content and write a header yourself that matches the content as well as
 ## Best Practices for iTELL JSON
 
 1. **Always include all required fields**: Title, Description, VolumeSummary at volume level; all chunk fields for page.chunk
-2. **Use proper HTML encoding**: &amp; for &, &lt; for <, &gt; for >, preserve quotes as \"
+2. **Use proper Markdown formatting**: Separate paragraphs with blank lines, use **bold** and *italic* syntax correctly
 3. **Maintain consistent structure**: All pages in Pages array, all chunks in Content array
 4. **Apply Title Case consistently**: All headers and titles should use Title Case
 5. **Balance chunk types**: Use page.plain-chunk for supplementary material (objectives, references), page.chunk for main content
@@ -376,7 +366,7 @@ Read the content and write a header yourself that matches the content as well as
 
 1. **Missing required fields**: Every page.chunk must have Question, ConstructedResponse, and KeyPhrase
 2. **Incorrect __component values**: Must be exactly "page.chunk" or "page.plain-chunk"
-3. **Malformed HTML**: Missing closing tags, unencoded special characters
+3. **Malformed Markdown**: Missing blank lines between paragraphs, incorrect bold/italic syntax
 4. **Overly long chunks**: Keep chunks under 500 words
 5. **Generic keyphrases**: Avoid vague terms like "important concepts" or "key ideas"
 6. **Yes/no questions**: Questions should require substantive answers

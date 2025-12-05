@@ -44,7 +44,7 @@ Is this main content (200-400 words)?
 ### Step 5: Generate Content for Each Chunk
 
 **For page.chunk:**
-1. Convert text to valid HTML (use `<p>`, `<b>`, `<i>`)
+1. Convert text to valid Markdown (use **bold**, *italic*, paragraphs separated by blank lines)
 2. Create Header in Title Case
 3. **Insert image links where appropriate** (see Image Handling below)
 4. Generate 3-5 KeyPhrases (noun phrases from text)
@@ -52,7 +52,7 @@ Is this main content (200-400 words)?
 6. Write a 1-2 sentence ConstructedResponse
 
 **For page.plain-chunk:**
-1. Convert text to valid HTML
+1. Convert text to valid Markdown
 2. Create Header in Title Case
 3. **Insert image links where appropriate** (see Image Handling below)
 4. Skip Question, ConstructedResponse, KeyPhrase
@@ -80,15 +80,15 @@ Should this image be included?
 
 **Image Link Format:**
 
-Insert images using this exact HTML structure:
+Insert images using this exact Markdown structure:
 
-```html
-<img src="image_page_X_Y" alt="[caption or description]" />
+```markdown
+![caption or description](image_page_X_Y)
 ```
 
 Where:
 - `image_page_X_Y` is the `image_id` from the metadata
-- `alt` text is the caption if available, otherwise a brief description
+- The text in brackets is the caption if available, otherwise a brief description
 
 **Image Placement Examples:**
 
@@ -96,7 +96,7 @@ Where:
 ```json
 {
   "Header": "Photosynthesis Process",
-  "Text": "<p>Plants convert sunlight into energy through photosynthesis.</p><img src=\"image_page_2_1\" alt=\"Figure 1: Diagram of the photosynthesis process showing chloroplasts\" /><p>This process occurs in the chloroplasts of plant cells.</p>"
+  "Text": "Plants convert sunlight into energy through photosynthesis.\n\n![Figure 1: Diagram of the photosynthesis process showing chloroplasts](image_page_2_1)\n\nThis process occurs in the chloroplasts of plant cells."
 }
 ```
 
@@ -104,7 +104,7 @@ Where:
 ```json
 {
   "Header": "Cell Structure",
-  "Text": "<p>The cell membrane controls what enters and exits the cell.</p><img src=\"image_page_3_2\" alt=\"Microscope image of cell membrane\" />"
+  "Text": "The cell membrane controls what enters and exits the cell.\n\n![Microscope image of cell membrane](image_page_3_2)"
 }
 ```
 
@@ -112,7 +112,7 @@ Where:
 ```json
 {
   "Header": "Photosynthesis Process",
-  "Text": "<p>Plants convert sunlight into energy through photosynthesis.</p>"
+  "Text": "Plants convert sunlight into energy through photosynthesis."
 }
 ```
 
@@ -121,10 +121,10 @@ Before outputting, check:
 - [ ] All required volume fields present (Title, Description, VolumeSummary)
 - [ ] All page.chunk objects have Question, ConstructedResponse, KeyPhrase
 - [ ] All Headers use Title Case
-- [ ] All HTML is properly encoded (&amp; for &)
+- [ ] All Markdown is properly formatted (blank lines between paragraphs, **bold**, *italic*)
 - [ ] No `[cite_start]` or citation markers remain
-- [ ] All images from metadata are included with proper `<img>` tags
-- [ ] Image src attributes use correct image_id format
+- [ ] All images from metadata are included with proper markdown image syntax
+- [ ] Image paths use correct image_id format
 - [ ] JSON is properly nested and comma-separated
 
 ## Common Mistakes to Avoid
@@ -134,7 +134,7 @@ Before outputting, check:
 {
   "__component": "page.chunk",
   "Header": "Introduction",
-  "Text": "<p>Content here</p>"
+  "Text": "Content here"
 }
 ```
 
@@ -143,7 +143,7 @@ Before outputting, check:
 {
   "__component": "page.chunk",
   "Header": "Introduction",
-  "Text": "<p>Content here</p>",
+  "Text": "Content here",
   "Question": "What is the main topic discussed?",
   "ConstructedResponse": "The main topic is...",
   "KeyPhrase": "key concept, main idea, important term"
@@ -152,12 +152,12 @@ Before outputting, check:
 
 ### WRONG: Citation markers left in text
 ```json
-"Text": "[cite_start]<p>The Constitution was written in 1787[cite: 19].</p>"
+"Text": "[cite_start]The Constitution was written in 1787[cite: 19]."
 ```
 
-### CORRECT: Clean HTML text
+### CORRECT: Clean markdown text
 ```json
-"Text": "<p>The Constitution was written in 1787.</p>"
+"Text": "The Constitution was written in 1787."
 ```
 
 ### WRONG: Lowercase header
@@ -170,14 +170,14 @@ Before outputting, check:
 "Header": "Introduction to Psychology"
 ```
 
-### WRONG: Unencoded ampersand
+### WRONG: Improperly formatted
 ```json
-"Text": "<p>Research & Development</p>"
+"Text": "Research & Development"
 ```
 
-### CORRECT: Properly encoded
+### CORRECT: Properly formatted
 ```json
-"Text": "<p>Research &amp; Development</p>"
+"Text": "Research & Development"
 ```
 
 ## Quick Reference: Required Fields
@@ -206,23 +206,23 @@ Before outputting, check:
 - `Header`: string (Title Case)
 - `Text`: HTML string
 
-## HTML Formatting Quick Reference
+## Markdown Formatting Quick Reference
 
-- Paragraphs: `<p>...</p>`
-- Bold: `<b>...</b>`
-- Italics: `<i>...</i>`
-- Ampersands: `&amp;`
-- Images: `<img src="image_page_X_Y" alt="description" />`
-- Inline math: `<span class="math-tex">\( formula \)</span>`
-- Block math: `<span class="math-tex">\[ formula \]</span>`
+- Paragraphs: Separate with blank lines
+- Bold: `**text**`
+- Italics: `*text*`
+- Ampersands: `&` (use as-is)
+- Images: `![description](image_page_X_Y)`
+- Inline math: `$formula$`
+- Block math: `$$formula$$`
 - Learning Objectives callout:
-```html
-<section class="Info">
-<h3 class="InfoTitle">Learning Objectives</h3>
-<p class="InfoContent">Content here</p>
-</section>
+```markdown
+> **Learning Objectives**
+> 
+> Content here
 ```
 
 ## Final Output Instructions
 
 After completing all 6 steps above, output ONLY the complete JSON with no additional text before or after.
+

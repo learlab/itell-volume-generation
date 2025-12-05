@@ -36,12 +36,12 @@ Smith, J. (2020). Introduction to Psychology. Academic Press.
         {
           "__component": "page.plain-chunk",
           "Header": "Learning Objectives",
-          "Text": "<section class=\"Info\"><h3 class=\"InfoTitle\">Learning Objectives</h3><p class=\"InfoContent\">1. Define psychology as a science</p><p class=\"InfoContent\">2. Explain the scientific method in psychology</p></section>"
+          "Text": "> **Learning Objectives**\n>\n> 1. Define psychology as a science\n> 2. Explain the scientific method in psychology"
         },
         {
           "__component": "page.chunk",
           "Header": "What Is Psychology?",
-          "Text": "<p>Psychology is the scientific study of human behavior and mental processes. This definition emphasizes that psychology is empirical, meaning it relies on systematic observation and experimentation rather than intuition or speculation.</p>",
+          "Text": "Psychology is the scientific study of human behavior and mental processes. This definition emphasizes that psychology is empirical, meaning it relies on systematic observation and experimentation rather than intuition or speculation.",
           "Question": "Why is psychology considered an empirical science?",
           "ConstructedResponse": "Psychology is empirical because it relies on systematic observation and experimentation rather than intuition or speculation.",
           "KeyPhrase": "psychology, scientific study, empirical, human behavior, mental processes"
@@ -49,7 +49,7 @@ Smith, J. (2020). Introduction to Psychology. Academic Press.
         {
           "__component": "page.chunk",
           "Header": "The Scientific Method in Psychology",
-          "Text": "<p>The scientific method in psychology involves several steps. First, researchers formulate a hypothesis based on existing theories or observations. Second, they design controlled experiments to test their hypothesis. Third, they collect and analyze data using statistical methods. Finally, they draw conclusions and share their findings with the scientific community through peer-reviewed publications.</p>",
+          "Text": "The scientific method in psychology involves several steps. First, researchers formulate a hypothesis based on existing theories or observations. Second, they design controlled experiments to test their hypothesis. Third, they collect and analyze data using statistical methods. Finally, they draw conclusions and share their findings with the scientific community through peer-reviewed publications.",
           "Question": "What are the main steps of the scientific method in psychology?",
           "ConstructedResponse": "The scientific method involves formulating a hypothesis, designing controlled experiments, collecting and analyzing data, and sharing findings through peer-reviewed publications.",
           "KeyPhrase": "scientific method, hypothesis, controlled experiments, data analysis, peer review"
@@ -57,7 +57,7 @@ Smith, J. (2020). Introduction to Psychology. Academic Press.
         {
           "__component": "page.plain-chunk",
           "Header": "References",
-          "Text": "<p>Smith, J. (2020). <i>Introduction to Psychology</i>. Academic Press.</p>"
+          "Text": "Smith, J. (2020). *Introduction to Psychology*. Academic Press."
         }
       ]
     }
@@ -66,9 +66,9 @@ Smith, J. (2020). Introduction to Psychology. Academic Press.
 ```
 
 **Key Patterns to Notice:**
-- Learning Objectives → `page.plain-chunk` with Info callout
+- Learning Objectives → `page.plain-chunk` with blockquote format
 - Main content paragraphs → `page.chunk` with Q&A
-- References → `page.plain-chunk` with italicized titles
+- References → `page.plain-chunk` with italicized titles using *asterisks*
 - Each chunk 150-300 words
 - KeyPhrases pulled directly from text
 - Questions ask about main concepts
@@ -99,7 +99,7 @@ To solve for x in the equation 2x + 5 = 13, we first subtract 5 from both sides 
         {
           "__component": "page.chunk",
           "Header": "Understanding Linear Equations",
-          "Text": "<p>A linear equation has the form <span class=\"math-tex\">\\( y = mx + b \\)</span>, where <span class=\"math-tex\">\\( m \\)</span> is the slope and <span class=\"math-tex\">\\( b \\)</span> is the y-intercept. The slope represents the rate of change, while the y-intercept is where the line crosses the y-axis.</p>",
+          "Text": "A linear equation has the form $y = mx + b$, where $m$ is the slope and $b$ is the y-intercept. The slope represents the rate of change, while the y-intercept is where the line crosses the y-axis.",
           "Question": "What do the variables m and b represent in the linear equation y = mx + b?",
           "ConstructedResponse": "In the equation, m represents the slope (rate of change) and b represents the y-intercept (where the line crosses the y-axis).",
           "KeyPhrase": "linear equation, slope, y-intercept, rate of change"
@@ -107,7 +107,7 @@ To solve for x in the equation 2x + 5 = 13, we first subtract 5 from both sides 
         {
           "__component": "page.chunk",
           "Header": "Solving Linear Equations",
-          "Text": "<p>To solve for <span class=\"math-tex\">\\( x \\)</span> in the equation <span class=\"math-tex\">\\( 2x + 5 = 13 \\)</span>, we first subtract 5 from both sides to get <span class=\"math-tex\">\\( 2x = 8 \\)</span>, then divide both sides by 2 to find <span class=\"math-tex\">\\( x = 4 \\)</span>.</p>",
+          "Text": "To solve for $x$ in the equation $2x + 5 = 13$, we first subtract 5 from both sides to get $2x = 8$, then divide both sides by 2 to find $x = 4$.",
           "Question": "What are the steps to solve the equation 2x + 5 = 13?",
           "ConstructedResponse": "First subtract 5 from both sides to get 2x = 8, then divide both sides by 2 to find x = 4.",
           "KeyPhrase": "solving equations, algebraic manipulation, isolating variables"
@@ -119,9 +119,9 @@ To solve for x in the equation 2x + 5 = 13, we first subtract 5 from both sides 
 ```
 
 **Key Patterns for Math:**
-- Use `<span class="math-tex">\( ... \)</span>` for inline math
+- Use `$...$` for inline math
 - Keep math notation consistent with LaTeX
-- Variables in text should also be wrapped in math spans
+- Variables in text should also be wrapped in `$...$`
 - Questions can ask about solving specific equations
 
 ## Complete Example 3: Page with Images
@@ -162,7 +162,7 @@ The light-dependent reactions occur in the thylakoid membranes, while the Calvin
         {
           "__component": "page.chunk",
           "Header": "Photosynthesis and Chloroplasts",
-          "Text": "<p>Photosynthesis is the process by which plants convert light energy into chemical energy. This process takes place in specialized organelles called chloroplasts.</p><img src=\"image_page_5_1\" alt=\"Figure 2.1: Cross-section of a chloroplast showing thylakoid membranes\" /><p>The light-dependent reactions occur in the thylakoid membranes, while the Calvin cycle takes place in the stroma.</p>",
+          "Text": "Photosynthesis is the process by which plants convert light energy into chemical energy. This process takes place in specialized organelles called chloroplasts.\n\n![Figure 2.1: Cross-section of a chloroplast showing thylakoid membranes](image_page_5_1)\n\nThe light-dependent reactions occur in the thylakoid membranes, while the Calvin cycle takes place in the stroma.",
           "Question": "Where do the light-dependent reactions of photosynthesis occur?",
           "ConstructedResponse": "The light-dependent reactions occur in the thylakoid membranes of the chloroplast.",
           "KeyPhrase": "photosynthesis, chloroplasts, thylakoid membranes, Calvin cycle, light-dependent reactions"
@@ -174,23 +174,22 @@ The light-dependent reactions occur in the thylakoid membranes, while the Calvin
 ```
 
 **Key Patterns for Images:**
-- Use `<img src="image_page_X_Y" alt="caption" />` format
-- Place image between paragraphs at the logical point
-- Use the caption from metadata as the alt text
-- Image src should match the `image_id` from metadata
-- Self-closing tag with space before `/>`
+- Use `![caption](image_page_X_Y)` format
+- Place image between paragraphs at the logical point with blank lines
+- Use the caption from metadata as the alt text (in brackets)
+- Image path should match the `image_id` from metadata
 
 ## Pattern Matching Rules
 
 ### Text Conversion Patterns
 
-| Source Format | iTELL HTML | Example |
-|---------------|------------|---------|
-| **Bold text** | `<b>Bold text</b>` | `<b>important concept</b>` |
-| *Italic text* | `<i>Italic text</i>` | `<i>Scientific American</i>` |
-| "Text & more" | `Text &amp; more` | `Research &amp; Development` |
-| [IMAGE] with caption | `<img src="image_page_X_Y" alt="caption" />` | See Example 3 |
-| Math: x = 5 | `<span class="math-tex">\( x = 5 \)</span>` | See Example 2 |
+| Source Format | iTELL Markdown | Example |
+|---------------|----------------|---------|
+| **Bold text** | `**Bold text**` | `**important concept**` |
+| *Italic text* | `*Italic text*` | `*Scientific American*` |
+| "Text & more" | `Text & more` | `Research & Development` |
+| [IMAGE] with caption | `![caption](image_page_X_Y)` | See Example 3 |
+| Math: x = 5 | `$x = 5$` | See Example 2 |
 
 ### Chunk Type Selection Pattern
 
@@ -245,7 +244,7 @@ AFTER (JSON):
 {
   "__component": "page.plain-chunk",
   "Header": "Learning Objectives",
-  "Text": "<section class=\"Info\"><h3 class=\"InfoTitle\">Learning Objectives</h3><p class=\"InfoContent\">Define culture</p><p class=\"InfoContent\">Explain communication</p></section>"
+  "Text": "> **Learning Objectives**\n>\n> Define culture\n> Explain communication"
 }
 ```
 
@@ -258,7 +257,7 @@ AFTER (JSON):
 {
   "__component": "page.chunk",
   "Header": "Understanding Culture",
-  "Text": "<p>Culture is that part of the environment made by humans. It includes both physical and psychological aspects.</p>",
+  "Text": "Culture is that part of the environment made by humans. It includes both physical and psychological aspects.",
   "Question": "What is culture?",
   "ConstructedResponse": "Culture is that part of the environment made by humans, including both physical and psychological aspects.",
   "KeyPhrase": "culture, environment, physical aspects, psychological aspects"
@@ -275,7 +274,7 @@ AFTER (JSON):
 {
   "__component": "page.plain-chunk",
   "Header": "References",
-  "Text": "<p>Smith, J. (2020). <i>Book Title</i>. Publisher.</p>"
+  "Text": "Smith, J. (2020). *Book Title*. Publisher."
 }
 ```
 
@@ -297,7 +296,7 @@ AFTER (JSON):
 {
   "__component": "page.chunk",
   "Header": "Cell Structure",
-  "Text": "<p>Text about cells and their structure.</p><img src=\"image_page_4_1\" alt=\"Figure 3: Labeled diagram showing cell organelles\" /><p>Further discussion about cell organelles...</p>",
+  "Text": "Text about cells and their structure.\n\n![Figure 3: Labeled diagram showing cell organelles](image_page_4_1)\n\nFurther discussion about cell organelles...",
   "Question": "What are the main organelles in an animal cell?",
   "ConstructedResponse": "The main organelles include the nucleus, mitochondria, endoplasmic reticulum, and Golgi apparatus.",
   "KeyPhrase": "cell structure, organelles, animal cell"

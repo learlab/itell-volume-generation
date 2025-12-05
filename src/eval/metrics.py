@@ -43,12 +43,63 @@ def load_json(path: str) -> Optional[Dict[str, Any]]:
         return None
 
 
+def validate_json_structure(data: Optional[Dict[str, Any]]) -> Tuple[bool, str]:
+    """
+    Validate that JSON has the expected structure for scoring.
+    Returns (is_valid, error_message)
+    """
+    if data is None:
+        return False, "File could not be loaded"
+
+    # Check if it's a dict
+    if not isinstance(data, dict):
+        return False, f"Root is type '{type(data).__name__}', expected dict"
+
+    # Check for Pages/pages/data key
+    pages_key = None
+    for key in ["Pages", "pages", "data"]:
+        if key in data:
+            pages_key = key
+            break
+
+    if pages_key is None:
+        available_keys = list(data.keys())[:5]  # Show first 5 keys
+        return False, f"Missing 'Pages'/'pages'/'data' key. Found: {available_keys}"
+
+    # Check if pages is a list
+    pages = data[pages_key]
+    if not isinstance(pages, list):
+        return False, f"'{pages_key}' is type '{type(pages).__name__}', expected list"
+
+    # Check if we have at least one page
+    if len(pages) == 0:
+        return False, f"'{pages_key}' is empty"
+
+    # Check first page structure
+    first_page = pages[0]
+    if not isinstance(first_page, dict):
+        return False, f"First page is type '{type(first_page).__name__}', expected dict"
+
+    # Check for Title and Content in first page
+    if "Title" not in first_page and "title" not in first_page:
+        return False, f"First page missing 'Title' key. Found: {list(first_page.keys())[:5]}"
+
+    if "Content" not in first_page and "content" not in first_page:
+        return False, f"First page missing 'Content' key. Found: {list(first_page.keys())[:5]}"
+
+    return True, f"Valid ({len(pages)} page(s))"
+
+
 def clean_text(s: str) -> str:
+    """
+    Clean text while preserving HTML tags.
+    Only applies: HTML entity decoding, Unicode normalization, whitespace normalization.
+    """
     s = "" if s is None else str(s)
-    s = html.unescape(s)
-    s = TAG_RE.sub(" ", s)
-    s = unicodedata.normalize("NFKC", s)
-    s = WS_RE.sub(" ", s).strip()
+    s = html.unescape(s)  # Convert &lt; to <, &amp; to &, etc.
+    # NOTE: HTML tags are preserved (TAG_RE.sub removed)
+    s = unicodedata.normalize("NFKC", s)  # Normalize Unicode characters
+    s = WS_RE.sub(" ", s).strip()  # Normalize whitespace
     return s
 
 
@@ -224,68 +275,7 @@ def bleu_sentence(ref: str, hyp: str, max_n: int = 4) -> float:
     return float(score)
 
 
-def extract_chapter_index(title: str) -> Optional[int]:
-    """Extract chapter number from title"""
-    if not title:
-        return None
-    m = re.search(r"\bchapter\s*(\d{1,2})\b", title, flags=re.IGNORECASE)
-    if m:
-        try:
-            n = int(m.group(1))
-            return n if 1 <= n <= 4 else None
-        except Exception:
-            return None
-    if len(title) >= 9 and title[:8].lower() == "chapter " and title[8].isdigit():
-        n = int(title[8])
-        if 1 <= n <= 4:
-            return n
-    return None
-
-
-def normalize_title_for_csv(title: str, ch: int) -> str:
-    """Normalize title for CSV output"""
-    if not title:
-        return f"Chapter {ch}"
-    t = re.sub(r"\s+", " ", title).strip()
-    return t if t.lower().startswith(f"chapter {ch}") else f"Chapter {ch}: {t}"
-
-
-def collect_chapter_texts(
-    data_obj: Optional[Dict[str, Any]], use_raw_title: bool = False
-) -> Tuple[List[str], List[str]]:
-    texts = ["", "", "", ""]
-    titles: List[Optional[str]] = [None, None, None, None]
-    if data_obj is not None:
-        # Check for different possible key names - same as build_pages_map_levenshtein
-        page_list = (
-            data_obj.get("data", [])
-            or data_obj.get("pages", [])
-            or data_obj.get("Pages", [])
-        )
-        for p in page_list:
-            title = p.get("Title", "")
-            ch = extract_chapter_index(title)
-            if ch is None:
-                continue
-            parts: List[str] = []
-            for item in p.get("Content", []) or []:
-                t = item.get("Text")
-                if t:
-                    parts.append(clean_text(str(t)))
-            combined = " ".join(parts).strip()
-            if combined:
-                i = ch - 1
-                texts[i] = (texts[i] + " " + combined).strip()
-                if titles[i] is None:
-                    titles[i] = (
-                        title.strip()
-                        if use_raw_title
-                        else normalize_title_for_csv(title, ch)
-                    )
-    for i in range(4):
-        if titles[i] is None:
-            titles[i] = f"Chapter {i + 1}"
-    return texts, [t for t in titles]
+# Chapter-level BLEU functions removed - now using page-level comparison for all references
 
 
 def bleurt_preprocess_piece(title: str, text: str, lowercase: bool = False) -> str:
@@ -323,8 +313,8 @@ def title_key(s: str) -> str:
     return normalize_ws_punct(s).lower()
 
 
-def align_by_title_fuzzy(keys_ref: List[str], keys_other: List[str]) -> Dict[str, str]:
-    """Fuzzy title alignment"""
+def align_by_title_fuzzy(keys_ref: List[str], keys_other: List[str], threshold: int = 45) -> Dict[str, str]:
+    """Fuzzy title alignment with configurable threshold"""
     mapping: Dict[str, str] = {}
     ref_set = set(keys_ref)
     for k in keys_other:
@@ -332,8 +322,8 @@ def align_by_title_fuzzy(keys_ref: List[str], keys_other: List[str]) -> Dict[str
             mapping[k] = k
         elif FUZZY_AVAILABLE:
             best = process.extractOne(k, list(ref_set), scorer=fuzz.WRatio)
-            # Lower threshold to 60 for better matching
-            if best and best[1] >= 60:
+            # Use configurable threshold (default 45 for better matching)
+            if best and best[1] >= threshold:
                 mapping[k] = best[0]
     return mapping
 
@@ -367,7 +357,7 @@ def main() -> None:
     # Load all model data and extract names
     models_info = []
     for model_path in args.models:
-        model_name = "google/gemini-2.5-flash-preview-09-2025"
+        model_name = os.path.splitext(os.path.basename(model_path))[0]
         model_data = load_json(model_path)
         models_info.append(
             {
@@ -380,6 +370,25 @@ def main() -> None:
 
     print(f"Source: {source_name}")
     print(f"Models: {[m['name'] for m in models_info]}")
+
+    # Validate JSON structures
+    print("\n=== JSON Structure Validation ===")
+    orig_valid, orig_msg = validate_json_structure(orig)
+    if orig_valid:
+        print(f"✓ Reference: {orig_msg}")
+    else:
+        print(f"✗ Reference: {orig_msg}")
+        print("  -> WARNING: Reference file has invalid structure, scoring may fail")
+
+    for model_info in models_info:
+        model_valid, model_msg = validate_json_structure(model_info["data"])
+        status = "✓" if model_valid else "✗"
+        print(f"{status} {model_info['name']}: {model_msg}")
+        # Update the valid flag to include structure validation
+        model_info["valid"] = model_info["valid"] and model_valid
+        model_info["structure_valid"] = model_valid
+        model_info["structure_msg"] = model_msg
+    print()
 
     lowercase = args.case_insensitive
 
@@ -397,19 +406,6 @@ def main() -> None:
     use_rouge = not args.no_rouge
     use_bleu = not args.no_bleu
     use_bleurt = not args.no_bleurt and BLEURT_AVAILABLE
-
-    # BLEU chapter texts
-    ref_texts, ref_titles = collect_chapter_texts(orig, use_raw_title=True)
-
-    models_texts = []
-    for model_info in models_info:
-        texts, _ = collect_chapter_texts(model_info["data"])
-        models_texts.append(texts)
-
-    # print(f"BLEU chapter text lengths:")
-    # print(f"  Reference: {[len(t) for t in ref_texts]}")
-    # for i, model_info in enumerate(models_info):
-    # print(f"  {model_info['name']}: {[len(t) for t in models_texts[i]]}")
 
     # BLEURT setup
     bleurt_metric = None
@@ -438,13 +434,13 @@ def main() -> None:
         if use_bleu:
             all_scores[order]["bleu"] = {}
         all_scores[order]["bleurt"] = {}
+        all_scores[order]["bleurt_matched"] = {}
 
         # Compute scores for each model
         for model_idx, model_info in enumerate(models_info):
             model_name = model_info["name"]
             model_valid = model_info["valid"]
             model_pages = models_pages[model_idx]
-            model_texts = models_texts[model_idx]
 
             _t_model, hyp_model = model_pages.get(order, (title, ""))
 
@@ -457,23 +453,9 @@ def main() -> None:
                 rouge = rouge_l_f_score(ref, hyp_model or "") if model_valid else None
                 all_scores[order]["rouge"][model_name] = rouge
 
-            # BLEU
+            # BLEU - page-level comparison for all references
             if use_bleu:
-                ch_idx = extract_chapter_index(title)
-                use_chapter_level = ch_idx is not None and 1 <= ch_idx <= 4
-
-                if use_chapter_level:
-                    i = ch_idx - 1
-                    if model_valid and len(model_texts[i]) > 0:
-                        bleu = bleu_sentence(ref_texts[i], model_texts[i])
-                    elif model_valid:
-                        bleu = bleu_sentence(ref, hyp_model)
-                    else:
-                        bleu = None
-                else:
-                    # Page-level comparison
-                    bleu = bleu_sentence(ref, hyp_model) if model_valid else None
-
+                bleu = bleu_sentence(ref, hyp_model) if model_valid else None
                 all_scores[order]["bleu"][model_name] = bleu
 
             # BLEURT (will be filled in later)
@@ -487,7 +469,8 @@ def main() -> None:
         metrics.append("bleu")
     metrics.append("bleurt")
 
-    fieldnames = ["Reference JSON", "Content", "Model"] + metrics
+    # Add validation and metadata columns
+    fieldnames = ["Reference JSON", "Content", "Model", "json_valid"] + metrics + ["bleurt_matched"]
 
     # Load existing CSV if it exists for append/update mode
     import pandas as pd
@@ -509,12 +492,19 @@ def main() -> None:
         # Write row for each model
         for model_info in models_info:
             model_name = model_info["name"]
-            row = {"Reference JSON": source_name, "Content": title, "Model": model_name}
+            row = {
+                "Reference JSON": source_name,
+                "Content": title,
+                "Model": model_name,
+                "json_valid": model_info["structure_valid"]
+            }
             for metric in metrics:
                 if metric in all_scores[order]:
                     row[metric] = all_scores[order][metric].get(model_name)
                 else:
                     row[metric] = None
+            # Initialize bleurt_matched as None (will be updated during BLEURT computation)
+            row["bleurt_matched"] = None
             new_rows.append(row)
 
     # Create new dataframe from new rows
@@ -587,7 +577,12 @@ def main() -> None:
             result = {}
             if struct is None:
                 return result
-            for rec in extract_pages(struct):
+            try:
+                pages_list = extract_pages(struct)
+            except ValueError:
+                # Invalid structure - return empty result
+                return result
+            for rec in pages_list:
                 pre = bleurt_preprocess_piece(
                     rec["Title"], rec["Text"], lowercase=False
                 )
@@ -599,18 +594,35 @@ def main() -> None:
                 }
             return result
 
-        def align_by_title_fuzzy_local(keys_ref, keys_other):
+        def align_by_title_fuzzy_local(keys_ref, keys_other, model_name):
             mapping = {}
+            unmatched = []
             ref_set = set(keys_ref)
             for k in keys_other:
                 if k in ref_set:
                     mapping[k] = k
                 elif FUZZY_AVAILABLE:
                     best = process.extractOne(k, list(ref_set), scorer=fuzz.WRatio)
-                    # print(f"    Fuzzy match: '{k}' -> '{best[0]}' (score: {best[1]})")
-                    # Lower threshold to 60 for better matching
-                    if best and best[1] >= 60:
+                    # Lower threshold to 45 for better matching
+                    if best and best[1] >= 45:
                         mapping[k] = best[0]
+                        # Log fuzzy matches for debugging
+                        if best[1] < 100:
+                            print(f"  BLEURT fuzzy match ({model_name}): '{k}' -> '{best[0]}' ({best[1]}% similar)")
+                    else:
+                        unmatched.append((k, best[0] if best else None, best[1] if best else 0))
+                else:
+                    unmatched.append((k, None, 0))
+
+            # Report unmatched pages
+            if unmatched:
+                print(f"  WARNING ({model_name}): {len(unmatched)} page(s) could not be matched for BLEURT:")
+                for model_key, best_ref_key, score in unmatched[:3]:  # Show first 3
+                    if best_ref_key:
+                        print(f"    - '{model_key}' (best: '{best_ref_key}' at {score}%)")
+                    else:
+                        print(f"    - '{model_key}' (no match found)")
+
             return mapping
 
         m_orig = to_page_map(orig)
@@ -630,10 +642,9 @@ def main() -> None:
         models_mappings = []
         for i, model_info in enumerate(models_info):
             mapping = align_by_title_fuzzy_local(
-                keys_orig, list(models_page_maps[i].keys())
+                keys_orig, list(models_page_maps[i].keys()), model_info['name']
             )
             models_mappings.append(mapping)
-            # print(f"  {model_info['name']} to Original mapping: {mapping}")
 
         # Compute BLEURT for each page and each model
         for okey, o in m_orig.items():
@@ -648,13 +659,13 @@ def main() -> None:
                 model_mapping = models_mappings[model_idx]
 
                 model_text = None
+                matched = False
                 model_keys_for_this = [k for k, v in model_mapping.items() if v == okey]
                 if model_keys_for_this:
                     model_text = model_page_map[model_keys_for_this[0]]["Text"]
+                    matched = True
 
-                # print(f"  Order {order}: orig_key='{okey}', {model_name}_keys={model_keys_for_this}")
-
-                # Compute BLEURT score - only if source data is valid
+                # Compute BLEURT score - only if source data is valid and page matched
                 model_score = None
                 if model_valid and model_text:
                     try:
@@ -667,6 +678,7 @@ def main() -> None:
 
                 # Update the all_scores dictionary
                 all_scores[order]["bleurt"][model_name] = model_score
+                all_scores[order]["bleurt_matched"][model_name] = matched
 
         print(
             f"  Computed BLEURT for {len(all_scores)} pages across {len(models_info)} models"
@@ -689,6 +701,8 @@ def main() -> None:
                     if all_scores[order]["title"] == content:
                         if model in all_scores[order]["bleurt"]:
                             df.at[idx, "bleurt"] = all_scores[order]["bleurt"][model]
+                        if model in all_scores[order]["bleurt_matched"]:
+                            df.at[idx, "bleurt_matched"] = all_scores[order]["bleurt_matched"][model]
                         break
 
         df.to_csv(args.out, index=False)
@@ -699,3 +713,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
