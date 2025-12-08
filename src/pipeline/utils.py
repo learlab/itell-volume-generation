@@ -6,7 +6,6 @@ import textwrap
 from pathlib import Path
 from typing import Any, Dict, Optional, Sequence
 
-
 __all__ = [
     "load_reference_json",
     "load_guide_instructions",
@@ -42,14 +41,20 @@ def load_guide_instructions(guide_path: Path) -> str:
             from docx import Document  # type: ignore import
         except ImportError as exc:  # pragma: no cover - informative error path
             raise ImportError(
-                "python-docx is required to parse .docx instruction files; add it to requirements.txt"
+                "python-docx is required to parse .docx instruction files"
             ) from exc
 
         document = Document(str(guide_path))
-        paragraphs = [paragraph.text.strip() for paragraph in document.paragraphs if paragraph.text.strip()]
+        paragraphs = [
+            paragraph.text.strip()
+            for paragraph in document.paragraphs
+            if paragraph.text.strip()
+        ]
         return "\n".join(paragraphs)
 
-    raise ValueError(f"Unsupported guide format '{suffix}'. Expected .md, .txt, or .docx")
+    raise ValueError(
+        f"Unsupported guide format '{suffix}'. Expected .md, .txt, or .docx"
+    )
 
 
 def encode_pdf_to_base64(pdf_path: Path) -> str:
@@ -62,7 +67,9 @@ def encode_pdf_to_base64(pdf_path: Path) -> str:
         return base64.b64encode(handle.read()).decode("utf-8")
 
 
-def select_reference_example(reference_json: Dict[str, Any], example_title: Optional[str] = None) -> Any:
+def select_reference_example(
+    reference_json: Dict[str, Any], example_title: Optional[str] = None
+) -> Any:
     """Pick a specific section from the reference data if a title is provided."""
     if not example_title:
         return reference_json
@@ -92,7 +99,7 @@ def format_image_metadata(image_metadata: Sequence[Dict[str, Any]]) -> str:
     for entry in image_metadata:
         desc = f"\n- {entry.get('filename')} (id: {entry.get('image_id')}): {entry.get('position')} of page {entry.get('page_num')}"
 
-        width_pct = float(entry.get("size", {}).get("width_pct", "0%").rstrip('%'))
+        width_pct = float(entry.get("size", {}).get("width_pct", "0%").rstrip("%"))
         if width_pct > 80:
             desc += ", spanning nearly full width"
         elif width_pct < 30:
@@ -102,46 +109,54 @@ def format_image_metadata(image_metadata: Sequence[Dict[str, Any]]) -> str:
             desc += f'\n  Caption: "{caption}"'
 
         nearby = entry.get("nearby_text", {})
-        context_parts = [f'{pos}: "{nearby[pos][0][:60]}..."' for pos in ['above', 'below'] if nearby.get(pos)]
+        context_parts = [
+            f'{pos}: "{nearby[pos][0][:60]}..."'
+            for pos in ["above", "below"]
+            if nearby.get(pos)
+        ]
         if context_parts:
             desc += f"\n  Context ({', '.join(context_parts)})"
 
         lines.append(desc)
 
     lines.append("\n**Instructions for Image Placement:**")
-    lines.append("- Use the 'Context' field to match each image to its correct location in the content")
+    lines.append(
+        "- Use the 'Context' field to match each image to its correct location in the content"
+    )
     lines.append("- Insert image placeholders in the HTML where they appear in the PDF")
     lines.append("- Use this format: {{image_id}}")
     lines.append("- Example: {{image_page_1_1}}")
     return "\n".join(lines)
 
 
-def build_conversion_prompt(guide_text: str, example_json: Any, image_metadata_text: Optional[str] = None) -> str:
+def build_conversion_prompt(
+    guide_text: str, example_json: Any, image_metadata_text: Optional[str] = None
+) -> str:
     """Create the LLM prompt by combining guide instructions with a JSON example."""
     if not guide_text.strip():
         raise ValueError("Guide instructions are empty; cannot craft a prompt.")
 
     example_json_str = json.dumps(example_json, indent=2, ensure_ascii=False)
+
     template = f"""
     Your Role: iTELL Content Authoring Expert
-        You are a specialized AI assistant expert in the iTELL framework. Your primary function is to convert source documents into perfectly structured iTELL JSON files.
-    Source Files for This Task:
+    You are a specialized AI assistant expert in the iTELL framework. Your primary function is to convert source documents into perfectly structured iTELL JSON files.
 
-    INSTRUCTIONS:
+    GUIDE TO iTELL JSON:
     {guide_text.strip()}
 
-    REFERENCE OUTPUT EXAMPLE:
+    REFERENCE iTELL JSON:
     ```json
     {example_json_str}
     ```
 
-    Carefully read the provided PDF and convert it into iTELL JSON.
-    Only return JSON that adheres to the example schema and instructions above.
-    """
+    Carefully analyze the provided source document and convert it into iTELL JSON.
+    Only return JSON that adheres to the example schema and instructions above."""
+
     if image_metadata_text:
         template += f"""
 
     EXTRACTED IMAGES WITH CONTEXT:
-    {image_metadata_text}
-        """
+    {image_metadata_text}"""
+
     return textwrap.dedent(template).strip()
