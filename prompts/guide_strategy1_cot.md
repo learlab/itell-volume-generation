@@ -31,19 +31,17 @@ For each page, follow this decision process:
 
 **Decision Tree for Chunking:**
 
-```
-Is this section < 100 words?
-├─ YES → Use page.plain-chunk
+Is this section < 100 words?  
+├─ YES → Use page.plain-chunk  
 └─ NO → Continue
 
-Is this Learning Objectives/References/Key Takeaways?
-├─ YES → Use page.plain-chunk
+Is this Learning Objectives/References/Key Takeaways?  
+├─ YES → Use page.plain-chunk  
 └─ NO → Continue
 
-Is this main content (200-400 words)?
-├─ YES → Use page.chunk (requires Question, ConstructedResponse, KeyPhrase)
+Is this main content (200-400 words)?  
+├─ YES → Use page.chunk (requires Question, ConstructedResponse, KeyPhrase)  
 └─ NO → Split into multiple chunks or use plain-chunk
-```
 
 ### Step 5: Generate Content for Each Chunk
 
@@ -69,20 +67,18 @@ If image metadata is provided, follow this decision process for each image:
 
 **Image Placement Decision Tree:**
 
-```
-Does this image have a caption?
-├─ YES → Place image near the text that discusses the caption topic
+Does this image have a caption?  
+├─ YES → Place image near the text that discusses the caption topic  
 └─ NO → Check nearby_text
 
-Is there nearby_text above/below the image?
-├─ YES → Place image in the chunk containing that text
+Is there nearby_text above/below the image?  
+├─ YES → Place image in the chunk containing that text  
 └─ NO → Place image at the most logical position based on page_num
 
-Should this image be included?
-├─ Decorative/logo → SKIP
-├─ Diagram/chart/figure → INCLUDE
+Should this image be included?  
+├─ Decorative/logo → SKIP  
+├─ Diagram/chart/figure → INCLUDE  
 └─ Photo/illustration → INCLUDE if relevant
-```
 
 **Image Link Format:**
 
@@ -240,12 +236,6 @@ Before outputting, check:
 - Inline math: `$formula$`
 - Block math: `$$formula$$`
 - Learning Objectives callout:
-
-```markdown
-> **Learning Objectives**
->
-> Content here
-```
 
 ## Final Output Instructions
 

@@ -8,7 +8,6 @@ Generate JSON that passes all validation rules, then self-check your output befo
 
 ### Required Structure
 
-```
 Volume
 ├── Title (string, required)
 ├── Description (string, required, 1-2 sentences)
@@ -25,7 +24,6 @@ Volume
                 ├── Question (string, required for page.chunk only)
                 ├── ConstructedResponse (string, required for page.chunk only)
                 └── KeyPhrase (string, required for page.chunk only)
-```
 
 ## Validation Rules (Check Each One)
 
