@@ -5,7 +5,7 @@ from typing import Any, Optional
 
 import fitz
 from PIL import Image
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class BBox(BaseModel):
@@ -22,10 +22,10 @@ class Size(BaseModel):
 
 
 class NearbyText(BaseModel):
-    above: list[str] = []
-    below: list[str] = []
-    left: list[str] = []
-    right: list[str] = []
+    above: list[str] = Field(default_factory=list)
+    below: list[str] = Field(default_factory=list)
+    left: list[str] = Field(default_factory=list)
+    right: list[str] = Field(default_factory=list)
 
 
 class ImageMetadata(BaseModel):
@@ -113,7 +113,7 @@ class ExtractImages:
             distance: Padding distance (in page units) around the image to search.
 
         Returns:
-            A dict with keys 'above', 'below', 'left', 'right' mapping to lists of strings.
+            NearbyText: A Pydantic model with attributes 'above', 'below', 'left', and 'right', each mapping to a list of strings containing nearby text blocks.
         """
         x0, y0, x1, y1 = img_bbox
         search_bbox = (
@@ -153,7 +153,7 @@ class ExtractImages:
         filter by length and the presence of common caption indicators.
 
         Args:
-            nearby_text: The dictionary returned by `get_nearby_text`.
+            nearby_text: The `NearbyText` Pydantic model returned by `get_nearby_text`.
 
         Returns:
             The caption string if found, otherwise `None`.
@@ -189,7 +189,7 @@ class ExtractImages:
             A list of `ImageMetadata` instances for each extracted image.
         """
         if not os.path.exists(self.pdf_path):
-            raise FileNotFoundError("PDF File not found")
+            raise FileNotFoundError(f"PDF File not found: {self.pdf_path}")
 
         with fitz.open(self.pdf_path) as doc:
             for page_num in range(len(doc)):
@@ -217,7 +217,7 @@ class ExtractImages:
                     x0, y0, x1, y1 = bbox.x0, bbox.y0, bbox.x1, bbox.y1
                     image = Image.open(io.BytesIO(base_image["image"]))
 
-                    nearby_text = self.get_nearby_text(page, bbox, distance=50)
+                    nearby_text = self.get_nearby_text(page, (x0, y0, x1, y1), distance=50)
                     width_pct = ((x1 - x0) / page.rect.width) * 100
                     height_pct = ((y1 - y0) / page.rect.height) * 100
 
