@@ -10,4 +10,5 @@ extractedimages/
 src/resources/*.pdf
 src/__*
 venv/
+.venv/
 .claude

@@ -7,22 +7,23 @@ Follow the patterns demonstrated in the examples below. Pay close attention to s
 ## Complete Example 1: Simple Page with Mixed Chunks
 
 **Input Text:**
-```
-Chapter 1: The Science of Psychology
 
-Learning Objectives:
-1. Define psychology as a science
-2. Explain the scientific method in psychology
-
-Psychology is the scientific study of human behavior and mental processes. This definition emphasizes that psychology is empirical, meaning it relies on systematic observation and experimentation rather than intuition or speculation.
-
-The scientific method in psychology involves several steps. First, researchers formulate a hypothesis based on existing theories or observations. Second, they design controlled experiments to test their hypothesis. Third, they collect and analyze data using statistical methods. Finally, they draw conclusions and share their findings with the scientific community through peer-reviewed publications.
-
-References:
-Smith, J. (2020). Introduction to Psychology. Academic Press.
-```
+> Chapter 1: The Science of Psychology
+>
+> Learning Objectives:
+>
+> 1. Define psychology as a science
+> 2. Explain the scientific method in psychology
+>
+> Psychology is the scientific study of human behavior and mental processes. This definition emphasizes that psychology is empirical, meaning it relies on systematic observation and experimentation rather than intuition or speculation.
+>
+> The scientific method in psychology involves several steps. First, researchers formulate a hypothesis based on existing theories or observations. Second, they design controlled experiments to test their hypothesis. Third, they collect and analyze data using statistical methods. Finally, they draw conclusions and share their findings with the scientific community through peer-reviewed publications.
+>
+> References:
+> Smith, J. (2020). Introduction to Psychology. Academic Press.
 
 **Output JSON:**
+
 ```json
 {
   "Title": "Introduction to Psychology",
@@ -66,6 +67,7 @@ Smith, J. (2020). Introduction to Psychology. Academic Press.
 ```
 
 **Key Patterns to Notice:**
+
 - Learning Objectives → `page.plain-chunk` with blockquote format
 - Main content paragraphs → `page.chunk` with Q&A
 - References → `page.plain-chunk` with italicized titles using *asterisks*
@@ -77,15 +79,15 @@ Smith, J. (2020). Introduction to Psychology. Academic Press.
 ## Complete Example 2: Page with Math Content
 
 **Input Text:**
-```
-Section 3.2: Linear Equations
 
-A linear equation has the form y = mx + b, where m is the slope and b is the y-intercept. The slope represents the rate of change, while the y-intercept is where the line crosses the y-axis.
-
-To solve for x in the equation 2x + 5 = 13, we first subtract 5 from both sides to get 2x = 8, then divide both sides by 2 to find x = 4.
-```
+> Section 3.2: Linear Equations
+>
+> A linear equation has the form y = mx + b, where m is the slope and b is the y-intercept. The slope represents the rate of change, while the y-intercept is where the line crosses the y-axis.
+>
+> To solve for x in the equation 2x + 5 = 13, we first subtract 5 from both sides to get 2x = 8, then divide both sides by 2 to find x = 4.
 
 **Output JSON:**
+
 ```json
 {
   "Title": "Algebra Fundamentals",
@@ -119,6 +121,7 @@ To solve for x in the equation 2x + 5 = 13, we first subtract 5 from both sides 
 ```
 
 **Key Patterns for Math:**
+
 - Use `$...$` for inline math
 - Keep math notation consistent with LaTeX
 - Variables in text should also be wrapped in `$...$`
@@ -127,18 +130,18 @@ To solve for x in the equation 2x + 5 = 13, we first subtract 5 from both sides 
 ## Complete Example 3: Page with Images
 
 **Input Text:**
-```
-Chapter 2: Plant Biology
 
-Photosynthesis is the process by which plants convert light energy into chemical energy. This process takes place in specialized organelles called chloroplasts.
-
-[IMAGE: Diagram of chloroplast structure]
-Figure 2.1: Cross-section of a chloroplast showing thylakoid membranes
-
-The light-dependent reactions occur in the thylakoid membranes, while the Calvin cycle takes place in the stroma.
-```
+> Chapter 2: Plant Biology
+>
+> Photosynthesis is the process by which plants convert light energy into chemical energy. This process takes place in specialized organelles called chloroplasts.
+>
+> [IMAGE: Diagram of chloroplast structure]
+> Figure 2.1: Cross-section of a chloroplast showing thylakoid membranes
+>
+> The light-dependent reactions occur in the thylakoid membranes, while the Calvin cycle takes place in the stroma.
 
 **Image Metadata Provided:**
+
 ```json
 {
   "image_id": "image_page_5_1",
@@ -149,6 +152,7 @@ The light-dependent reactions occur in the thylakoid membranes, while the Calvin
 ```
 
 **Output JSON:**
+
 ```json
 {
   "Title": "Plant Biology",
@@ -174,6 +178,7 @@ The light-dependent reactions occur in the thylakoid membranes, while the Calvin
 ```
 
 **Key Patterns for Images:**
+
 - Use `![caption](image_page_X_Y)` format
 - Place image between paragraphs at the logical point with blank lines
 - Use the caption from metadata as the alt text (in brackets)
@@ -204,12 +209,14 @@ The light-dependent reactions occur in the thylakoid membranes, while the Calvin
 ### KeyPhrase Pattern Matching
 
 **Good KeyPhrases** (noun phrases from text):
+
 - "scientific method"
 - "controlled experiments"
 - "empirical research"
 - "systematic observation"
 
 **Bad KeyPhrases** (avoid these):
+
 - "understand the concept" (not from text)
 - "important ideas" (too vague)
 - "the scientific method involves" (not a noun phrase)
@@ -218,14 +225,17 @@ The light-dependent reactions occur in the thylakoid membranes, while the Calvin
 ### Question/Answer Patterns
 
 **Pattern 1: Definition Questions**
+
 - Question: "What is [concept]?"
 - Answer: Direct definition from text
 
 **Pattern 2: Explanation Questions**
+
 - Question: "Why is [phenomenon] important?"
 - Answer: Brief explanation (1-2 sentences)
 
 **Pattern 3: Process Questions**
+
 - Question: "What are the steps in [process]?"
 - Answer: Concise list or sequence
 
@@ -234,13 +244,17 @@ The light-dependent reactions occur in the thylakoid membranes, while the Calvin
 ### Before → After Transformations
 
 **Transformation 1: Learning Objectives**
-```
+
 BEFORE (PDF):
-Learning Objectives:
-- Define culture
-- Explain communication
+
+> Learning Objectives:
+>
+> - Define culture
+> - Explain communication
 
 AFTER (JSON):
+
+```json
 {
   "__component": "page.plain-chunk",
   "Header": "Learning Objectives",
@@ -249,11 +263,13 @@ AFTER (JSON):
 ```
 
 **Transformation 2: Main Content**
-```
+
 BEFORE (PDF):
-Culture is that part of the environment made by humans. It includes both physical and psychological aspects.
+> Culture is that part of the environment made by humans. It includes both physical and psychological aspects.
 
 AFTER (JSON):
+
+```json
 {
   "__component": "page.chunk",
   "Header": "Understanding Culture",
@@ -265,12 +281,14 @@ AFTER (JSON):
 ```
 
 **Transformation 3: References**
-```
+
 BEFORE (PDF):
-References
-Smith, J. (2020). Book Title. Publisher.
+> References
+> Smith, J. (2020). Book Title. Publisher.
 
 AFTER (JSON):
+
+```json
 {
   "__component": "page.plain-chunk",
   "Header": "References",
@@ -279,20 +297,25 @@ AFTER (JSON):
 ```
 
 **Transformation 4: Images**
-```
+
 BEFORE (PDF + Metadata):
-Text about cells and their structure.
-[IMAGE: Diagram of animal cell]
-Figure 3: Labeled diagram showing cell organelles
+> Text about cells and their structure.
+> [IMAGE: Diagram of animal cell]
+> Figure 3: Labeled diagram showing cell organelles
 
 Metadata:
+
+```json
 {
   "image_id": "image_page_4_1",
   "caption": "Figure 3: Labeled diagram showing cell organelles",
   "page_num": 4
 }
+```
 
 AFTER (JSON):
+
+```json
 {
   "__component": "page.chunk",
   "Header": "Cell Structure",
@@ -310,4 +333,3 @@ AFTER (JSON):
 3. When in doubt, follow the transformation rules in the Quick Reference Card
 4. **If image metadata is provided, include ALL images using the pattern from Example 3 and Transformation 4**
 5. Output only the complete JSON with no additional text
-
