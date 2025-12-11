@@ -38,10 +38,13 @@ Volume
 
 ### Page-Level Validation
 
-- [ ] **Rule P1**: Every page has Title field (string, Title Case)
-- [ ] **Rule P2**: Every page has ReferenceSummary field (string or null)
-- [ ] **Rule P3**: Every page has Content field (array with at least 1 chunk)
-- [ ] **Rule P4**: Page titles use Title Case (e.g., "The Science of Psychology")
+**Note: "Page" in iTELL = logical organizational unit (chapter section), NOT physical PDF page**
+
+- [ ] **Rule P1**: Every iTELL page has Title field (string, Title Case)
+- [ ] **Rule P2**: Every iTELL page has ReferenceSummary field (string or null)
+- [ ] **Rule P3**: Every iTELL page has Content field (array with at least 2 chunks, typically 3-6)
+- [ ] **Rule P4**: iTELL page titles use Title Case (e.g., "The Science of Psychology")
+- [ ] **Rule P5**: **iTELL pages are divided into multiple chunks by heading/topic - NOT one large chunk**
 
 ### Chunk-Level Validation
 
@@ -51,34 +54,50 @@ Volume
 - [ ] **Rule C2**: \_\_component value is exactly "page.chunk" or "page.plain-chunk" (no typos)
 - [ ] **Rule C3**: Every chunk has Header field (string, Title Case)
 - [ ] **Rule C4**: Every chunk has Text field (string, valid Markdown)
-- [ ] **Rule C5**: Text field contains only valid Markdown (paragraphs separated by blank lines, **bold**, _italic_)
+- [ ] **Rule C5**: Text field contains properly formatted Markdown:
+  - Blank lines only between distinct paragraphs
+  - No line breaks within paragraphs
+  - Appropriate **bold** and *italic* formatting
+  - Preserved list indentation
 - [ ] **Rule C6**: Chunk word count is 150-500 words
+- [ ] **Rule C7**: **Each page has MULTIPLE chunks (3-6 typical) - do NOT put all content in one chunk**
+- [ ] **Rule C8**: **Each chunk represents ONE heading/topic - do NOT combine multiple topics**
 
 #### page.chunk Specific Rules
 
-- [ ] **Rule C7**: Every page.chunk has Question field (non-empty string)
-- [ ] **Rule C8**: Every page.chunk has ConstructedResponse field (non-empty string)
-- [ ] **Rule C9**: Every page.chunk has KeyPhrase field (non-empty string)
-- [ ] **Rule C10**: Question is not a yes/no question
-- [ ] **Rule C11**: ConstructedResponse is 1-3 sentences
-- [ ] **Rule C12**: KeyPhrase contains 3-5 terms separated by commas
-- [ ] **Rule C13**: KeyPhrase terms are noun phrases from the text
+- [ ] **Rule C9**: Every page.chunk has Question field (non-empty string)
+- [ ] **Rule C10**: Every page.chunk has ConstructedResponse field (non-empty string)
+- [ ] **Rule C11**: Every page.chunk has KeyPhrase field (non-empty string)
+- [ ] **Rule C12**: Question is not a yes/no question
+- [ ] **Rule C13**: ConstructedResponse is 1-3 sentences
+- [ ] **Rule C14**: KeyPhrase contains 3-5 terms separated by commas
+- [ ] **Rule C15**: KeyPhrase terms are noun phrases from the text
 
 #### page.plain-chunk Specific Rules
 
-- [ ] **Rule C14**: page.plain-chunk does NOT have Question field
-- [ ] **Rule C15**: page.plain-chunk does NOT have ConstructedResponse field
-- [ ] **Rule C16**: page.plain-chunk does NOT have KeyPhrase field
+- [ ] **Rule C16**: page.plain-chunk does NOT have Question field
+- [ ] **Rule C17**: page.plain-chunk does NOT have ConstructedResponse field
+- [ ] **Rule C18**: page.plain-chunk does NOT have KeyPhrase field
+
+### Chunking Strategy Validation
+
+- [ ] **Rule CS1**: Each iTELL page contains MULTIPLE chunks (minimum 2, typically 3-6)
+- [ ] **Rule CS2**: Each chunk has a DISTINCT header representing one topic/heading
+- [ ] **Rule CS3**: Content is divided by natural headings/subsections from source
+- [ ] **Rule CS4**: Long sections (>500 words) are split into multiple chunks
+- [ ] **Rule CS5**: Related but distinct topics are in separate chunks
 
 ### Markdown Validation Rules
 
-- [ ] **Rule M1**: Paragraphs are separated by blank lines
-- [ ] **Rule M2**: Ampersands use `&` as-is (no encoding needed)
-- [ ] **Rule M3**: Bold uses `**text**` syntax
-- [ ] **Rule M4**: Italics use `*text*` syntax
-- [ ] **Rule M5**: Math uses `$...$` for inline
-- [ ] **Rule M6**: Math uses `$$...$$` for block equations
-- [ ] **Rule M7**: Info callouts use blockquote structure:
+- [ ] **Rule M1**: Blank lines (`\n\n`) only between distinct paragraphs, NOT within paragraphs
+- [ ] **Rule M2**: Paragraphs flow continuously without internal line breaks
+- [ ] **Rule M3**: Ampersands use `&` as-is (no encoding needed)
+- [ ] **Rule M4**: Bold (`**text**`) applied appropriately for key terms, emphasis, important concepts
+- [ ] **Rule M5**: Italics (`*text*`) used for book/journal titles, foreign words, definitions
+- [ ] **Rule M6**: List indentation preserved (2 spaces per nested level)
+- [ ] **Rule M7**: Math uses `$...$` for inline
+- [ ] **Rule M8**: Math uses `$$...$$` for block equations
+- [ ] **Rule M9**: Info callouts use blockquote structure:
 
 ```markdown
 > **Title**
@@ -86,19 +105,18 @@ Volume
 > Content
 ```
 
-- [ ] **Rule M8**: Images use markdown syntax: `![description](image_id)`
-- [ ] **Rule M9**: Image paths match image_id from metadata (format: `image_page_X_Y`)
-- [ ] **Rule M10**: Image alt text (in brackets) contains caption or meaningful description
+- [ ] **Rule M10**: Images use markdown syntax: `![description](image_page_X_Y)` (standard Markdown)
+- [ ] **Rule M11**: Image paths match image_id from metadata exactly (format: `image_page_X_Y`, e.g., image_page_2_1)
+- [ ] **Rule M12**: Image alt text (in brackets) contains brief descriptive caption
 
 ### Image Validation Rules (If Metadata Provided)
 
-- [ ] **Rule I1**: All images from metadata are included in the JSON
-- [ ] **Rule I2**: Each image uses correct `image_id` in Markdown format: `![description](image_id)`
-- [ ] **Rule I3**: Images are placed in logical positions within text
-- [ ] **Rule I4**: Images with captions use caption as alt text (in brackets)
-- [ ] **Rule I5**: Images without captions have descriptive alt text (in brackets)
-- [ ] **Rule I6**: No placeholder text like "[IMAGE]" remains in output
-- [ ] **Rule I7**: Images use Markdown syntax `![alt text](image_id)`, not HTML tags
+- [ ] **Rule I1**: Images with captions (i.e., Figures) should be included in the JSON
+- [ ] **Rule I2**: Each image uses correct `image_id` in Markdown format: `![description](image_page_X_Y)`
+- [ ] **Rule I3**: Images are placed in logical positions within text with blank lines before/after
+- [ ] **Rule I4**: Images have brief, descriptive captions generated by you as alt text (in brackets)
+- [ ] **Rule I5**: No placeholder text like "[IMAGE]", `{{image}}` remains in output
+- [ ] **Rule I6**: Images use standard Markdown syntax `![alt text](image_page_X_Y)`, NOT `{{image_page_X_Y}}` or HTML tags
 
 ### Content Quality Rules
 
@@ -113,18 +131,21 @@ Volume
 
 Apply these rules in order when converting source text to Markdown:
 
-1. **Rule T1**: Separate paragraphs with blank lines
-2. **Rule T2**: Keep ampersands as `&` (no encoding needed)
-3. **Rule T3**: Convert bold text to `**text**`
-4. **Rule T4**: Convert italic text to `*text*`
-5. **Rule T5**: Convert image references to `![caption or description](image_id)`
-6. **Rule T6**: Remove all `[cite_start]` and `[cite: N]` markers
-7. **Rule T7**: Convert book/journal titles to `*Title*`
-8. **Rule T8**: Convert inline math to `$formula$`
-9. **Rule T9**: Convert block math to `$$formula$$`
-10. **Rule T10**: Convert Learning Objectives sections to blockquote structure with bold header
-11. **Rule T11**: Match each image to its metadata using page_num and position information
-12. **Rule T12**: Place images between paragraphs with blank lines, not mid-sentence
+1. **Rule T1**: Separate distinct paragraphs with blank lines (`\n\n`)
+2. **Rule T2**: Do NOT add line breaks within paragraphs - let text flow continuously
+3. **Rule T3**: Keep ampersands as `&` (no encoding needed)
+4. **Rule T4**: Apply bold `**text**` to key terms, important concepts, names, emphasis
+5. **Rule T5**: Apply italic `*text*` to book/journal titles, foreign words, definitions
+6. **Rule T6**: Preserve list indentation using 2 spaces per nested level
+7. **Rule T7**: Convert image references to `![caption or description](image_page_X_Y)`
+8. **Rule T8**: Remove all `[cite_start]` and `[cite: N]` markers
+9. **Rule T9**: Convert inline math to `$formula$`
+10. **Rule T10**: Convert block math to `$$formula$$` (on separate lines with blank lines)
+11. **Rule T11**: Convert Learning Objectives to blockquote structure with `> **Title**\n>\n> Content`
+12. **Rule T12**: Match each image to its metadata using page_num and position information
+13. **Rule T13**: Place images between paragraphs with blank lines, not mid-sentence
+14. **Rule T14**: Convert all image references to standard Markdown: `![caption](image_page_X_Y)`
+15. **Rule T15**: Never use `{{image_page_X_Y}}`, HTML `<img>`, or text references like "see Figure 1"
 
 ## Common Errors with Corrections
 
@@ -325,22 +346,60 @@ Apply these rules in order when converting source text to Markdown:
 }
 ```
 
-### Error 10: Improper Markdown Formatting
+### Error 10: Extra Line Breaks Within Paragraphs
 
 **INVALID:**
 
 ```json
 {
-  "Text": "Psychology is the **scientific study** of *behavior*.- Observation\n- Experimentation\n- Analysis"
+  "Text": "Psychology is the scientific study of behavior.\nIt emerged in the 19th century.\nResearchers use various methods."
 }
 ```
 
-**Violated Rules:** C5, M1
+**Violated Rules:** M1, M2, T2
 **VALID:**
 
 ```json
 {
-  "Text": "Psychology is the **scientific study** of *behavior*.\n\nObservation, experimentation, and analysis are key methods."
+  "Text": "Psychology is the scientific study of behavior. It emerged in the 19th century. Researchers use various methods.\n\nThe field has evolved significantly over time."
+}
+```
+
+### Error 10b: Missing Text Formatting
+
+**INVALID:**
+
+```json
+{
+  "Text": "The term psychology comes from psyche and logos. B.F. Skinner introduced operant conditioning."
+}
+```
+
+**Violated Rules:** M4, M5, T4
+**VALID:**
+
+```json
+{
+  "Text": "The term **psychology** comes from *psyche* and *logos*. **B.F. Skinner** introduced **operant conditioning**."
+}
+```
+
+### Error 10c: Lost List Indentation
+
+**INVALID:**
+
+```json
+{
+  "Text": "Research methods include:\n- Observation\n- Experiment\n- Control group\n- Experimental group\n- Analysis"
+}
+```
+
+**Violated Rules:** M6, T6
+**VALID:**
+
+```json
+{
+  "Text": "Research methods include:\n\n- Observation\n- Experiment\n  - Control group\n  - Experimental group\n- Analysis"
 }
 ```
 
@@ -366,7 +425,7 @@ Apply these rules in order when converting source text to Markdown:
 
 ### Error 12: Wrong Image Format
 
-**INVALID:**
+**INVALID (HTML tag):**
 
 ```json
 {
@@ -374,12 +433,28 @@ Apply these rules in order when converting source text to Markdown:
 }
 ```
 
-**Violated Rules:** M8, I7
+**INVALID (Double brace placeholder):**
+
+```json
+{
+  "Text": "The interface is shown below.\n\n{{image_page_4_1}}\n\nThis interface is user-friendly."
+}
+```
+
+**INVALID (Text reference):**
+
+```json
+{
+  "Text": "The graphical user interface (see Figure 1) requires no programming knowledge."
+}
+```
+
+**Violated Rules:** M10, I7, T14, T15
 **VALID:**
 
 ```json
 {
-  "Text": "See the diagram below.\n\n![Process diagram](image_page_2_1)\n\nThis shows the process."
+  "Text": "See the diagram below.\n\n![Figure 1: Process diagram showing the workflow](image_page_2_1)\n\nThis shows the process."
 }
 ```
 
@@ -431,7 +506,7 @@ Apply these rules in order when converting source text to Markdown:
 }
 ```
 
-**Violated Rules:** M10, I4 or I5
+**Violated Rules:** M12, I4 or I5
 **VALID:**
 
 ```json
@@ -440,6 +515,82 @@ Apply these rules in order when converting source text to Markdown:
 }
 ```
 
+### Error 16: All Content in One Chunk (CRITICAL)
+
+**INVALID:**
+
+```json
+{
+  "Title": "Cell Biology",
+  "ReferenceSummary": null,
+  "Content": [
+    {
+      "__component": "page.chunk",
+      "Header": "Cell Biology",
+      "Text": "Learning Objectives: Define cell structure. Explain organelles.\n\nCells are the basic units of life. They have various structures including the cell membrane, nucleus, and mitochondria.\n\nThe cell membrane controls what enters and exits. The nucleus contains DNA. Mitochondria produce energy.\n\nOrganelles work together to maintain cell function. Each has a specific role in cellular processes.",
+      "Question": "What are the main parts of a cell?",
+      "ConstructedResponse": "The main parts include cell membrane, nucleus, and mitochondria.",
+      "KeyPhrase": "cell structure, organelles, cell membrane, nucleus"
+    }
+  ]
+}
+```
+
+**Violated Rules:** CS1, CS2, CS3, P3, P5
+**VALID:**
+
+```json
+{
+  "Title": "Cell Biology",
+  "ReferenceSummary": null,
+  "Content": [
+    {
+      "__component": "page.plain-chunk",
+      "Header": "Learning Objectives",
+      "Text": "> **Learning Objectives**\n>\n> Define cell structure\n> Explain organelles"
+    },
+    {
+      "__component": "page.chunk",
+      "Header": "Introduction to Cells",
+      "Text": "**Cells** are the basic units of life. They have various structures including the **cell membrane**, **nucleus**, and **mitochondria**.",
+      "Question": "What are cells?",
+      "ConstructedResponse": "Cells are the basic units of life with various structures.",
+      "KeyPhrase": "cells, basic units of life, cell structure"
+    },
+    {
+      "__component": "page.chunk",
+      "Header": "Cell Membrane",
+      "Text": "The **cell membrane** controls what enters and exits the cell. This selective permeability is essential for maintaining cellular homeostasis.",
+      "Question": "What is the function of the cell membrane?",
+      "ConstructedResponse": "The cell membrane controls what enters and exits the cell.",
+      "KeyPhrase": "cell membrane, selective permeability, cellular homeostasis"
+    },
+    {
+      "__component": "page.chunk",
+      "Header": "Nucleus and Mitochondria",
+      "Text": "The **nucleus** contains DNA and controls cell activities. **Mitochondria** produce energy through cellular respiration, earning them the nickname 'powerhouses of the cell.'",
+      "Question": "What are the roles of the nucleus and mitochondria?",
+      "ConstructedResponse": "The nucleus contains DNA and controls cell activities, while mitochondria produce energy.",
+      "KeyPhrase": "nucleus, mitochondria, DNA, cellular respiration, energy production"
+    },
+    {
+      "__component": "page.chunk",
+      "Header": "Organelle Interactions",
+      "Text": "**Organelles** work together to maintain cell function. Each has a specific role in cellular processes, and their coordination is essential for cell survival.",
+      "Question": "How do organelles work together?",
+      "ConstructedResponse": "Organelles coordinate their specific roles to maintain cell function and survival.",
+      "KeyPhrase": "organelles, cellular processes, cell function, coordination"
+    }
+  ]
+}
+```
+
+**Notice:**
+- Invalid has only 1 chunk containing all content
+- Valid has 5 chunks, each with a distinct topic/heading
+- Learning objectives separated into plain-chunk
+- Each major concept gets its own chunk
+
 ## Self-Validation Checklist
 
 Before outputting JSON, verify each category:
@@ -447,16 +598,20 @@ Before outputting JSON, verify each category:
 ### Structure Validation
 
 - [ ] All required volume fields present (V1-V6)
-- [ ] All required page fields present (P1-P4)
-- [ ] All required chunk fields present (C1-C16)
+- [ ] All required page fields present (P1-P6)
+- [ ] All required chunk fields present (C1-C18)
+- [ ] **Multiple chunks per page (CS1-CS7) - NOT one large chunk**
+- [ ] Each chunk represents one topic/heading (CS2)
 - [ ] Correct \_\_component values used (C2)
 
 ### Markdown Validation
 
-- [ ] All Markdown properly formed (M1-M10)
-- [ ] Paragraphs separated by blank lines (M1)
-- [ ] Correct bold and italic syntax (M3-M4)
-- [ ] Images use correct format (M8-M10)
+- [ ] All Markdown properly formed (M1-M12)
+- [ ] Blank lines only between distinct paragraphs, not within (M1, M2)
+- [ ] Appropriate text formatting applied: **bold** and *italic* (M4, M5)
+- [ ] List indentation preserved (M6)
+- [ ] Correct bold and italic syntax (M4-M5)
+- [ ] Images use correct format (M10-M12)
 
 ### Content Validation
 
@@ -467,11 +622,12 @@ Before outputting JSON, verify each category:
 
 ### Image Validation (If Metadata Provided)
 
-- [ ] All images from metadata included (I1)
-- [ ] Correct image_id format used (I2, M9)
-- [ ] All images have alt text (M10, I4, I5)
-- [ ] Images placed logically in text (I3)
-- [ ] No placeholder text remains (I6)
+- [ ] Images with captions (Figures) should be included (I1)
+- [ ] Correct image_id format used: `image_page_X_Y` (I2, M11)
+- [ ] All images have brief descriptive captions in alt text (M12, I4)
+- [ ] Images placed logically in text with blank lines (I3)
+- [ ] No placeholder text remains: no `{{image}}`, `[IMAGE]`
+- [ ] Standard Markdown syntax used: `![...](image_page_X_Y)` (I6, M10)
 
 ### JSON Syntax Validation
 
