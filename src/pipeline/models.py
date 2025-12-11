@@ -38,9 +38,7 @@ class NewPage(BaseModel):
 
 class NewVolume(BaseModel):
     Title: str = Field(description="The title of the volume")
-    Description: str = Field(
-        description="The description of the volume", max_length=255
-    )
+    Description: str = Field(description="The description of the volume")
     VolumeSummary: str = Field(description="A summary of the volume")
     Pages: list[NewPage] = Field(description="Array of pages within the volume")
 
