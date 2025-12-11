@@ -198,10 +198,10 @@ Follow the patterns demonstrated in the examples below. Pay close attention to s
 
 **Key Patterns for Images:**
 
-- **CRITICAL: ALL images with captions MUST be included**
-- Use `![caption](image_page_X_Y)` format (standard Markdown image syntax)
+- Include images based on their relevance: especially Figures with captions, diagrams, charts, tables
+- Use `![description](image_page_X_Y)` format (standard Markdown image syntax)
 - Place image between paragraphs at the logical point with blank lines before and after
-- Use the **full caption** from metadata as the alt text (in brackets)
+- Generate a brief, descriptive caption as the alt text (in brackets)
 - Image path should match the `image_id` from metadata exactly (e.g., image_page_5_1)
 - Never use `{{image_page_X_Y}}`, HTML tags, or text references like "see Figure 1"
 
@@ -248,16 +248,16 @@ This creates improper formatting.
 | Medium page (3-4 topics) | 4-5 chunks | Learning Objectives + 3-4 content chunks |
 | Long page (5+ topics) | 6+ chunks | Learning Objectives + 5+ content chunks + References |
 
-**Example Page Chunking:**
+**Example iTELL Page Chunking:**
 
 ```
-Page: "Introduction to Psychology"
+iTELL Page: "Introduction to Psychology"
 ├─ Chunk 1: Learning Objectives (plain-chunk)
 ├─ Chunk 2: What Is Psychology? (chunk)
 ├─ Chunk 3: The Scientific Method (chunk)
 ├─ Chunk 4: Research Ethics (chunk)
 └─ Chunk 5: References (plain-chunk)
-Total: 5 chunks for one page
+Total: 5 chunks for one iTELL page
 ```
 
 ### Chunk Type Selection Pattern
@@ -410,27 +410,25 @@ AFTER (JSON):
 1. Study the examples above carefully
 2. Match your output structure to these patterns exactly
 3. When in doubt, follow the transformation rules in the Quick Reference Card
-4. **CRITICAL: If image metadata is provided, include ALL images (especially those with captions) using the pattern from Example 3 and Transformation 4**
-5. **Use proper markdown image syntax: `![caption](image_page_X_Y)` - NOT `{{image_page_X_Y}}` or HTML**
+4. **CRITICAL: If image metadata is provided, include images (especially those with captions) using the pattern from Example 3 and Transformation 4**
+5. **Use proper markdown image syntax: `![description](image_page_X_Y)` - NOT `{{image_page_X_Y}}` or HTML**
 6. Never use text references like "see Figure 1" - always use actual markdown images
-7. **Create MULTIPLE chunks per page** - divide content by heading/topic (3-6 chunks typical)
-8. **Ignore PDF page boundaries** - chunk by topic only, keep same topic together even across PDF pages
-9. Apply proper paragraph formatting: blank lines only between distinct paragraphs
-10. Apply appropriate text formatting: **bold** for key terms, *italic* for titles
-11. Preserve list indentation (2 spaces per nested level)
-12. Output only the complete JSON with no additional text
+7. **Create MULTIPLE chunks per iTELL page** - divide content by heading/topic (3-6 chunks typical)
+8. Apply proper paragraph formatting: blank lines only between distinct paragraphs
+9. Apply appropriate text formatting: **bold** for key terms, *italic* for titles
+10. Preserve list indentation (2 spaces per nested level)
+11. Output only the complete JSON with no additional text
 
 ## Image Format Reminder
 
 **ALWAYS use this format:**
 
 ```markdown
-![Figure caption or description](image_page_X_Y)
+![Figuere Caption or Brief Descriptive caption](image_page_X_Y)
 ```
 
 **NEVER use:**
 
 - `{{image_page_X_Y}}`
 - `<img src="image_page_X_Y">`
-- Text references: "see Figure 1"
 - Placeholders: `[IMAGE]` or `[IMAGE: description]`

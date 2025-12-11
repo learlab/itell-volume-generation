@@ -27,18 +27,15 @@ Follow these explicit steps in order when generating iTELL JSON:
 
 - Decide which sections become separate iTELL pages (e.g., chapter sections)
 - Assign Title to each iTELL page (use Title Case)
-- **For each iTELL page, identify ALL headings/subsections that will become chunks**
+- **For each iTELL page, identify ALL headings that will become chunks**
 - Plan to create 3-6 chunks per iTELL page (depending on content length)
-- **Ignore physical PDF page breaks** - chunk by topic/heading only
 - Check if source material has page summaries for ReferenceSummary
 
 **Example Planning:**
 - iTELL Page: "Cell Biology" 
-  - Will have chunks: Learning Objectives, Cell Structure, Cell Membrane, Organelles, References
-  - (These chunks may span multiple PDF pages - that's fine!)
+  - Will have chunks: Learning Objectives (plain-chunk), Cell Structure (chunk), Cell Membrane (chunk), Organelles (chunk), References (plain-chunk)
 - iTELL Page: "Photosynthesis"
-  - Will have chunks: Learning Objectives, Overview, Light-Dependent Reactions, Calvin Cycle, Summary
-  - (Keep each topic together even if it crosses PDF page boundaries)
+  - Will have chunks: Learning Objectives (plain-chunk), Overview (chunk), Light-Dependent Reactions (chunk), Calvin Cycle (chunk), Summary (plain-chunk)
 
 ### Step 4: Chunk Each Page by Headings/Topics
 
@@ -80,12 +77,9 @@ Page: "Introduction to Psychology"
 
 **Key Principles:**
 - One heading/topic = One chunk
-- Multiple chunks per page (typically 3-6)
+- Multiple chunks per iTELL page (typically 3-6)
 - Never combine unrelated topics in one chunk
-- If source has subsections, create separate chunks for each
-- **IMPORTANT: Physical page breaks in PDF do NOT determine chunk boundaries**
-- **Keep content together if it's the same topic, even if it spans multiple PDF pages**
-- **Only create new chunks when topics/headings change, not when PDF pages change**
+- Only create new chunks when topics/headings change
 
 ### Step 5: Generate Content for Each Chunk
 
@@ -141,27 +135,25 @@ Apply these formatting rules to create a properly formatted digital textbook:
 
 ### Step 5.1: Handle Images (If Provided)
 
-**CRITICAL: ALL images from metadata MUST be included. Never skip images that have captions.**
-
-If image metadata is provided, follow this decision process for each image:
-
 **Image Inclusion Rules:**
 
-ALL images with captions → MUST INCLUDE  
-Diagrams/charts/figures → MUST INCLUDE  
-Tables/equations as images → MUST INCLUDE  
-Photos/illustrations → INCLUDE if content-relevant  
+If image metadata is provided, include images based on their relevance:
+
+Diagrams/charts/figures → INCLUDE  
+Tables/equations as images → INCLUDE  
+Photos/illustrations with captions (i.e., Figures) → INCLUDE  
+Photos/illustrations without captions → Use judgment based on content relevance  
 Decorative elements/logos → SKIP
 
 **Image Placement Decision Tree:**
 
-Does this image have a caption?  
-├─ YES → MUST include; place image near the text that discusses the caption topic  
-└─ NO → Check nearby_text
+Does this image have a caption (i.e., is it a Figure)?  
+├─ YES → Include; place image near the text that discusses the caption topic  
+└─ NO → Evaluate content relevance
 
 Is there nearby_text above/below the image?  
 ├─ YES → Place image in the chunk containing that text  
-└─ NO → Place image at the most logical position based on page_num
+└─ NO → Place image at the most logical position based on context
 
 **Image Link Format:**
 
@@ -174,7 +166,7 @@ Insert images using this exact Markdown structure:
 Where:
 
 - `image_page_X_Y` is the `image_id` from the metadata (e.g., image_page_2_1, image_page_5_3)
-- The text in brackets `[...]` is the **full caption** if available, otherwise a brief description
+- The text in brackets `[...]` should be a brief, descriptive caption that you generate based on the image context
 - Place images between paragraphs with blank lines before and after
 - Never use HTML `<img>` tags, placeholders like `{{image_...}}`, or text references like "see Figure 1"
 
@@ -236,8 +228,8 @@ Before outputting, check:
 - [ ] **Text formatting applied appropriately**: **bold** for key terms/emphasis, *italic* for titles/definitions
 - [ ] **Indentation preserved**: Lists, nested items, blockquotes maintain proper structure
 - [ ] No `[cite_start]` or citation markers remain
-- [ ] **ALL images with captions from metadata are included**
-- [ ] **All images use proper markdown syntax: `![caption](image_page_X_Y)`**
+- [ ] **All relevant images (especially Figures with captions) are included**
+- [ ] **All images use proper markdown syntax: `![description](image_page_X_Y)`**
 - [ ] Image paths use correct image_id format (e.g., image_page_2_1, not {{image_page_2_1}})
 - [ ] No text references like "see Figure 1" - use actual markdown images
 - [ ] No placeholder text like `[IMAGE]` or `{{image}}` remains
