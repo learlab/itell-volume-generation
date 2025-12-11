@@ -68,13 +68,32 @@ Follow the patterns demonstrated in the examples below. Pay close attention to s
 
 **Key Patterns to Notice:**
 
+- **Multiple chunks per page** → Each heading/topic gets its own chunk
 - Learning Objectives → `page.plain-chunk` with blockquote format
-- Main content paragraphs → `page.chunk` with Q&A
+- Main content paragraphs → Separate `page.chunk` for EACH topic with Q&A
 - References → `page.plain-chunk` with italicized titles using *asterisks*
 - Each chunk 150-300 words
 - KeyPhrases pulled directly from text
 - Questions ask about main concepts
 - ConstructedResponses are concise (1-2 sentences)
+
+**Chunking Patterns:**
+
+- **One heading = One chunk** (do NOT combine topics)
+- **3-6 chunks per iTELL page** typical (minimum 2)
+- **Split long sections** (>500 words) into multiple chunks
+- **Distinct headers** for each chunk representing the topic
+- **Ignore PDF page breaks** - chunk by topic/heading only
+- **Keep content together** if same topic, even across multiple PDF pages
+
+**Formatting Patterns:**
+
+- **Blank lines**: Only between distinct paragraphs (use `\n\n`)
+- **Within paragraphs**: No line breaks - let text flow continuously
+- **Bold** (`**text**`): Key terms, important concepts, emphasis
+- **Italic** (`*text*`): Book/journal titles, foreign words, definitions
+- **Lists**: Preserve indentation (2 spaces per nested level)
+- **Blockquotes**: Use `> ` with proper structure for callouts
 
 ## Complete Example 2: Page with Math Content
 
@@ -179,10 +198,12 @@ Follow the patterns demonstrated in the examples below. Pay close attention to s
 
 **Key Patterns for Images:**
 
-- Use `![caption](image_page_X_Y)` format
-- Place image between paragraphs at the logical point with blank lines
-- Use the caption from metadata as the alt text (in brackets)
-- Image path should match the `image_id` from metadata
+- **CRITICAL: ALL images with captions MUST be included**
+- Use `![caption](image_page_X_Y)` format (standard Markdown image syntax)
+- Place image between paragraphs at the logical point with blank lines before and after
+- Use the **full caption** from metadata as the alt text (in brackets)
+- Image path should match the `image_id` from metadata exactly (e.g., image_page_5_1)
+- Never use `{{image_page_X_Y}}`, HTML tags, or text references like "see Figure 1"
 
 ## Pattern Matching Rules
 
@@ -190,11 +211,54 @@ Follow the patterns demonstrated in the examples below. Pay close attention to s
 
 | Source Format | iTELL Markdown | Example |
 |---------------|----------------|---------|
+| Paragraph breaks | Blank line `\n\n` only between distinct paragraphs | See examples below |
 | **Bold text** | `**Bold text**` | `**important concept**` |
 | *Italic text* | `*Italic text*` | `*Scientific American*` |
+| Key terms | `**term**` | `**operant conditioning**` |
+| Book titles | `*Title*` | `*Introduction to Psychology*` |
 | "Text & more" | `Text & more` | `Research & Development` |
+| Bulleted list | `- Item\n- Item` | See lists section |
+| Nested list | 2-space indent per level | `  - Sub-item` |
 | [IMAGE] with caption | `![caption](image_page_X_Y)` | See Example 3 |
 | Math: x = 5 | `$x = 5$` | See Example 2 |
+
+### Paragraph Formatting Pattern
+
+**CORRECT Pattern:**
+```markdown
+First paragraph flows continuously without internal line breaks. Sentences are part of the same paragraph.
+
+Second paragraph is separated by a blank line. It also flows continuously.
+```
+
+**INCORRECT Pattern:**
+```markdown
+First paragraph has unnecessary breaks.
+Each sentence is on a new line.
+This creates improper formatting.
+```
+
+### Chunking Strategy Pattern (CRITICAL)
+
+**Key Rule: Create MULTIPLE chunks per page based on headings/topics**
+
+| Page Section | Number of Chunks | Pattern |
+|-------------|------------------|---------|
+| Short page (1-2 topics) | 2-3 chunks | Learning Objectives + 1-2 content chunks |
+| Medium page (3-4 topics) | 4-5 chunks | Learning Objectives + 3-4 content chunks |
+| Long page (5+ topics) | 6+ chunks | Learning Objectives + 5+ content chunks + References |
+
+**Example Page Chunking:**
+
+```
+Page: "Introduction to Psychology"
+├─ Chunk 1: Learning Objectives (plain-chunk)
+├─ Chunk 2: What Is Psychology? (chunk)
+├─ Chunk 3: The Scientific Method (chunk)
+├─ Chunk 4: Research Ethics (chunk)
+└─ Chunk 5: References (plain-chunk)
+Total: 5 chunks for one page
+```
 
 ### Chunk Type Selection Pattern
 
@@ -203,8 +267,15 @@ Follow the patterns demonstrated in the examples below. Pay close attention to s
 | Learning Objectives | `page.plain-chunk` with Info callout | Too short, list format |
 | References/Bibliography | `page.plain-chunk` | No Q&A needed |
 | Main explanatory text (200-400 words) | `page.chunk` | Needs learning activities |
+| Each heading/subsection | Separate `page.chunk` | One topic per chunk |
 | Short intro paragraph (<100 words) | `page.plain-chunk` | Too short for quality Q&A |
 | Key Takeaways | `page.plain-chunk` | Summary content, exclude if possible |
+
+**IMPORTANT Rules:**
+- Do NOT combine multiple topics/headings into one chunk
+- **Do NOT create chunk breaks just because of PDF page boundaries**
+- **Keep the same topic together even if it spans multiple PDF pages**
+- Only create new chunks when headings/topics change
 
 ### KeyPhrase Pattern Matching
 
@@ -262,10 +333,12 @@ AFTER (JSON):
 }
 ```
 
-**Transformation 2: Main Content**
+**Transformation 2: Main Content with Formatting**
 
 BEFORE (PDF):
 > Culture is that part of the environment made by humans. It includes both physical and psychological aspects.
+> 
+> Donald Klopf (1991) described culture as encompassing everything from buildings to social norms. Communication scholars study how culture influences interaction patterns.
 
 AFTER (JSON):
 
@@ -273,12 +346,18 @@ AFTER (JSON):
 {
   "__component": "page.chunk",
   "Header": "Understanding Culture",
-  "Text": "Culture is that part of the environment made by humans. It includes both physical and psychological aspects.",
-  "Question": "What is culture?",
+  "Text": "**Culture** is that part of the environment made by humans. It includes both **physical** and **psychological** aspects.\n\n**Donald Klopf** (1991) described culture as encompassing everything from buildings to social norms. Communication scholars study how culture influences interaction patterns.",
+  "Question": "What is culture according to Klopf?",
   "ConstructedResponse": "Culture is that part of the environment made by humans, including both physical and psychological aspects.",
-  "KeyPhrase": "culture, environment, physical aspects, psychological aspects"
+  "KeyPhrase": "culture, environment, physical aspects, psychological aspects, Donald Klopf"
 }
 ```
+
+**Notice:** 
+- Blank line (`\n\n`) between two distinct paragraphs
+- No line breaks within each paragraph
+- **Bold** applied to key terms (Culture, physical, psychological, Donald Klopf)
+- Text flows continuously within paragraphs
 
 **Transformation 3: References**
 
@@ -331,5 +410,27 @@ AFTER (JSON):
 1. Study the examples above carefully
 2. Match your output structure to these patterns exactly
 3. When in doubt, follow the transformation rules in the Quick Reference Card
-4. **If image metadata is provided, include ALL images using the pattern from Example 3 and Transformation 4**
-5. Output only the complete JSON with no additional text
+4. **CRITICAL: If image metadata is provided, include ALL images (especially those with captions) using the pattern from Example 3 and Transformation 4**
+5. **Use proper markdown image syntax: `![caption](image_page_X_Y)` - NOT `{{image_page_X_Y}}` or HTML**
+6. Never use text references like "see Figure 1" - always use actual markdown images
+7. **Create MULTIPLE chunks per page** - divide content by heading/topic (3-6 chunks typical)
+8. **Ignore PDF page boundaries** - chunk by topic only, keep same topic together even across PDF pages
+9. Apply proper paragraph formatting: blank lines only between distinct paragraphs
+10. Apply appropriate text formatting: **bold** for key terms, *italic* for titles
+11. Preserve list indentation (2 spaces per nested level)
+12. Output only the complete JSON with no additional text
+
+## Image Format Reminder
+
+**ALWAYS use this format:**
+
+```markdown
+![Figure caption or description](image_page_X_Y)
+```
+
+**NEVER use:**
+
+- `{{image_page_X_Y}}`
+- `<img src="image_page_X_Y">`
+- Text references: "see Figure 1"
+- Placeholders: `[IMAGE]` or `[IMAGE: description]`
