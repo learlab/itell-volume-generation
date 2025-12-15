@@ -7,7 +7,7 @@ from typing import Any, Dict, Optional, Sequence, Type, TypeVar
 
 from google import genai
 from openai import OpenAI
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 
 logger = logging.getLogger(__name__)
@@ -124,7 +124,7 @@ class GeminiClient:
             "data": pdf_bytes
         }
         response = self.client.models.generate_content(
-            model="gemini-2.5-flash",
+            model=self.model,
             contents=[
                   genai.types.Part.from_bytes(
                     data=pdf_bytes,
@@ -146,7 +146,7 @@ class GeminiClient:
         pdf_bytes = base64.b64decode(pdf_base64)
         
         completion = self.client.models.generate_content(
-            model="gemini-2.5-flash",
+            model=self.model,
             contents=[
                   genai.types.Part.from_bytes(
                     data=pdf_bytes,
@@ -157,11 +157,75 @@ class GeminiClient:
             config=genai.types.GenerateContentConfig(
                 max_output_tokens=self.max_output_tokens,
                 response_mime_type="application/json",
-                response_schema=response_format.model_json_schema(),
+                response_schema=response_format,
             ),
         )
+        parsed = getattr(completion, "parsed", None)
+        if parsed is not None:
+            if isinstance(parsed, BaseModel):
+                return parsed
+            try:
+                return response_format.model_validate(parsed)
+            except ValidationError as e:
+                raise RuntimeError(f"Gemini returned data that failed validation: {e}") from e
+
         try:
-            response_dict = json.loads(completion.text)
+            cleaned_text = self._extract_json_payload(completion.text or "")
+            response_dict = json.loads(cleaned_text)
             return response_format.model_validate(response_dict)
-        except (json.JSONDecodeError, ValueError) as e:
-            raise RuntimeError(f"Failed to parse structured output from Gemini: {e}") from e
+        except (json.JSONDecodeError, ValidationError, ValueError) as e:
+            snippet = (completion.text or "")[:500]
+            raise RuntimeError(
+                f"Failed to parse structured output from Gemini: {e}. Raw response (truncated): {snippet}"
+            ) from e
+
+    @staticmethod
+    def _extract_json_payload(raw_text: str) -> str:
+        """Strip code fences and leading/trailing chatter to isolate JSON."""
+        cleaned = raw_text.strip()
+        lower_cleaned = cleaned.lower()
+        if lower_cleaned.startswith("```json"):
+            cleaned = cleaned[len("```json"):].strip()
+        elif cleaned.startswith("```"):
+            cleaned = cleaned[3:].strip()
+
+        if cleaned.endswith("```"):
+            cleaned = cleaned[:-3].strip()
+
+        # Walk the response so we only capture the balanced JSON payload even if
+        # stray braces appear inside quoted text.
+        start_index = None
+        brace_depth = 0
+        in_string = False
+        escape = False
+        for idx, char in enumerate(cleaned):
+            if start_index is None:
+                if char == "{":
+                    start_index = idx
+                    brace_depth = 1
+                continue
+
+            if in_string:
+                if escape:
+                    escape = False
+                    continue
+                if char == "\\":
+                    escape = True
+                    continue
+                if char == '"':
+                    in_string = False
+                continue
+
+            if char == '"':
+                in_string = True
+                continue
+
+            if char == "{":
+                brace_depth += 1
+            elif char == "}":
+                brace_depth -= 1
+                if brace_depth == 0 and start_index is not None:
+                    cleaned = cleaned[start_index:idx + 1]
+                    break
+
+        return cleaned
