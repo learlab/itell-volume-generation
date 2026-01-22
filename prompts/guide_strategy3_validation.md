@@ -45,6 +45,91 @@ Volume
 - [ ] **Rule P3**: Every iTELL page has Content field (array with at least 2 chunks, typically 3-6)
 - [ ] **Rule P4**: iTELL page titles use Title Case (e.g., "The Science of Psychology")
 - [ ] **Rule P5**: **iTELL pages are divided into multiple chunks by heading/topic - NOT one large chunk**
+- [ ] **Rule P6**: **Create FEWER pages, not more - group related content into single pages with multiple chunks**
+- [ ] **Rule P7**: **For single-page documents or small sections, use exactly 1 page**
+- [ ] **Rule P8**: **For textbooks, only create a new page for major chapter boundaries or completely distinct topics**
+- [ ] **Rule P9**: **When in doubt, add more chunks to an existing page rather than creating a new page**
+
+#### When to Create a New Page
+
+Create a new iTELL page ONLY when:
+1. **Major chapter boundary**: Starting a completely new chapter with a distinct topic
+2. **Completely unrelated topic**: The content has no relationship to previous pages
+3. **Very large volume**: For textbooks with 20+ chapters, you may need multiple pages, but still group related chapters
+
+#### When to Add Chunks to Existing Page
+
+Add chunks to an existing page when:
+1. **Related sections**: All content is part of the same topic/chapter
+2. **Subsections**: Content is organized under the same main heading
+3. **Single-page document**: For a single PDF page or small section, use exactly 1 page with multiple chunks
+4. **Related concepts**: Content builds on or relates to previous chunks
+
+#### Examples
+
+**CORRECT - Single Page with Multiple Chunks:**
+```json
+{
+  "Pages": [
+    {
+      "Title": "The Science of Psychology",
+      "Content": [
+        {"__component": "page.plain-chunk", "Header": "The Science of Psychology", ...},
+        {"__component": "page.plain-chunk", "Header": "References", ...}
+      ]
+    }
+  ]
+}
+```
+
+**INCORRECT - Too Many Pages:**
+```json
+{
+  "Pages": [
+    {"Title": "The Science of Psychology", "Content": [{"__component": "page.plain-chunk", ...}]},
+    {"Title": "References", "Content": [{"__component": "page.plain-chunk", ...}]}
+  ]
+}
+```
+
+**CORRECT - Textbook with Grouped Pages:**
+```json
+{
+  "Pages": [
+    {
+      "Title": "Introduction to Psychology",
+      "Content": [
+        {"__component": "page.plain-chunk", "Header": "Learning Objectives", ...},
+        {"__component": "page.chunk", "Header": "What Is Psychology?", ...},
+        {"__component": "page.chunk", "Header": "The Scientific Method", ...},
+        {"__component": "page.chunk", "Header": "Research Ethics", ...},
+        {"__component": "page.plain-chunk", "Header": "References", ...}
+      ]
+    },
+    {
+      "Title": "Biological Bases of Behavior",
+      "Content": [
+        {"__component": "page.plain-chunk", "Header": "Learning Objectives", ...},
+        {"__component": "page.chunk", "Header": "Neurons and Neurotransmitters", ...},
+        {"__component": "page.chunk", "Header": "The Nervous System", ...}
+      ]
+    }
+  ]
+}
+```
+
+**INCORRECT - Too Many Pages for Textbook:**
+```json
+{
+  "Pages": [
+    {"Title": "Learning Objectives", "Content": [...]},
+    {"Title": "What Is Psychology?", "Content": [...]},
+    {"Title": "The Scientific Method", "Content": [...]},
+    {"Title": "Research Ethics", "Content": [...]},
+    {"Title": "References", "Content": [...]}
+  ]
+}
+```
 
 ### Chunk-Level Validation
 
@@ -591,6 +676,105 @@ Apply these rules in order when converting source text to Markdown:
 - Learning objectives separated into plain-chunk
 - Each major concept gets its own chunk
 
+### Error 17: Too Many Pages (CRITICAL - Over-Generation)
+
+**INVALID - Single-page document split into multiple pages:**
+
+```json
+{
+  "Pages": [
+    {
+      "Title": "The Science of Psychology",
+      "ReferenceSummary": null,
+      "Content": [
+        {
+          "__component": "page.plain-chunk",
+          "Header": "The Science of Psychology",
+          "Text": "Many people believe that women tend to talk more than men..."
+        }
+      ]
+    },
+    {
+      "Title": "References",
+      "ReferenceSummary": null,
+      "Content": [
+        {
+          "__component": "page.plain-chunk",
+          "Header": "References",
+          "Text": "<ol><li>Mehl, M. R., ...</li></ol>"
+        }
+      ]
+    }
+  ]
+}
+```
+
+**Violated Rules:** P6, P7, P9
+**VALID - Single page with multiple chunks:**
+
+```json
+{
+  "Pages": [
+    {
+      "Title": "The Science of Psychology",
+      "ReferenceSummary": null,
+      "Content": [
+        {
+          "__component": "page.plain-chunk",
+          "Header": "The Science of Psychology",
+          "Text": "Many people believe that women tend to talk more than men..."
+        },
+        {
+          "__component": "page.plain-chunk",
+          "Header": "References",
+          "Text": "<ol><li>Mehl, M. R., ...</li></ol>"
+        }
+      ]
+    }
+  ]
+}
+```
+
+**INVALID - Textbook with too many pages (one page per section):**
+
+```json
+{
+  "Pages": [
+    {"Title": "Learning Objectives", "Content": [...]},
+    {"Title": "What Is Psychology?", "Content": [...]},
+    {"Title": "The Scientific Method", "Content": [...]},
+    {"Title": "Research Ethics", "Content": [...]},
+    {"Title": "References", "Content": [...]}
+  ]
+}
+```
+
+**Violated Rules:** P6, P8, P9
+**VALID - Textbook with grouped pages:**
+
+```json
+{
+  "Pages": [
+    {
+      "Title": "Introduction to Psychology",
+      "Content": [
+        {"__component": "page.plain-chunk", "Header": "Learning Objectives", ...},
+        {"__component": "page.chunk", "Header": "What Is Psychology?", ...},
+        {"__component": "page.chunk", "Header": "The Scientific Method", ...},
+        {"__component": "page.chunk", "Header": "Research Ethics", ...},
+        {"__component": "page.plain-chunk", "Header": "References", ...}
+      ]
+    }
+  ]
+}
+```
+
+**Notice:**
+- Invalid examples create separate pages for related content
+- Valid examples group related content into single pages with multiple chunks
+- For single-page documents: Use exactly 1 page
+- For textbooks: Only create new pages for major chapter/topic boundaries
+
 ## Self-Validation Checklist
 
 Before outputting JSON, verify each category:
@@ -598,11 +782,13 @@ Before outputting JSON, verify each category:
 ### Structure Validation
 
 - [ ] All required volume fields present (V1-V6)
-- [ ] All required page fields present (P1-P6)
+- [ ] All required page fields present (P1-P9)
 - [ ] All required chunk fields present (C1-C18)
 - [ ] **Multiple chunks per page (CS1-CS7) - NOT one large chunk**
+- [ ] **FEWER pages with MORE chunks - not many pages with few chunks (P6-P9)**
 - [ ] Each chunk represents one topic/heading (CS2)
 - [ ] Correct \_\_component values used (C2)
+- [ ] Page boundaries follow guidelines (only major chapter/topic breaks create new pages)
 
 ### Markdown Validation
 
@@ -640,11 +826,17 @@ Before outputting JSON, verify each category:
 
 ## Generation Workflow
 
-1. **Generate**: Create JSON following all rules above
-2. **Validate**: Check against all validation rules (V1-V6, P1-P4, C1-C16, H1-H10, Q1-Q6)
-3. **Fix**: Correct any violated rules
-4. **Re-validate**: Verify all rules pass
-5. **Output**: Submit only the complete, valid JSON
+1. **Plan Page Structure**: 
+   - For single-page documents: Use exactly 1 page
+   - For textbooks: Group related chapters/sections into fewer pages (only create new pages for major topic boundaries)
+   - Aim for 3-6 chunks per page
+2. **Generate**: Create JSON following all rules above, prioritizing fewer pages with more chunks
+3. **Validate**: Check against all validation rules (V1-V6, P1-P9, C1-C18, CS1-CS5, M1-M12, I1-I6, Q1-Q6)
+4. **Fix**: Correct any violated rules, especially:
+   - Consolidate pages if you created too many (combine related content into single pages)
+   - Ensure each page has 3-6 chunks
+5. **Re-validate**: Verify all rules pass, especially page count (should be minimal)
+6. **Output**: Submit only the complete, valid JSON
 
 ## Final Output
 
