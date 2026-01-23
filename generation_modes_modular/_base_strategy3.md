@@ -839,8 +839,3 @@ Before outputting JSON, verify each category:
 ## Final Output
 
 After completing validation, output ONLY the complete JSON with no explanatory text.
-
-
-## Final Output
-
-After completing validation, output ONLY the complete JSON with no explanatory text.
