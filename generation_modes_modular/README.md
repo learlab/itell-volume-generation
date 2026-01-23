@@ -69,17 +69,6 @@ python -m src.pipeline.main \
     --output output.json
 ```
 
-## Comparison with Full Inclusion
-
-| Aspect | Modular | Full Inclusion |
-|--------|---------|---------------|
-| File size | ~50-140 lines | ~900-1000 lines |
-| Dependencies | Requires base | None |
-| Pipeline changes | Required | None needed |
-| Duplication | No | Yes (5x) |
-| Updates | Update 1 file | Update 5 files |
-| Complexity | More complex | Simple |
-
 ## Testing
 
 ```bash
