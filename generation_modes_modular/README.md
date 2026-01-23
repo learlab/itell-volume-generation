@@ -3,24 +3,10 @@
 ## Overview
 
 This folder contains **modular** generation mode files. The structure is:
-- **`_base_strategy3.md`** (~850 lines) - Shared Strategy 3 validation rules
-- **Mode files** (~50-140 lines each) - Mode-specific instructions only
+- **`_base_strategy3.md`** - Shared Strategy 3 validation rules
+- **Mode files** - Mode-specific instructions only
 
 **Total content same as Full Inclusion, just organized differently.**
-
-## Advantages
-
-✅ **DRY principle** - Strategy 3 content in one place  
-✅ **Smaller files** - Mode files are ~50-140 lines  
-✅ **Easy updates** - Change base Strategy 3 once, affects all modes  
-✅ **Clean separation** - Mode-specific vs. shared content clearly divided  
-✅ **Version control friendly** - Smaller diffs when making changes  
-
-## Disadvantages
-
-⚠️ **Requires pipeline changes** - Need to load both files  
-⚠️ **Dependencies** - Mode files depend on base file  
-⚠️ **More complex** - Two files must be combined at runtime  
 
 ## Files
 
@@ -28,11 +14,11 @@ This folder contains **modular** generation mode files. The structure is:
 - `_base_strategy3.md` (846 lines) - Complete Strategy 3 validation rules
 
 **Mode-Specific:**
-- `faithful.md` (50 lines) - Exact preservation instructions
-- `simplified.md` (83 lines) - Language simplification instructions  
-- `condensed.md` (85 lines) - Content reduction instructions
-- `hybrid.md` (103 lines) - Balanced optimization instructions ⭐
-- `interaction-heavy.md` (138 lines) - Micro-chunking instructions
+- `faithful.md` - Exact preservation instructions
+- `simplified.md` - Language simplification instructions  
+- `condensed.md` - Content reduction instructions
+- `hybrid.md`  - Balanced optimization instructions
+- `interaction-heavy.md` - Micro-chunking instructions
 
 ## Usage (Requires Pipeline Update)
 
@@ -82,15 +68,6 @@ python -m src.pipeline.main \
     --guide prompts/hybrid_combined.md \
     --output output.json
 ```
-
-## When to Use This Approach
-
-Choose **Modular** when:
-- ✅ You want clean file organization
-- ✅ You'll frequently update Strategy 3 base rules
-- ✅ You prefer DRY principles
-- ✅ You don't mind pipeline modifications
-- ✅ You want smaller, focused mode files
 
 ## Comparison with Full Inclusion
 
