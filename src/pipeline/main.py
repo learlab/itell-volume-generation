@@ -60,9 +60,9 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser.add_argument(
         "--mode-folder",
         type=str,
-        choices=["full", "modular", "original"],
-        default="full",
-        help="Which mode folder to use: 'full' (self-contained, default), 'modular' (requires combining), 'original' (old short versions)",
+        choices=["modular"],
+        default="modular",
+        help="Mode folder (modular only)",
     )
     parser.add_argument(
         "--reference-json",
@@ -109,33 +109,22 @@ def main(argv: Optional[Sequence[str]] = None) -> str:
     guide_text = None
     
     if args.mode:
-        if args.mode_folder == "modular":
-            # Modular approach - combine mode + base files
-            mode_file = workspace_root / "generation_modes_modular" / f"{args.mode}.md"
-            base_file = workspace_root / "generation_modes_modular" / "_base_strategy3.md"
-            
-            if not mode_file.exists() or not base_file.exists():
-                raise FileNotFoundError(
-                    f"Modular mode files not found. Ensure both {mode_file} and {base_file} exist."
-                )
-            
-            mode_content = mode_file.read_text()
-            base_content = base_file.read_text()
-            guide_text = f"{mode_content}\n\n---\n\n{base_content}"
-            
-            print(f"Using modular mode: {args.mode}")
-            print(f"  Mode file: {mode_file}")
-            print(f"  Base file: {base_file}")
-            
-        elif args.mode_folder == "full":
-            # Full inclusion - self-contained files
-            args.guide = workspace_root / "generation_modes_full" / f"{args.mode}.md"
-            
-            if not args.guide.exists():
-                raise FileNotFoundError(f"Full mode file not found: {args.guide}")
-            
-            print(f"Using full mode: {args.mode}")
-            print(f"Guide: {args.guide}")
+        # Modular approach - combine mode + base files
+        mode_file = workspace_root / "generation_modes_modular" / f"{args.mode}.md"
+        base_file = workspace_root / "generation_modes_modular" / "_base_strategy3.md"
+        
+        if not mode_file.exists() or not base_file.exists():
+            raise FileNotFoundError(
+                f"Modular mode files not found. Ensure both {mode_file} and {base_file} exist."
+            )
+        
+        mode_content = mode_file.read_text()
+        base_content = base_file.read_text()
+        guide_text = f"{mode_content}\n\n---\n\n{base_content}"
+        
+        print(f"Using mode: {args.mode}")
+        print(f"  Mode file: {mode_file}")
+        print(f"  Base file: {base_file}")
             
     elif args.guide is None:
         # Use default guide if neither --mode nor --guide specified

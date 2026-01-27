@@ -1,10 +1,8 @@
 #!/bin/bash
-# Updated generation script supporting both full and modular approaches
+# iTELL content generation with modular modes
 #
-# Usage:
-#   ./generate_mode.sh <mode> <input.pdf> [approach] [output.json]
+# Usage: ./generate_mode.sh <mode> <input.pdf> [output.json]
 #
-# Approaches: full (default), modular, original
 # Modes: faithful, simplified, condensed, hybrid, interaction-heavy
 
 set -e
@@ -20,31 +18,24 @@ NC='\033[0m'
 if [ "$#" -lt 2 ]; then
     echo -e "${RED}Error: Missing required arguments${NC}"
     echo ""
-    echo "Usage: $0 <mode> <input.pdf> [approach] [output.json]"
+    echo "Usage: $0 <mode> <input.pdf> [output.json]"
     echo ""
     echo "Modes:"
-    echo "  faithful          - Exact preservation (900 lines)"
-    echo "  simplified        - Grade 9-10 reading level (920 lines)"
-    echo "  condensed         - Core concepts only (920 lines)"
-    echo "  hybrid            - Balanced optimization (940 lines) ⭐"
-    echo "  interaction-heavy - Maximum engagement (980 lines)"
-    echo ""
-    echo "Approaches:"
-    echo "  full     - Self-contained files (default, recommended)"
-    echo "  modular  - Combines mode + base files"
-    echo "  original - Old short versions (for comparison)"
+    echo "  faithful          - Exact preservation (400-500w chunks)"
+    echo "  simplified        - Grade 9-10 reading level (200-400w chunks)"
+    echo "  condensed         - Core concepts only, 60% length (150-300w chunks)"
+    echo "  hybrid            - Balanced optimization, 80% length (250-400w chunks) ⭐"
+    echo "  interaction-heavy - Maximum engagement (100-250w chunks)"
     echo ""
     echo "Examples:"
     echo "  $0 hybrid textbook.pdf"
-    echo "  $0 hybrid textbook.pdf full"
-    echo "  $0 condensed chapter1.pdf modular results/output.json"
+    echo "  $0 condensed chapter1.pdf results/output.json"
     exit 1
 fi
 
 MODE=$1
 INPUT_PDF=$2
-APPROACH=${3:-"full"}
-OUTPUT_JSON=${4:-""}
+OUTPUT_JSON=${3:-""}
 
 # Validate mode
 case "$MODE" in
@@ -53,17 +44,6 @@ case "$MODE" in
     *)
         echo -e "${RED}Error: Invalid mode '$MODE'${NC}"
         echo "Available modes: faithful, simplified, condensed, hybrid, interaction-heavy"
-        exit 1
-        ;;
-esac
-
-# Validate approach
-case "$APPROACH" in
-    full|modular|original)
-        ;;
-    *)
-        echo -e "${RED}Error: Invalid approach '$APPROACH'${NC}"
-        echo "Available approaches: full, modular, original"
         exit 1
         ;;
 esac
@@ -77,7 +57,7 @@ fi
 # Generate default output name if not provided
 if [ -z "$OUTPUT_JSON" ]; then
     BASENAME=$(basename "$INPUT_PDF" .pdf)
-    OUTPUT_JSON="results/${BASENAME}_${MODE}_${APPROACH}.json"
+    OUTPUT_JSON="results/${BASENAME}_${MODE}.json"
 fi
 
 # Create output directory
@@ -86,33 +66,14 @@ mkdir -p "$OUTPUT_DIR"
 
 echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}iTELL Generation - $MODE mode${NC}"
-echo -e "${GREEN}Approach: $APPROACH${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
-echo "Input:    $INPUT_PDF"
-echo "Output:   $OUTPUT_JSON"
-echo "Mode:     $MODE"
-echo "Approach: $APPROACH"
+echo "Input:  $INPUT_PDF"
+echo "Output: $OUTPUT_JSON"
+echo "Mode:   $MODE"
 echo ""
-
-# Show approach details
-case "$APPROACH" in
-    full)
-        echo -e "${BLUE}Using full inclusion (self-contained file)${NC}"
-        echo "  File: generation_modes_full/${MODE}.md (~900-1000 lines)"
-        ;;
-    modular)
-        echo -e "${BLUE}Using modular approach (mode + base)${NC}"
-        echo "  Mode: generation_modes_modular/${MODE}.md"
-        echo "  Base: generation_modes_modular/_base_strategy3.md"
-        echo "  Combined: ~900-1000 lines"
-        ;;
-    original)
-        echo -e "${YELLOW}Using original short mode files (WARNING: Missing Strategy 3 examples!)${NC}"
-        echo "  File: generation_modes/${MODE}.md (~200-300 lines)"
-        ;;
-esac
-
+echo -e "${BLUE}Mode file: generation_modes_modular/${MODE}.md${NC}"
+echo -e "${BLUE}Base:      generation_modes_modular/_base_strategy3.md${NC}"
 echo ""
 echo -e "${YELLOW}Starting generation...${NC}"
 echo ""
@@ -121,7 +82,7 @@ echo ""
 python -m src.pipeline.main \
     --pdf "$INPUT_PDF" \
     --mode "$MODE" \
-    --mode-folder "$APPROACH" \
+    --mode-folder "modular" \
     --output "$OUTPUT_JSON"
 
 # Check success
