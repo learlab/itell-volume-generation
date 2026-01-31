@@ -24,6 +24,30 @@
 4. **PRESERVE SENTENCE STRUCTURE**: Maintain original sentence length and complexity
 5. **CONSERVATIVE CHUNKING**: Create fewer, larger chunks (400-500 words) to maintain context
 
+### CRI Requirements (Questions, Responses, KeyPhrases)
+
+1. **VARIED QUESTION TYPES** (rotate through these, matching original text's sophistication):
+   - **Conceptual**: "What is [concept]?"
+   - **Application**: "How would you apply [concept] to [scenario]?"
+   - **Analysis**: "What is the relationship between [concept A] and [concept B]?"
+   - **Synthesis**: "How does [concept] relate to [broader topic]?"
+   - **Evaluation**: "Why is [concept] significant in understanding [topic]?"
+
+2. **PROGRESSIVE DIFFICULTY**:
+   - Early chunks: comprehension and recall
+   - Middle chunks: application and analysis
+   - Later chunks: synthesis and evaluation
+
+3. **COMPREHENSIVE KEYPHRASES**:
+   - 3-5 essential terms per chunk
+   - Use exact terminology from original text
+   - Focus on terms critical to understanding
+
+4. **DETAILED CONSTRUCTED RESPONSES**:
+   - 2-3 sentences to match original content's depth
+   - Use sophisticated language from source text
+   - Provide comprehensive answers
+
 ### Faithful Mode Validation Rules
 
 - [ ] **Rule FM1**: All text matches source document exactly (no paraphrasing)
@@ -40,7 +64,11 @@
    - Aim for 2-4 larger chunks per page (400-500 words each)
 2. **Extract Faithful**: Copy all text exactly from source without any modifications
 3. **Chunk Conservatively**: Create fewer, larger chunks (400-500 words) to maintain context
-4. **Generate CRI**: Create Questions, ConstructedResponses, and KeyPhrases for each page.chunk
+4. **Generate CRI**: 
+   - Create varied Questions matching original text's sophistication (rotate through conceptual, application, analysis, synthesis, evaluation)
+   - Vary cognitive levels throughout the page (progressive difficulty)
+   - Write detailed 2-3 sentence ConstructedResponses using source terminology
+   - Select 3-5 essential KeyPhrases from original text
 5. **Insert Images**: Place images with proper Markdown syntax using metadata
 6. **Validate**: Check all rules (V1-V6, P1-P9, C1-C18, CS1-CS5, M1-M11, I1-I6, Q1-Q6, FM1-FM5)
 7. **Output**: Submit only the complete, valid JSON

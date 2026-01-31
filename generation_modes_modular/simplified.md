@@ -42,6 +42,30 @@
 
 6. **MAINTAIN CONTENT COMPLETENESS**: Keep all key concepts and information, just make them more accessible
 
+### CRI Requirements (Questions, Responses, KeyPhrases)
+
+1. **VARIED QUESTION TYPES** (rotate through these, using simplified language):
+   - **Conceptual**: "What is [concept]?" or "What does [concept] mean?"
+   - **Application**: "How would you use [concept] in [simple scenario]?"
+   - **Analysis**: "How are [concept A] and [concept B] connected?"
+   - **Synthesis**: "How does [concept] relate to what you learned before?"
+   - **Evaluation**: "Why does [concept] matter?"
+
+2. **PROGRESSIVE DIFFICULTY**:
+   - Early chunks: basic recall questions ("What is...?", "Who...?")
+   - Middle chunks: application and simple analysis ("How...?", "Why...?")
+   - Later chunks: connections and evaluation ("How does...relate?", "Why is...important?")
+
+3. **ACCESSIBLE KEYPHRASES**:
+   - 3-5 key terms with simplified definitions if needed
+   - Focus on essential vocabulary students must know
+   - Use everyday language where possible
+
+4. **CLEAR CONSTRUCTED RESPONSES**:
+   - Keep to 1-2 simple sentences
+   - Use vocabulary from the simplified text
+   - Model how students should answer
+
 ### Simplified Mode Validation Rules
 
 - [ ] **Rule SM1**: Flesch-Kincaid Grade Level is 9-10 (readability score 60-70)
@@ -51,13 +75,11 @@
 - [ ] **Rule SM5**: All key concepts from original are preserved (content complete)
 - [ ] **Rule SM6**: Chunk word count is 200-400 words
 
-### Simplification Examples
+### Example
 
-**Before (Complex):**
-"The empirical method of inquiry, characterized by systematic observation and experimentation, distinguishes psychology from pseudoscientific approaches that rely on anecdotal evidence and unfalsifiable claims."
+**Original (complex):** "The empirical method of inquiry, characterized by systematic observation and experimentation, distinguishes psychology from pseudoscientific approaches that rely on anecdotal evidence and unfalsifiable claims."
 
-**After (Simplified):**
-"Psychology uses **scientific methods** (*careful observation and testing*) to study behavior. This makes psychology different from fake science. Fake science relies on stories instead of tests. It also makes claims that cannot be proven wrong."
+**Simplified:** "Psychology uses **scientific methods** (*careful observation and testing*) to study behavior. This makes psychology different from fake science, which relies on stories instead of tests and makes claims that cannot be proven wrong."
 
 
 ## Generation Workflow (Simplified Mode)
@@ -73,7 +95,11 @@
    - Add definitions for necessary technical terms
    - Target Grade 9-10 reading level
 4. **Chunk**: Divide simplified content into 200-400 word chunks
-5. **Generate CRI**: Create Questions, ConstructedResponses, and KeyPhrases using simplified language
+5. **Generate CRI**: 
+   - Create varied Questions using simplified language (rotate through conceptual, application, analysis, synthesis, evaluation)
+   - Vary cognitive levels throughout the page (progressive difficulty)
+   - Write clear 1-2 sentence ConstructedResponses using simplified vocabulary
+   - Select 3-5 essential KeyPhrases with accessible language
 6. **Insert Images**: Place images with proper Markdown syntax
 7. **Validate**: Check all rules (V1-V6, P1-P9, C1-C18, CS1-CS5, M1-M11, I1-I6, Q1-Q6, SM1-SM6)
 8. **Output**: Submit only the complete, valid JSON

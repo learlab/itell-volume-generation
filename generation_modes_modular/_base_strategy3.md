@@ -44,7 +44,7 @@ Volume
 - [ ] **Rule P4**: iTELL page titles use Title Case (e.g., "The Science of Psychology")
 - [ ] **Rule P5**: **iTELL pages are divided into multiple chunks by heading/topic - NOT one large chunk**
 - [ ] **Rule P6**: **Create FEWER pages, not more - group related content into single pages with multiple chunks**
-- [ ] **Rule P7**: **For single-page documents or small sections, use exactly 1 page**
+- [ ] **Rule P7**: **Create as FEW iTELL pages as possible - one iTELL page should comprise MANY PDF pages** - Group extensive content together; only split for major topic boundaries
 - [ ] **Rule P8**: **For textbooks, only create a new page for major chapter boundaries or completely distinct topics**
 - [ ] **Rule P9**: **When in doubt, add more chunks to an existing page rather than creating a new page**
 

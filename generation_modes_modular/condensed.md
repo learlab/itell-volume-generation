@@ -44,6 +44,30 @@
 
 5. **AGGRESSIVE CHUNKING**: Create more, smaller chunks (150-300 words) for faster reading
 
+### CRI Requirements (Questions, Responses, KeyPhrases)
+
+1. **VARIED QUESTION TYPES** (rotate through these):
+   - **Conceptual**: "What is the main idea of [concept]?"
+   - **Application**: "How would you apply [concept] to [scenario]?"
+   - **Analysis**: "What is the relationship between [concept A] and [concept B]?"
+   - **Synthesis**: "How does [concept] connect to [related topic]?"
+   - **Evaluation**: "Why is [concept] important for understanding [topic]?"
+
+2. **PROGRESSIVE DIFFICULTY**:
+   - Early chunks: simpler recall and comprehension questions
+   - Middle chunks: application and analysis
+   - Later chunks: synthesis and evaluation
+
+3. **FOCUSED KEYPHRASES**:
+   - 3-5 most essential terms per chunk
+   - Focus on core concepts that support learning objectives
+   - Each chunk builds student's vocabulary incrementally
+
+4. **CONCISE CONSTRUCTED RESPONSES**:
+   - Keep to 1-2 sentences (condensed mode = concise answers)
+   - Model clear, focused answers
+   - Guide students on expected response length
+
 ### Condensed Mode Validation Rules
 
 - [ ] **Rule CM1**: Total word count is 55-65% of original (target 60%)
@@ -54,13 +78,11 @@
 - [ ] **Rule CM6**: Chunk word count is 150-300 words (smaller chunks)
 - [ ] **Rule CM7**: More chunks per page (4-8 typical) for quicker learning segments
 
-### Condensation Examples
+### Example
 
-**Before (Original - 150 words):**
-"Many people believe that women tend to talk more than men—with some even suggesting that this difference has a biological basis. One widely cited estimate is that women speak 20,000 words per day on average and men speak only 7,000. This claim seems plausible, but is it true? A group of psychologists led by Matthias Mehl decided to find out. They checked to see if anyone had actually tried to count the daily number of words spoken by women and men. No one had. So these researchers conducted a study in which female and male college students (369 in all) wore audio recorders while they went about their lives. The result? The women spoke an average of 16,215 words per day and the men spoke an average of 15,669—an extremely small difference that could easily be explained by chance."
+**Original (150w):** "Many people believe that women tend to talk more than men—with some even suggesting that this difference has a biological basis. One widely cited estimate is that women speak 20,000 words per day on average and men speak only 7,000. This claim seems plausible, but is it true? A group of psychologists led by Matthias Mehl decided to find out. They checked to see if anyone had actually tried to count the daily number of words spoken by women and men. No one had. So these researchers conducted a study in which female and male college students (369 in all) wore audio recorders while they went about their lives. The result? The women spoke an average of 16,215 words per day and the men spoke an average of 15,669—an extremely small difference that could easily be explained by chance."
 
-**After (Condensed - 90 words):**
-"A common belief is that women talk more than men, with estimates suggesting women speak 20,000 words daily versus men's 7,000. Psychologist Matthias Mehl tested this claim. His team had 369 college students wear audio recorders to count actual daily words spoken. The results showed women spoke an average of 16,215 words per day and men spoke 15,669 words—a negligible difference. This study demonstrates how **scientific research** can disprove widely held stereotypes through empirical evidence."
+**Condensed (90w - 60%):** "A common belief is that women talk more than men, with estimates suggesting women speak 20,000 words daily versus men's 7,000. Psychologist Matthias Mehl tested this. His team had 369 students wear audio recorders. Results: women spoke 16,215 words per day, men spoke 15,669—a negligible difference. This demonstrates how **scientific research** can disprove stereotypes through empirical evidence."
 
 
 ## Generation Workflow (Condensed Mode)
@@ -75,7 +97,11 @@
    - Keep: core concepts, key examples (1-2 per concept), learning objectives, summaries
    - Target: 60% of original length
 4. **Chunk Aggressively**: Divide condensed content into smaller 150-300 word chunks (more chunks per page)
-5. **Generate CRI**: Create Questions, ConstructedResponses, and KeyPhrases for focused learning
+5. **Generate Enhanced CRI**: 
+   - Create varied, high-quality Questions (rotate through conceptual, application, analysis, synthesis, evaluation)
+   - Vary cognitive levels throughout the page (progressive difficulty)
+   - Write concise 1-2 sentence ConstructedResponses
+   - Select 3-5 most essential KeyPhrases per chunk
 6. **Insert Images**: Place most important images with proper Markdown syntax
 7. **Validate**: Check all rules (V1-V6, P1-P9, C1-C18, CS1-CS5, M1-M11, I1-I6, Q1-Q6, CM1-CM7)
 8. **Output**: Submit only the complete, valid JSON

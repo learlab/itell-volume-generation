@@ -81,35 +81,16 @@ The goal is to create MORE opportunities for students to:
 - [ ] **Rule IH6**: KeyPhrases focus on 3-4 most essential terms
 - [ ] **Rule IH7**: Each chunk focuses on exactly ONE concept or idea
 
-### Interaction-Heavy Examples
+### Example
 
-**Standard Mode (1 chunk - 350 words):**
-```
-Chunk 1: "The Scientific Method in Psychology"
-[Contains: definition of scientific method, steps in the method, example research, and importance]
-Question: "What is the scientific method and why is it important in psychology?"
-```
+**Standard (1 chunk, 350w):** One chunk covering scientific method definition, steps, research example, and importance. One question covering all concepts.
 
-**Interaction-Heavy Mode (3 chunks from same content):**
-```
-Chunk 1: "Defining the Scientific Method" (120 words)
-[Contains: definition and basic principles]
-Question: "What makes the scientific method different from other ways of gaining knowledge?"
+**Interaction-Heavy (3 chunks from same content):**
+- Chunk 1 (120w): Definition and principles → "What makes the scientific method different from other ways of gaining knowledge?"
+- Chunk 2 (110w): Research steps → "How do psychologists move from observation to testing their ideas?"
+- Chunk 3 (120w): Importance and examples → "Why can't psychologists rely only on intuition and common sense?"
 
-Chunk 2: "Steps in Psychological Research" (110 words)
-[Contains: observation, hypothesis, testing, analysis]
-Question: "How do psychologists move from observation to testing their ideas?"
-
-Chunk 3: "Why Psychology Needs Science" (120 words)
-[Contains: importance, examples of misconceptions corrected by research]
-Question: "Why can't psychologists rely only on intuition and common sense?"
-```
-
-**Notice:**
-- Same content, divided into 3 smaller, focused chunks
-- More questions = more engagement points
-- Each question targets one specific aspect
-- Students check understanding more frequently
+Result: Same content, 3 engagement points instead of 1, each question targets specific aspect.
 
 
 ## Generation Workflow (Interaction-Heavy Mode)
