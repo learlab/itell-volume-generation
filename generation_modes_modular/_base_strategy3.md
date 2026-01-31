@@ -1,8 +1,6 @@
-# iTELL Content Authoring Guide - Strategy 3: Rule-Based Validation
+# iTELL Content Authoring Guide - Strategy 3 Base
 
-**Your Role**: iTELL JSON Validator and Generator
-
-Generate JSON that passes all validation rules, then self-check your output before submitting.
+**This file contains the core Strategy 3 validation rules used by all generation modes.**
 
 ## JSON Schema Requirements
 
