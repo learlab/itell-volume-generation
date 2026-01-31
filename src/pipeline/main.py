@@ -47,22 +47,8 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser.add_argument(
         "--guide",
         type=Path,
-        default=None,
+        default=DEFAULT_GUIDE_PATH,
         help="Instruction guide file (.docx/.md/.txt) that the LLM should follow.",
-    )
-    parser.add_argument(
-        "--mode",
-        type=str,
-        choices=["faithful", "simplified", "condensed", "hybrid", "interaction-heavy"],
-        default=None,
-        help="Generation mode (uses guide from generation_modes folder). Overrides --guide if specified.",
-    )
-    parser.add_argument(
-        "--mode-folder",
-        type=str,
-        choices=["modular"],
-        default="modular",
-        help="Mode folder (modular only)",
     )
     parser.add_argument(
         "--reference-json",
@@ -104,38 +90,8 @@ def main(argv: Optional[Sequence[str]] = None) -> str:
     load_dotenv()
     args = parse_args(argv)
 
-    # Handle --mode flag
-    workspace_root = Path(__file__).resolve().parents[2]
-    guide_text = None
-    
-    if args.mode:
-        # Modular approach - combine mode + base files
-        mode_file = workspace_root / "generation_modes_modular" / f"{args.mode}.md"
-        base_file = workspace_root / "generation_modes_modular" / "_base_strategy3.md"
-        
-        if not mode_file.exists() or not base_file.exists():
-            raise FileNotFoundError(
-                f"Modular mode files not found. Ensure both {mode_file} and {base_file} exist."
-            )
-        
-        mode_content = mode_file.read_text()
-        base_content = base_file.read_text()
-        guide_text = f"{mode_content}\n\n---\n\n{base_content}"
-        
-        print(f"Using mode: {args.mode}")
-        print(f"  Mode file: {mode_file}")
-        print(f"  Base file: {base_file}")
-            
-    elif args.guide is None:
-        # Use default guide if neither --mode nor --guide specified
-        args.guide = DEFAULT_GUIDE_PATH
-
     reference_json = load_reference_json(args.reference_json)
-    
-    # Load guide text if not already loaded (modular mode loads it directly)
-    if guide_text is None:
-        guide_text = load_guide_instructions(args.guide)
-    
+    guide_text = load_guide_instructions(args.guide)
     example_json = select_reference_example(reference_json, args.example_title)
 
     image_metadata_text = None
