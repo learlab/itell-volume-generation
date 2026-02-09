@@ -80,6 +80,8 @@ The goal is to create MORE opportunities for students to:
 - [ ] **Rule IH5**: Questions vary in cognitive level (not all recall)
 - [ ] **Rule IH6**: KeyPhrases focus on 3-4 most essential terms
 - [ ] **Rule IH7**: Each chunk focuses on exactly ONE concept or idea
+- [ ] **Rule IH8**: **CREATE MORE PAGES than other modes** - Each page ends with comprehension activities, so more pages = more assessment opportunities
+- [ ] **Rule IH9**: Break content into self-contained learning units with natural stopping points
 
 ### Example
 
@@ -96,9 +98,11 @@ Result: Same content, 3 engagement points instead of 1, each question targets sp
 ## Generation Workflow (Interaction-Heavy Mode)
 
 1. **Plan Page Structure**: 
-   - For single-page documents: Use exactly 1 page with 6-12 chunks
-   - For textbooks: Group related chapters/sections into fewer pages
+   - Create MORE pages than other modes (because each page ends with comprehension activities)
+   - For single-page documents: Create 2-3 pages with 6-12 chunks each
+   - For textbooks: Create separate pages for each major section/topic (not just chapters)
    - Aim for 6-12 very small chunks per page (100-250 words each)
+   - Each page should be a self-contained learning unit with natural stopping points
 2. **Extract**: Get all content from source
 3. **Micro-Chunk**: 
    - Divide content at every natural comprehension checkpoint
@@ -111,7 +115,7 @@ Result: Same content, 3 engagement points instead of 1, each question targets sp
    - Write concise 1-2 sentence ConstructedResponses
    - Select 3-4 most essential KeyPhrases per chunk
 5. **Insert Images**: Place images with proper Markdown syntax
-6. **Validate**: Check all rules (V1-V6, P1-P9, C1-C19, CS1-CS5, M1-M11, I1-I6, Q1-Q7, IH1-IH7)
+6. **Validate**: Check all rules (V1-V6, P1-P8, C1-C18, CS1-CS5, M1-M12, I1-I6, Q1-Q6, IH1-IH9)
 7. **Output**: Submit only the complete, valid JSON
 
 ## Final Output
