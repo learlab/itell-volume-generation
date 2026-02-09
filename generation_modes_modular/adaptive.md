@@ -75,7 +75,7 @@ Create questions and responses that best serve the learning goals:
 4. **Chunk Strategically**: Divide content using your chosen strategy
 5. **Generate CRI**: Create questions/responses that serve learning goals
 6. **Insert Images**: Place images where they enhance understanding
-7. **Validate**: Check all rules (V1-V6, P1-P9, C1-C18, CS1-CS5, M1-M11, I1-I6, Q1-Q6, AM1-AM6)
+7. **Validate**: Check all rules (V1-V6, P1-P8, C1-C18, CS1-CS5, M1-M12, I1-I6, Q1-Q6, AM1-AM6)
 8. **Output**: Submit only the complete, valid JSON
 
 ## Final Output

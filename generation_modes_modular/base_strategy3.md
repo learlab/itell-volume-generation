@@ -13,7 +13,6 @@ Volume
 └── Pages (array, required)
     └── Page
         ├── Title (string, required, Title Case)
-        ├── ReferenceSummary (string or null, required)
         └── Content (array, required)
             └── Chunk
                 ├── __component (string, required, exactly "page.chunk" or "page.plain-chunk")
@@ -39,9 +38,8 @@ Volume
 **Note: "Page" in iTELL = logical organizational unit (chapter section), NOT physical PDF page**
 
 - [ ] **Rule P1**: Every iTELL page has Title field (string, Title Case)
-- [ ] **Rule P2**: Every iTELL page has ReferenceSummary field (string or null)
-- [ ] **Rule P3**: Every iTELL page has Content field (array with at least 2 chunks, typically 3-6)
-- [ ] **Rule P4**: iTELL page titles use Title Case (e.g., "The Science of Psychology")
+- [ ] **Rule P2**: Every iTELL page has Content field (array with at least 2 chunks, typically 3-6)
+- [ ] **Rule P3**: iTELL page titles use Title Case (e.g., "The Science of Psychology")
 - [ ] **Rule P5**: **iTELL pages are divided into multiple chunks by heading/topic - NOT one large chunk**
 - [ ] **Rule P6**: **Create FEWER pages, not more - group related content into single pages with multiple chunks**
 - [ ] **Rule P7**: **Create as FEW iTELL pages as possible - one iTELL page should comprise MANY PDF pages** - Group extensive content together; only split for major topic boundaries
@@ -605,7 +603,6 @@ Apply these rules in order when converting source text to Markdown:
 ```json
 {
   "Title": "Cell Biology",
-  "ReferenceSummary": null,
   "Content": [
     {
       "__component": "page.chunk",
@@ -619,13 +616,12 @@ Apply these rules in order when converting source text to Markdown:
 }
 ```
 
-**Violated Rules:** CS1, CS2, CS3, P3, P5
+**Violated Rules:** CS1, CS2, CS3, P2, P4
 **VALID:**
 
 ```json
 {
   "Title": "Cell Biology",
-  "ReferenceSummary": null,
   "Content": [
     {
       "__component": "page.plain-chunk",
@@ -683,7 +679,6 @@ Apply these rules in order when converting source text to Markdown:
   "Pages": [
     {
       "Title": "The Science of Psychology",
-      "ReferenceSummary": null,
       "Content": [
         {
           "__component": "page.plain-chunk",
@@ -694,7 +689,6 @@ Apply these rules in order when converting source text to Markdown:
     },
     {
       "Title": "References",
-      "ReferenceSummary": null,
       "Content": [
         {
           "__component": "page.plain-chunk",
@@ -707,7 +701,7 @@ Apply these rules in order when converting source text to Markdown:
 }
 ```
 
-**Violated Rules:** P6, P7, P9
+**Violated Rules:** P5, P6, P8
 **VALID - Single page with multiple chunks:**
 
 ```json
@@ -715,7 +709,6 @@ Apply these rules in order when converting source text to Markdown:
   "Pages": [
     {
       "Title": "The Science of Psychology",
-      "ReferenceSummary": null,
       "Content": [
         {
           "__component": "page.plain-chunk",
@@ -829,7 +822,7 @@ Before outputting JSON, verify each category:
    - For textbooks: Group related chapters/sections into fewer pages (only create new pages for major topic boundaries)
    - Aim for 3-6 chunks per page
 2. **Generate**: Create JSON following all rules above, prioritizing fewer pages with more chunks
-3. **Validate**: Check against all validation rules (V1-V6, P1-P9, C1-C18, CS1-CS5, M1-M12, I1-I6, Q1-Q6)
+3. **Validate**: Check against all validation rules (V1-V6, P1-P8, C1-C18, CS1-CS5, M1-M12, I1-I6, Q1-Q6)
 4. **Fix**: Correct any violated rules, especially:
    - Consolidate pages if you created too many (combine related content into single pages)
    - Ensure each page has 3-6 chunks

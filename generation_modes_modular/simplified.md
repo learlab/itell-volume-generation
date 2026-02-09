@@ -101,7 +101,7 @@
    - Write clear 1-2 sentence ConstructedResponses using simplified vocabulary
    - Select 3-5 essential KeyPhrases with accessible language
 6. **Insert Images**: Place images with proper Markdown syntax
-7. **Validate**: Check all rules (V1-V6, P1-P9, C1-C18, CS1-CS5, M1-M11, I1-I6, Q1-Q6, SM1-SM6)
+7. **Validate**: Check all rules (V1-V6, P1-P8, C1-C18, CS1-CS5, M1-M12, I1-I6, Q1-Q6, SM1-SM6)
 8. **Output**: Submit only the complete, valid JSON
 
 ## Final Output

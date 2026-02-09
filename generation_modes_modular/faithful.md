@@ -70,7 +70,7 @@
    - Write detailed 2-3 sentence ConstructedResponses using source terminology
    - Select 3-5 essential KeyPhrases from original text
 5. **Insert Images**: Place images with proper Markdown syntax using metadata
-6. **Validate**: Check all rules (V1-V6, P1-P9, C1-C18, CS1-CS5, M1-M11, I1-I6, Q1-Q6, FM1-FM5)
+6. **Validate**: Check all rules (V1-V6, P1-P8, C1-C18, CS1-CS5, M1-M12, I1-I6, Q1-Q6, FM1-FM5)
 7. **Output**: Submit only the complete, valid JSON
 
 ## Final Output
