@@ -1,0 +1,62 @@
+{
+  "_source": "Derived from TAACO 2.0 connective lexicon (Crossley, Kyle & McNamara, 2016; Crossley et al., 2019). Crossley, S. A., Kyle, K., & McNamara, D. S. (2016). The tool for the automatic analysis of text cohesion (TAACO): Automatic assessment of local, global, and text cohesion. Behavior Research Methods, 48(4), 1227-1237.",
+
+  "additive": [
+    "additionally", "also", "and", "as well", "as well as", "besides",
+    "beyond that", "coupled with", "equally important", "further",
+    "furthermore", "in addition", "in addition to", "in the same way",
+    "likewise", "moreover", "not only", "not only that", "on top of that",
+    "plus", "similarly", "together with", "too", "what is more",
+    "what's more", "along with", "by the same token", "correspondingly",
+    "equally", "in like manner", "in like fashion", "in similar fashion",
+    "indeed", "more than that", "nor", "over and above that"
+  ],
+
+  "causal": [
+    "accordingly", "as a consequence", "as a result", "as a result of",
+    "because", "because of", "consequently", "due to", "for", "for that reason",
+    "for this reason", "given that", "hence", "in consequence",
+    "in light of", "in response to", "it follows that", "on account of",
+    "owing to", "since", "so", "so that", "stemming from", "that is why",
+    "therefore", "thereupon", "thus", "under these circumstances",
+    "with this in mind", "with the result that", "which is why"
+  ],
+
+  "adversative": [
+    "admittedly", "albeit", "although", "and yet", "at the same time",
+    "but", "by contrast", "conversely", "despite", "despite the fact that",
+    "differently", "even if", "even so", "even though", "except",
+    "except that", "for all that", "however", "in any case",
+    "in contrast", "in contrast to", "in contrast with", "in spite of",
+    "instead", "instead of", "meanwhile", "nevertheless", "nonetheless",
+    "notwithstanding", "on the contrary", "on the other hand",
+    "otherwise", "rather", "regardless", "still", "that said",
+    "though", "unlike", "whereas", "while", "with that said",
+    "without", "yet"
+  ],
+
+  "temporal": [
+    "after", "after that", "afterward", "afterwards", "as soon as",
+    "at first", "at last", "at length", "at that point", "at the same time",
+    "before", "before long", "by then", "by this time", "during",
+    "earlier", "eventually", "finally", "first", "following",
+    "formerly", "from that point on", "immediately", "in the beginning",
+    "in the end", "in the meantime", "initially", "later", "meanwhile",
+    "next", "now", "once", "previously", "prior to", "second",
+    "shortly", "simultaneously", "since", "so far", "soon", "subsequently",
+    "then", "thereafter", "third", "to begin with", "to start with",
+    "ultimately", "until", "when", "whenever", "while"
+  ],
+
+  "clarifying": [
+    "actually", "by definition", "certainly", "clearly", "especially",
+    "for example", "for instance", "i.e.", "e.g.", "in brief",
+    "in detail", "in fact", "in other words", "in particular",
+    "in short", "in sum", "in summary", "in that case", "namely",
+    "notably", "obviously", "of course", "otherwise stated",
+    "put another way", "put differently", "put simply",
+    "specifically", "that is", "that is to say", "to be precise",
+    "to be specific", "to clarify", "to illustrate", "to put it another way",
+    "to summarize", "truly", "undoubtedly", "without doubt"
+  ]
+}

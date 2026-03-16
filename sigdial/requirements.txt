@@ -1,0 +1,25 @@
+# K-12 AI Infrastructure — Evaluation Pipeline Dependencies
+# Install: pip install -r requirements.txt
+
+# ── Core ────────────────────────────────────────────────────────────────────
+pandas>=2.0
+scipy>=1.11
+
+# ── Readability (features/readability.py) ───────────────────────────────────
+textstat>=0.7
+
+# ── NLP — syntactic/lexical complexity + referential cohesion ───────────────
+# After install: python -m spacy download en_core_web_sm
+spacy>=3.7
+
+# ── Semantic cohesion (features/cohesion.py) ────────────────────────────────
+# Uses all-MiniLM-L6-v2 (auto-downloaded on first run)
+sentence-transformers>=2.6
+numpy>=1.24
+
+# ── Statistical analysis (analysis/stats.py) ────────────────────────────────
+statsmodels>=0.14      # Tukey HSD, mixed models
+
+# ── Inter-rater reliability (optional) ──────────────────────────────────────
+krippendorff>=0.6      # Krippendorff's alpha
+pingouin>=0.5          # ICC2 (intraclass correlation)
