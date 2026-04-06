@@ -48,31 +48,29 @@ Volume
 
 ## Field Rules
 
-### Volume-Level Rules
+### Volume-Level
 
 - Title must describe the overall course or instructional unit represented by the outline.
 - Description must be 1-2 complete sentences.
-- VolumeSummary must be 4-8 complete sentences.
-- VolumeSummary must cover the major topics across all generated pages.
+- VolumeSummary must be 4-8 complete sentences covering the major topics across all pages. It must not contain bullet points or lists.
 - Pages must contain at least 1 page.
 
-### Page-Level Rules
+### Page-Level
 
 - Every page must have Title, Order, ReferenceSummary, and Content.
 - Page titles must use Title Case.
 - Each page should represent one major outline section, module, week, unit, or a clearly related grouping of subtopics.
 - Preserve the order of the outline when assigning page order.
 - Each page should contain multiple chunks, typically 3-6.
-- `ReferenceSummary` must be 1-2 complete sentences in plain prose summarizing what the page teaches and how it maps to the outline section.
-- `ReferenceSummary` must not be a bullet list, must not simply repeat the page title, and must not list chunk headers verbatim.
+- `ReferenceSummary` must be 1-2 complete sentences in plain prose summarizing what the page teaches and how it maps to the outline section. It must not be a bullet list, repeat the page title verbatim, or list chunk headers.
 
-### Chunk-Level Rules
+### Chunk-Level
 
 #### Universal Chunk Rules
 
 - Every chunk must have `__component`, `Header`, and `Text`.
 - `__component` must be exactly `page.chunk` or `page.plain-chunk`.
-- Every chunk header must be in Title Case.
+- Every chunk header must be in Title Case and must accurately describe the chunk's content.
 - Text must be valid Markdown.
 - Each chunk should focus on one concept, subtopic, learning objective, or instructional purpose.
 - Chunk text should usually be 150-500 words unless a shorter chunk is clearly pedagogically better.
@@ -82,7 +80,7 @@ Volume
 - Must include Question, Answer, and KeyPhrase.
 - Question must be open-ended, not yes/no.
 - Answer must be 1-3 sentences and supported by the chunk text.
-- KeyPhrase must contain 3-5 comma-separated noun phrases or terms that appear in the chunk text.
+- KeyPhrase must contain 3-5 comma-separated noun phrases or terms that appear in the chunk text. No duplicates within a chunk.
 
 #### `page.plain-chunk` Rules
 
@@ -95,8 +93,10 @@ Volume
 - Do not insert line breaks inside normal paragraphs.
 - Use `**bold**` for important concepts when helpful.
 - Use `*italics*` for titles, special terms, or definitions when appropriate.
-- Preserve list indentation.
-- Use blockquote format for learning objectives when appropriate:
+- Preserve list indentation (2 spaces per nested level).
+- Keep ampersands as `&` (no HTML encoding).
+- Use `$...$` for inline math and `$$...$$` for block equations (on separate lines with blank lines).
+- Use blockquote format for learning objectives and callouts when appropriate:
 
 ```markdown
 > **Learning Objectives**
@@ -112,94 +112,78 @@ If the PDF contains useful images and image metadata is supplied:
 - Use standard Markdown image syntax: `![brief description](image_page_X_Y)`
 - Match image IDs exactly.
 - Only include images when they genuinely support understanding.
+- Place images between paragraphs with blank lines before and after, not mid-sentence.
+- Do not reference images in running text (e.g., avoid "as shown in Figure 1").
 - Do not use placeholders like `{{image_id}}` or HTML image tags.
 
 ## Adaptive Authoring Rules
 
 ### Core Philosophy
 
-The uploaded PDF provides the **course structure**. You must turn that structure into complete instructional material suitable for iTELL.
+The outline is the canonical source for **scope, sequence, and emphasis**. Turn it into complete instructional material suitable for iTELL, but do not treat sparse bullets as permission to invent unrelated content.
 
-The outline is the canonical source for **scope, sequence, and emphasis**. Use it to infer what the course teaches, but do not treat sparse bullets as permission to invent unrelated content.
-
-### Planning Rules
+### Planning
 
 1. Before drafting, internally map major outline headings to page titles and chunk headers.
-2. Ensure every major outline topic appears somewhere in the generated volume unless it is clearly administrative.
-3. Infer the likely audience and course level from the course title, prerequisites, terminology, and module naming.
-4. If the audience or level is unclear, default to clear undergraduate-level instructional prose.
+2. Infer the likely audience and course level from the course title, prerequisites, terminology, and module naming.
 
-### Structural Rules
+### Structure
 
-1. **Follow the outline order**.
-2. **Use the outline as the canonical structure**.
-3. **Usually create one page per major outline section, module, week, or unit**.
-4. **Merge only very small adjacent outline items when they clearly belong together**.
-5. **Do not reorganize the course into a different sequence** unless the outline is clearly malformed.
-6. **Administrative sections** such as grading, policies, schedules, office hours, or prerequisites may be compressed into a short introductory page or one or more `page.plain-chunk` entries rather than expanded like instructional modules.
+1. Follow the outline order.
+2. Usually create one page per major outline section, module, week, or unit.
+3. Merge only very small adjacent outline items when they clearly belong together. If a small item does not support a full page, fold it into an adjacent related page.
+4. Do not reorganize the course into a different sequence unless the outline is clearly malformed.
+5. Do not create new major pages or sections unless they are explicitly present in the outline or very strongly implied by repeated outline evidence. Never manufacture standalone pages for projects, resources, assessments, tools, or policies that do not actually appear in the outline.
+6. Administrative sections (grading, policies, schedules, office hours, prerequisites) may be compressed into a short introductory page or `page.plain-chunk` entries rather than expanded like instructional modules.
 
-### Content Authoring Rules
+### Content
 
-1. Expand sparse bullets into coherent instructional prose.
-2. Stay within the scope implied by the outline.
-3. Do not invent an unrelated course or introduce large off-outline digressions.
-4. Add enough explanation so each page is teachable and self-contained.
-5. Define important terms when the outline introduces them without explanation.
-6. Maintain reasonably consistent depth across sections unless the outline itself emphasizes some sections more heavily.
-7. If the outline is sparse or ambiguous, prefer accurate, generic instructional phrasing over fabricated specifics.
-8. Do not invent exact logistical or factual details unless they appear in the PDF. This includes grading percentages, schedules, deadlines, textbook titles, software requirements, datasets, case studies, or named tools that are not actually present in the outline.
+1. Expand sparse bullets into coherent instructional prose. Add enough explanation so each page is teachable and self-contained.
+2. Define important terms when the outline introduces them without explanation.
+3. Maintain reasonably consistent depth across sections unless the outline itself emphasizes some sections more heavily.
+4. Use this inference ladder to decide what to include:
+   - **Explicit in the outline**: Include it directly.
+   - **Strongly implied by multiple nearby outline cues**: Generalize cautiously without adding specific numbers, titles, or logistics.
+   - **Merely plausible or common for a course like this**: Omit it.
+5. When you infer instructional detail, expand concepts and explanations, not administrative specifics. Never invent grading percentages, schedules, deadlines, textbook titles, software requirements, datasets, case studies, named tools, recommended resources, assignments, labs, or assessment breakdowns that are not in the outline.
+6. Generated content must read like intentional instructional material, not disconnected bullet expansion.
 
-### CRI Rules
+### CRI (Questions, Answers, KeyPhrases)
 
 1. Generate questions that target the most important idea in each chunk.
-2. Rotate across **conceptual**, **application**, **analysis**, **synthesis**, and **evaluation** question types when appropriate.
+2. Rotate across **conceptual**, **application**, **analysis**, **synthesis**, and **evaluation** question types.
 3. Use **progressive difficulty** across a page when it fits the material:
-   - Early chunks may focus on comprehension and foundational ideas.
-   - Middle chunks may emphasize application and analysis.
-   - Later chunks may emphasize synthesis, comparison, transfer, or evaluation.
-4. Write answers that model the level of understanding expected from students and are fully supported by the chunk text.
+   - Early chunks: comprehension and foundational ideas.
+   - Middle chunks: application and analysis.
+   - Later chunks: synthesis, comparison, transfer, or evaluation.
+4. Write answers that model the expected level of understanding and are fully supported by the chunk text.
 5. Choose key phrases that capture the core vocabulary or concepts of the chunk.
-6. Prefer questions that ask students to explain, connect, compare, apply, or interpret ideas rather than merely copy a phrase from the text.
-
-## Quality Rules
-
-- Generated content must read like intentional instructional material, not disconnected bullet expansion.
-- The page structure must reflect the outline progression.
-- Each major outline topic must appear somewhere in the generated volume.
-- Added detail must stay within the scope implied by the outline.
-- Questions, answers, and key phrases must align tightly with the generated instructional text.
-- Do not include citation markers like `[cite_start]` or `[cite: 1]`.
-- Do not fabricate specificity to make the course sound more concrete than the outline supports.
+6. Prefer questions that ask students to explain, connect, compare, apply, or interpret rather than merely recall a phrase from the text.
 
 ## Self-Check Before Output
 
 Verify all of the following before returning JSON:
 
-- The output is a single valid JSON object.
-- The JSON uses the exact field name `Answer`, not `ConstructedResponse`.
-- Page order follows the outline order.
-- Every page has multiple chunks.
-- Every page has a 1-2 sentence `ReferenceSummary` that accurately summarizes the page's instructional focus.
-- Every `page.chunk` has Question, Answer, and KeyPhrase.
-- Every `page.chunk` question is open-ended and instructionally meaningful.
-- Every `page.chunk` `KeyPhrase` has 3-5 comma-separated noun phrases or terms from the chunk text.
-- Every `page.plain-chunk` omits Question, Answer, and KeyPhrase.
-- Markdown is clean and readable.
-- No placeholder image syntax remains.
-- Administrative material is compressed appropriately rather than over-expanded.
-- No fabricated logistical or factual details were introduced.
-- The generated content is coherent, teachable, and aligned to the outline.
+- [ ] Single valid JSON object with the exact field names above (`Answer`, not `ConstructedResponse`). Proper nesting, no trailing commas, all strings quoted, all brackets matched.
+- [ ] Every page has Title (Title Case), Order (follows outline order), ReferenceSummary (1-2 sentences), and Content (multiple chunks).
+- [ ] Every `page.chunk` has Question (open-ended), Answer (1-3 sentences), and KeyPhrase (3-5 terms from the text).
+- [ ] Every `page.plain-chunk` omits Question, Answer, and KeyPhrase.
+- [ ] Markdown is clean: blank lines between paragraphs, no internal line breaks, no placeholder image syntax.
+- [ ] No page, section, or detail was created unless explicitly supported or strongly implied by the outline.
+- [ ] No fabricated logistics, resources, grading schemes, tools, or project details.
+- [ ] No citation markers like `[cite_start]` or `[cite: 1]`.
+- [ ] Content is coherent, teachable, and aligned to the outline.
 
 ## Generation Workflow
 
 1. Read the outline PDF and infer the course hierarchy, audience, and instructional scope.
-2. Internally map major headings to page titles and chunk headers before writing.
-3. Determine the major pages from the outline structure.
-4. Compress administrative sections into concise introductory content or `page.plain-chunk` entries when appropriate.
-5. Expand each instructional section into teachable prose that stays within the outline's scope.
-6. Divide each page into multiple concept-focused chunks.
-7. Add questions, answers, and key phrases for interactive chunks, varying question types and difficulty where appropriate.
-8. Validate the JSON structure, field requirements, and no-fabrication rules.
+2. Internally map major headings to page titles and chunk headers.
+3. Determine pages from the outline structure; compress administrative sections.
+4. Expand each instructional section into teachable prose within the outline's scope.
+5. Divide each page into multiple concept-focused chunks.
+6. Add CRI for interactive chunks, varying question types and difficulty.
+7. Remove any page, section, or detail that is only plausible but not supported by the outline.
+8. Validate structure, fields, and no-fabrication rules.
 9. Output only the final JSON.
 
 ## Final Output Rule
