@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from pydantic import AliasChoices, BaseModel, Field
 
 
 class NewPlainChunk(BaseModel):
@@ -9,7 +9,7 @@ class NewPlainChunk(BaseModel):
     Text: str = Field(description="The main text content, may include HTML markup")
 
     model_config = {
-        "populate_by_name": True,  # Allow population by alias
+        "populate_by_name": True,
     }
 
 
@@ -19,15 +19,17 @@ class NewChunk(BaseModel):
     Text: str = Field(description="The main text content, may include HTML markup")
     KeyPhrase: str = Field(description="Key phrases for the chunk")
     Question: str = Field(description="Question for the chunk")
-    ConstructedResponse: str = Field(description="Constructed response for the chunk")
+    Answer: str = Field(
+        description="Answer for the chunk",
+        validation_alias=AliasChoices("Answer", "ConstructedResponse"),
+    )
 
     model_config = {
-        "populate_by_name": True,  # Allow population by alias
+        "populate_by_name": True,
     }
 
 
 class NewPage(BaseModel):
-    # TODO: Add summary field and potentially cloze field when implemented
     Title: str = Field(description="The title of the page")
     Order: int = Field(description="The order of the page within the volume")
     ReferenceSummary: str = Field(description="A summary of the page")
@@ -41,6 +43,3 @@ class NewVolume(BaseModel):
     Description: str = Field(description="The description of the volume")
     VolumeSummary: str = Field(description="A summary of the volume")
     Pages: list[NewPage] = Field(description="Array of pages within the volume")
-
-
-

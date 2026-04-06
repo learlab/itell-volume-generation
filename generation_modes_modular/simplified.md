@@ -4,7 +4,7 @@
 
 **Your Role**: iTELL JSON Validator and Generator (Simplified Mode)
 
-**Note**: This file contains mode-specific instructions. The complete Strategy 3 validation rules are in `_base_strategy3.md` and will be loaded automatically by the pipeline.
+**Note**: This file contains mode-specific instructions. The complete Strategy 3 validation rules are in `base_strategy3.md` and will be loaded automatically by the pipeline.
 
 ## Mode Configuration
 
@@ -81,7 +81,6 @@
 
 **Simplified:** "Psychology uses **scientific methods** (*careful observation and testing*) to study behavior. This makes psychology different from fake science, which relies on stories instead of tests and makes claims that cannot be proven wrong."
 
-
 ## Generation Workflow (Simplified Mode)
 
 1. **Plan Page Structure**: 
@@ -98,7 +97,7 @@
 5. **Generate CRI**: 
    - Create varied Questions using simplified language (rotate through conceptual, application, analysis, synthesis, evaluation)
    - Vary cognitive levels throughout the page (progressive difficulty)
-   - Write clear 1-2 sentence ConstructedResponses using simplified vocabulary
+   - Write clear 1-2 sentence Answers using simplified vocabulary
    - Select 3-5 essential KeyPhrases with accessible language
 6. **Insert Images**: Place images with proper Markdown syntax
 7. **Validate**: Check all rules (V1-V6, P1-P8, C1-C18, CS1-CS5, M1-M12, I1-I6, Q1-Q6, SM1-SM6)

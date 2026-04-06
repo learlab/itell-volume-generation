@@ -7,12 +7,14 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Sequence
 
 __all__ = [
-    "load_reference_json",
-    "load_guide_instructions",
-    "encode_pdf_to_base64",
-    "select_reference_example",
     "build_conversion_prompt",
+    "build_mode_guide_text",
+    "encode_pdf_to_base64",
     "format_image_metadata",
+    "load_guide_instructions",
+    "load_reference_json",
+    "resolve_mode_directory",
+    "select_reference_example",
 ]
 
 
@@ -39,7 +41,7 @@ def load_guide_instructions(guide_path: Path) -> str:
     if suffix == ".docx":
         try:
             from docx import Document  # type: ignore import
-        except ImportError as exc:  # pragma: no cover - informative error path
+        except ImportError as exc:  # pragma: no cover
             raise ImportError(
                 "python-docx is required to parse .docx instruction files"
             ) from exc
@@ -57,6 +59,32 @@ def load_guide_instructions(guide_path: Path) -> str:
     )
 
 
+def resolve_mode_directory(mode_folder: Optional[str]) -> Path:
+    if not mode_folder or mode_folder == "modular":
+        cwd_modular = Path("generation_modes_modular")
+        if cwd_modular.is_dir():
+            return cwd_modular.resolve()
+        # Notebooks often run with cwd under src/; anchor to repo root.
+        repo_root = Path(__file__).resolve().parents[2]
+        return repo_root / "generation_modes_modular"
+    return Path(mode_folder)
+
+
+def build_mode_guide_text(mode: str, mode_root: Path) -> str:
+    """Load prompt instructions for a generation mode.
+
+    Non-adaptive modes compose the shared base with mode-specific instructions.
+    Adaptive uses only ``adaptive.md`` so it is not layered on top of the
+    extraction-oriented base.
+    """
+    mode_root = Path(mode_root)
+    mode_text = load_guide_instructions(mode_root / f"{mode}.md")
+    if mode == "adaptive":
+        return mode_text.strip()
+
+    base_text = load_guide_instructions(mode_root / "base_strategy3.md")
+    return f"{base_text}\n\n{mode_text}".strip()
+
 def encode_pdf_to_base64(pdf_path: Path) -> str:
     """Return a base64 string of the PDF contents."""
     pdf_path = Path(pdf_path)
@@ -70,16 +98,23 @@ def encode_pdf_to_base64(pdf_path: Path) -> str:
 def select_reference_example(
     reference_json: Dict[str, Any], example_title: Optional[str] = None
 ) -> Any:
-    """Pick a specific section from the reference data if a title is provided."""
+    """Pick a specific page from a reference volume if a title is provided."""
     if not example_title:
         return reference_json
 
-    if not isinstance(reference_json, dict):
-        raise ValueError("Reference JSON must be a dictionary when filtering by title.")
+    normalized = example_title.strip().casefold()
 
-    data = reference_json.get("data")
+    pages = reference_json.get("Pages") if isinstance(reference_json, dict) else None
+    if isinstance(pages, list):
+        for page in pages:
+            if not isinstance(page, dict):
+                continue
+            title = page.get("Title") or page.get("title")
+            if isinstance(title, str) and title.strip().casefold() == normalized:
+                return page
+
+    data = reference_json.get("data") if isinstance(reference_json, dict) else None
     if isinstance(data, list):
-        normalized = example_title.strip().casefold()
         for page in data:
             if not isinstance(page, dict):
                 continue
@@ -97,7 +132,10 @@ def format_image_metadata(image_metadata: Sequence[Dict[str, Any]]) -> str:
     lines = ["Image Reference Guide:"]
 
     for entry in image_metadata:
-        desc = f"\n- {entry.get('filename')} (id: {entry.get('image_id')}): {entry.get('position')} of page {entry.get('page_num')}"
+        desc = (
+            f"\n- {entry.get('filename')} (id: {entry.get('image_id')}): "
+            f"{entry.get('position')} of page {entry.get('page_num')}"
+        )
 
         width_pct = float(entry.get("size", {}).get("width_pct", "0%").rstrip("%"))
         if width_pct > 80:
@@ -121,11 +159,11 @@ def format_image_metadata(image_metadata: Sequence[Dict[str, Any]]) -> str:
 
     lines.append("\n**Instructions for Image Placement:**")
     lines.append(
-        "- Use the 'Context' field to match each image to its correct location in the content"
+        "- Use the Context field to match each image to the correct location in the content"
     )
-    lines.append("- Insert image placeholders in the HTML where they appear in the PDF")
-    lines.append("- Use this format: {{image_id}}")
-    lines.append("- Example: {{image_page_1_1}}")
+    lines.append("- Use standard Markdown image syntax: ![brief description](image_id)")
+    lines.append("- Example: ![Diagram of cell membrane](image_page_1_1)")
+    lines.append("- Never use placeholder syntax like {{image_id}} or HTML image tags")
     return "\n".join(lines)
 
 

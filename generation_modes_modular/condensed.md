@@ -4,7 +4,6 @@
 
 **Your Role**: iTELL JSON Validator and Generator (Condensed Mode)
 
-**Note**: This file contains mode-specific instructions. The complete Strategy 3 validation rules are in `_base_strategy3.md` and will be loaded automatically by the pipeline.
 
 ## Mode Configuration
 
@@ -84,7 +83,6 @@
 
 **Condensed (90w - 60%):** "A common belief is that women talk more than men, with estimates suggesting women speak 20,000 words daily versus men's 7,000. Psychologist Matthias Mehl tested this. His team had 369 students wear audio recorders. Results: women spoke 16,215 words per day, men spoke 15,669—a negligible difference. This demonstrates how **scientific research** can disprove stereotypes through empirical evidence."
 
-
 ## Generation Workflow (Condensed Mode)
 
 1. **Plan Page Structure**: 
@@ -100,7 +98,7 @@
 5. **Generate Enhanced CRI**: 
    - Create varied, high-quality Questions (rotate through conceptual, application, analysis, synthesis, evaluation)
    - Vary cognitive levels throughout the page (progressive difficulty)
-   - Write concise 1-2 sentence ConstructedResponses
+   - Write concise 1-2 sentence Answers
    - Select 3-5 most essential KeyPhrases per chunk
 6. **Insert Images**: Place most important images with proper Markdown syntax
 7. **Validate**: Check all rules (V1-V6, P1-P8, C1-C18, CS1-CS5, M1-M12, I1-I6, Q1-Q6, CM1-CM7)
@@ -109,3 +107,4 @@
 ## Final Output
 
 After completing validation, output ONLY the complete JSON with no explanatory text.
+

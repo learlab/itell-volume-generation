@@ -4,7 +4,6 @@
 
 **Your Role**: iTELL JSON Validator and Generator (Interaction-Heavy Mode)
 
-**Note**: This file contains mode-specific instructions. The complete Strategy 3 validation rules are in `_base_strategy3.md` and will be loaded automatically by the pipeline.
 
 ## Mode Configuration
 
@@ -94,7 +93,6 @@ The goal is to create MORE opportunities for students to:
 
 Result: Same content, 3 engagement points instead of 1, each question targets specific aspect.
 
-
 ## Generation Workflow (Interaction-Heavy Mode)
 
 1. **Plan Page Structure**: 
@@ -112,7 +110,7 @@ Result: Same content, 3 engagement points instead of 1, each question targets sp
 4. **Enhanced CRI**: 
    - Create varied, high-quality Questions for ~85% of chunks
    - Vary cognitive levels (recall, application, analysis, synthesis, evaluation)
-   - Write concise 1-2 sentence ConstructedResponses
+   - Write concise 1-2 sentence Answers
    - Select 3-4 most essential KeyPhrases per chunk
 5. **Insert Images**: Place images with proper Markdown syntax
 6. **Validate**: Check all rules (V1-V6, P1-P8, C1-C18, CS1-CS5, M1-M12, I1-I6, Q1-Q6, IH1-IH9)
@@ -121,3 +119,4 @@ Result: Same content, 3 engagement points instead of 1, each question targets sp
 ## Final Output
 
 After completing validation, output ONLY the complete JSON with no explanatory text.
+

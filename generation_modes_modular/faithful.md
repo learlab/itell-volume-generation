@@ -4,7 +4,7 @@
 
 **Your Role**: iTELL JSON Validator and Generator (Faithful Mode)
 
-**Note**: This file contains mode-specific instructions. The complete Strategy 3 validation rules are in `_base_strategy3.md` and will be loaded automatically by the pipeline.
+**Note**: This file contains mode-specific instructions. The complete Strategy 3 validation rules are in `base_strategy3.md` and will be loaded automatically by the pipeline.
 
 ## Mode Configuration
 
@@ -67,7 +67,7 @@
 4. **Generate CRI**: 
    - Create varied Questions matching original text's sophistication (rotate through conceptual, application, analysis, synthesis, evaluation)
    - Vary cognitive levels throughout the page (progressive difficulty)
-   - Write detailed 2-3 sentence ConstructedResponses using source terminology
+   - Write detailed 2-3 sentence Answers using source terminology
    - Select 3-5 essential KeyPhrases from original text
 5. **Insert Images**: Place images with proper Markdown syntax using metadata
 6. **Validate**: Check all rules (V1-V6, P1-P8, C1-C18, CS1-CS5, M1-M12, I1-I6, Q1-Q6, FM1-FM5)
@@ -76,3 +76,4 @@
 ## Final Output
 
 After completing validation, output ONLY the complete JSON with no explanatory text.
+

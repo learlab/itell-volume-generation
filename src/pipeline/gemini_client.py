@@ -5,7 +5,10 @@ import json
 import logging
 from typing import Any, Dict, Optional, Sequence, Type, TypeVar
 
-from google import genai
+try:
+    from google import genai
+except ImportError:  # pragma: no cover - optional unless GeminiClient is used
+    genai = None
 from openai import OpenAI
 from pydantic import BaseModel, ValidationError
 
@@ -106,6 +109,8 @@ class GeminiClient:
     ) -> None:
         if not api_key:
             raise ValueError("A Gemini API key is required.")
+        if genai is None:
+            raise ImportError("google-genai is required to use GeminiClient")
 
         self.model_name = model
         self.max_output_tokens = max_output_tokens

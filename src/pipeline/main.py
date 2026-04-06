@@ -12,13 +12,15 @@ try:
     from .extract_images import ExtractImages
     from .utils import (
         build_conversion_prompt,
+        build_mode_guide_text,
         encode_pdf_to_base64,
         format_image_metadata,
         load_guide_instructions,
         load_reference_json,
+        resolve_mode_directory,
         select_reference_example,
     )
-except ImportError:  # pragma: no cover - allows running as a script without module context
+except ImportError:  # pragma: no cover
     import sys
 
     sys.path.append(str(Path(__file__).resolve().parents[1]))
@@ -26,29 +28,45 @@ except ImportError:  # pragma: no cover - allows running as a script without mod
     from pipeline.extract_images import ExtractImages  # type: ignore
     from pipeline.utils import (  # type: ignore
         build_conversion_prompt,
+        build_mode_guide_text,
         encode_pdf_to_base64,
         format_image_metadata,
         load_guide_instructions,
         load_reference_json,
+        resolve_mode_directory,
         select_reference_example,
     )
 
 
-DEFAULT_GUIDE_PATH = Path("src/resources/guide.md")
-DEFAULT_REFERENCE_PATH = Path("src/resources/reference.json")
-DEFAULT_PDF_PATH = Path("src/resources/input.pdf")
+DEFAULT_GUIDE_PATH = Path("prompts/guide_strategy3_validation.md")
+DEFAULT_REFERENCE_PATH = Path("prompts/reference.json")
+DEFAULT_PDF_PATH = Path("data/input.pdf")
 DEFAULT_IMAGE_DIR = Path("results/extracted-images")
 OPENROUTER_DEFAULT_BASE_URL = "https://openrouter.ai/api/v1"
 
 
 def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Convert a PDF into iTELL JSON via OpenAI-compatible APIs.")
+    parser = argparse.ArgumentParser(
+        description="Convert a PDF into iTELL JSON via OpenAI-compatible APIs."
+    )
     parser.add_argument("--pdf", type=Path, default=DEFAULT_PDF_PATH, help="Path to the PDF that should be converted.")
     parser.add_argument(
         "--guide",
         type=Path,
         default=DEFAULT_GUIDE_PATH,
-        help="Instruction guide file (.docx/.md/.txt) that the LLM should follow.",
+        help="Instruction guide file (.docx/.md/.txt) when not using a named mode.",
+    )
+    parser.add_argument(
+        "--mode",
+        type=str,
+        default=None,
+        help="Named generation mode file to load from the mode folder, e.g. adaptive or faithful.",
+    )
+    parser.add_argument(
+        "--mode-folder",
+        type=str,
+        default="modular",
+        help="Mode directory alias or path. 'modular' resolves to generation_modes_modular.",
     )
     parser.add_argument(
         "--reference-json",
@@ -60,7 +78,7 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         "--example-title",
         type=str,
         default=None,
-        help="Optional title from the reference JSON to use as the example section.",
+        help="Optional page title from the reference JSON to use as the example section.",
     )
     parser.add_argument("--output", type=Path, default=None, help="Optional file path to write the LLM response JSON.")
     parser.add_argument("--model", type=str, default=None, help="Override the model name (defaults to OPENAI_MODEL env).")
@@ -91,17 +109,24 @@ def main(argv: Optional[Sequence[str]] = None) -> str:
     args = parse_args(argv)
 
     reference_json = load_reference_json(args.reference_json)
-    guide_text = load_guide_instructions(args.guide)
     example_json = select_reference_example(reference_json, args.example_title)
+
+    if args.mode:
+        mode_root = resolve_mode_directory(args.mode_folder)
+        guide_text = build_mode_guide_text(args.mode, mode_root)
+    else:
+        guide_text = load_guide_instructions(args.guide)
 
     image_metadata_text = None
     if not args.skip_image_extraction:
         extractor = ExtractImages(str(args.pdf), str(args.image_dir))
-        image_metadata = extractor.extract_img(str(args.pdf))
+        image_metadata = extractor.extract_img()
         extractor.save_metadata(str(args.image_dir / "metadata.json"))
         image_metadata_text = format_image_metadata(image_metadata) or None
 
-    prompt = build_conversion_prompt(guide_text, example_json, image_metadata_text=image_metadata_text)
+    prompt = build_conversion_prompt(
+        guide_text, example_json, image_metadata_text=image_metadata_text
+    )
     pdf_b64 = encode_pdf_to_base64(args.pdf)
 
     openai_key = os.getenv("OPENAI_API_KEY")
@@ -109,7 +134,9 @@ def main(argv: Optional[Sequence[str]] = None) -> str:
 
     api_key = args.api_key or openai_key or openrouter_key
     if not api_key:
-        raise RuntimeError("Set OPENAI_API_KEY (or OPENROUTER_API_KEY) before running the pipeline.")
+        raise RuntimeError(
+            "Set OPENAI_API_KEY (or OPENROUTER_API_KEY) before running the pipeline."
+        )
 
     using_openrouter = False
     if openrouter_key and not args.api_key and not openai_key:
@@ -150,7 +177,11 @@ def main(argv: Optional[Sequence[str]] = None) -> str:
         default_headers=default_headers,
     )
 
-    result_json = client.generate_itell_json(pdf_filename=args.pdf.name, pdf_base64=pdf_b64, prompt=prompt)
+    result_json = client.generate_itell_json(
+        pdf_filename=args.pdf.name,
+        pdf_base64=pdf_b64,
+        prompt=prompt,
+    )
 
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
