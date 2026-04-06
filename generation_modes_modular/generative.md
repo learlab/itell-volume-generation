@@ -36,8 +36,8 @@ Author complete instructional material suitable for iTELL, but do not treat spar
    - **Explicit in the outline**: Include it directly.
    - **Strongly implied by multiple nearby outline cues**: Generalize cautiously without adding specific numbers, titles, or logistics.
    - **Merely plausible or common for a course like this**: Omit it.
-4. Expand concepts and explanations, not administrative specifics.
-5. Never invent grading percentages, schedules, deadlines, textbook titles, software requirements, datasets, case studies, named tools, recommended resources, assignments, labs, or assessment breakdowns unless they are explicitly present or very strongly implied by the outline.
+4. Expand concepts and explanations, not administrative specifics. **Do not generate pages or chunks for non-instructional content** such as course overviews, grading policies, project lists, recommended reading, or resource compilations — even if the outline contains these sections. Only generate content that teaches a concept, skill, or technique.
+5. Never invent grading percentages, schedules, deadlines, textbook titles, software requirements, datasets, case studies, named tools, recommended resources, assignments, labs, or assessment breakdowns unless they are explicitly present or very strongly implied by the outline. Even when present, do not expand them into standalone pages — they are metadata, not instructional content.
 
 ### Structure and Planning
 
@@ -48,7 +48,7 @@ Author complete instructional material suitable for iTELL, but do not treat spar
 5. If a small item does not support a full page, fold it into an adjacent related page instead of inventing filler.
 6. Do not reorganize the course into a different sequence unless the outline is clearly malformed.
 7. Do not create new major pages or sections unless they are explicitly present in the outline or very strongly implied by repeated outline evidence.
-8. Administrative sections such as grading, policies, schedules, office hours, prerequisites, and references may be compressed into a short introductory page or one or more `page.plain-chunk` entries rather than expanded like instructional modules.
+8. **Omit non-instructional outline sections entirely.** Sections whose sole purpose is administrative — grading breakdowns, assessment weights, project listings, recommended resources/textbooks, office hours, course policies, schedules, prerequisites, and similar logistics — should NOT become pages or chunks. They add no learning value for a student reading the iTELL volume. If any administrative detail is essential context for understanding the instructional content (e.g., "this course uses Python" informs the technical depth), weave that detail briefly into the relevant instructional page rather than giving it its own section.
 
 ### CRI Expectations
 
@@ -212,7 +212,8 @@ Add chunks to an existing page when:
 - [ ] **Rule G1**: Added instructional detail stays within the scope implied by the outline
 - [ ] **Rule G2**: No fabricated logistical or factual details are introduced
 - [ ] **Rule G3**: Unsupported projects, resources, assessments, tools, or policies are omitted rather than invented
-- [ ] **Rule G4**: Administrative sections are compressed appropriately instead of expanded like instructional modules
+- [ ] **Rule G4**: Non-instructional sections (course overviews, grading, project lists, recommended resources, policies, schedules) are fully omitted — no pages or chunks are generated for them
+- [ ] **Rule G7**: Every generated page teaches a concept, skill, or technique; no page exists solely to list logistics, resources, or assessments
 - [ ] **Rule G5**: Audience and reading level are inferred reasonably from the outline, or default to clear undergraduate-level prose
 - [ ] **Rule G6**: Each major outline topic appears somewhere in the generated volume
 
@@ -289,6 +290,7 @@ Before outputting JSON, verify each category:
 ## Generation Workflow
 
 1. **Plan Page Structure**:
+   - First, identify and **discard** all non-instructional outline sections (course overview, grading, projects list, recommended resources, policies, office hours, schedules). These will not become pages.
    - For short or single-page outlines: create only as many iTELL pages as the top-level outline structure supports; often 1 page unless there are multiple major units
    - For larger course outlines: create one page per major module/week/unit or a clearly related grouping of subtopics
    - Aim for 3-6 chunks per page
