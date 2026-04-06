@@ -3,7 +3,7 @@
 #
 # Usage: ./generate_mode.sh <mode> <input.pdf> [output.json]
 #
-# Modes: faithful, simplified, condensed, hybrid, interaction-heavy
+# Modes: faithful, simplified, condensed, generative, interaction-heavy
 
 set -e
 
@@ -24,11 +24,11 @@ if [ "$#" -lt 2 ]; then
     echo "  faithful          - Exact preservation (400-500w chunks)"
     echo "  simplified        - Grade 9-10 reading level (200-400w chunks)"
     echo "  condensed         - Core concepts only, 60% length (150-300w chunks)"
-    echo "  hybrid            - Balanced optimization, 80% length (250-400w chunks) ⭐"
+    echo "  generative        - Author content from a course outline (3-6 chunks/page)"
     echo "  interaction-heavy - Maximum engagement (100-250w chunks)"
     echo ""
     echo "Examples:"
-    echo "  $0 hybrid textbook.pdf"
+    echo "  $0 generative syllabus.pdf"
     echo "  $0 condensed chapter1.pdf results/output.json"
     exit 1
 fi
@@ -39,11 +39,11 @@ OUTPUT_JSON=${3:-""}
 
 # Validate mode
 case "$MODE" in
-    faithful|simplified|condensed|hybrid|interaction-heavy)
+    faithful|simplified|condensed|generative|interaction-heavy)
         ;;
     *)
         echo -e "${RED}Error: Invalid mode '$MODE'${NC}"
-        echo "Available modes: faithful, simplified, condensed, hybrid, interaction-heavy"
+        echo "Available modes: faithful, simplified, condensed, generative, interaction-heavy"
         exit 1
         ;;
 esac
@@ -73,7 +73,11 @@ echo "Output: $OUTPUT_JSON"
 echo "Mode:   $MODE"
 echo ""
 echo -e "${BLUE}Mode file: generation_modes_modular/${MODE}.md${NC}"
-echo -e "${BLUE}Base:      generation_modes_modular/_base_strategy3.md${NC}"
+if [ "$MODE" = "generative" ]; then
+    echo -e "${BLUE}Base:      embedded in generation_modes_modular/generative.md${NC}"
+else
+    echo -e "${BLUE}Base:      generation_modes_modular/base_strategy3.md${NC}"
+fi
 echo ""
 echo -e "${YELLOW}Starting generation...${NC}"
 echo ""

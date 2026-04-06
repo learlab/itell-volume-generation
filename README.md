@@ -9,10 +9,10 @@ Use this repo to test prompt and pipeline behavior before wiring changes into th
 - `faithful`
 - `simplified`
 - `condensed`
-- `adaptive`
+- `generative`
 - `interaction-heavy`
 
-`adaptive` is intended for **course-outline PDFs** where the model authors iTELL content from the outline rather than extracting textbook prose verbatim.
+`generative` is intended for **course-outline PDFs** where the model authors iTELL content from the outline rather than extracting textbook prose verbatim.
 
 ## Setup
 
@@ -45,7 +45,7 @@ Use this repo to test prompt and pipeline behavior before wiring changes into th
 Run a named mode:
 
 ```bash
-./generate_mode.sh adaptive path/to/course-outline.pdf
+./generate_mode.sh generative path/to/course-outline.pdf
 ```
 
 Or call the pipeline directly:
@@ -53,10 +53,10 @@ Or call the pipeline directly:
 ```bash
 python -m src.pipeline.main \
   --pdf path/to/course-outline.pdf \
-  --mode adaptive \
+  --mode generative \
   --mode-folder modular \
   --reference-json prompts/reference.json \
-  --output results/outline_adaptive.json
+  --output results/outline_generative.json
 ```
 
 If you want to bypass the modular mode system and provide a custom guide directly, you can still use:

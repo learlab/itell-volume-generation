@@ -73,13 +73,13 @@ def resolve_mode_directory(mode_folder: Optional[str]) -> Path:
 def build_mode_guide_text(mode: str, mode_root: Path) -> str:
     """Load prompt instructions for a generation mode.
 
-    Non-adaptive modes compose the shared base with mode-specific instructions.
-    Adaptive uses only ``adaptive.md`` so it is not layered on top of the
-    extraction-oriented base.
+    Non-generative modes compose the shared base with mode-specific instructions.
+    Generative uses only ``generative.md`` because it already includes the
+    adapted base validation rules plus generative-specific authoring guidance.
     """
     mode_root = Path(mode_root)
     mode_text = load_guide_instructions(mode_root / f"{mode}.md")
-    if mode == "adaptive":
+    if mode == "generative":
         return mode_text.strip()
 
     base_text = load_guide_instructions(mode_root / "base_strategy3.md")

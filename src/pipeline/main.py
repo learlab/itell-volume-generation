@@ -60,7 +60,7 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         "--mode",
         type=str,
         default=None,
-        help="Named generation mode file to load from the mode folder, e.g. adaptive or faithful.",
+        help="Named generation mode file to load from the mode folder, e.g. generative or faithful.",
     )
     parser.add_argument(
         "--mode-folder",
