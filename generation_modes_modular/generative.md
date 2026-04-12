@@ -6,49 +6,54 @@
 
 ## Purpose
 
-Use this mode when the input is a **course outline PDF**, syllabus, schedule, or other structure-first instructional document rather than a prose textbook chapter.
+Use this mode when the input is a source document or note set that may contain instructional structure, prose, or a mix of both.
 
-Your task is to infer the intended course structure from that outline and **author original iTELL instructional content** that follows the outline.
+Your first task is to inspect the source and classify it based on evidence in the material:
+- outline-like or syllabus-like structure
+- slide-deck or outline-like presentation notes
+- prose instructional source
+- mixed notes or partial instructional material
+- insufficient instructional signal
 
-This is an **outline-to-content authoring task**: author original instructional content from the outline rather than extracting, simplifying, condensing, or heavily restructuring existing prose.
+Then choose the appropriate behavior for that source type. If the input is clearly outline-like or slide-outline-like, author original iTELL instructional content that follows the source structure. If the input is already prose instructional source, convert or adapt it rather than inventing new material. If the input is mixed, use the strongest instructional evidence and stay close to what is supported. If the input lacks enough instructional signal, stay conservative and avoid unsupported fabrication.
 
 ## Mode Configuration
 
-- **Content Modification**: Yes - author original instructional content from the outline
-- **Reading Level**: Infer from the outline; if unclear, default to clear undergraduate-level prose
+- **Content Modification**: Yes - author original instructional content from the source
+- **Reading Level**: Infer from the source; if unclear, default to clear undergraduate-level prose
 - **Length Target**: Enough detail for each page to be teachable and self-contained without padding
-- **Chunking Strategy**: Outline-aligned (typically 3-6 chunks per page, with chunk length usually 150-500 words)
-- **Stages**: Infer Structure -> Plan Pages -> Author -> Chunk -> CRI -> Images -> Validate
+- **Chunking Strategy**: Source-aligned (typically 3-6 chunks per page, with chunk length usually 150-500 words)
+- **Stages**: Inspect Source -> Classify -> Plan Pages -> Author/Adapt -> Chunk -> CRI -> Images -> Validate
 
 ## Generative Mode Specific Instructions
 
 ### Core Philosophy
 
-The outline is the canonical source for **scope, sequence, and emphasis**. Use headings, bullets, sequencing cues, prerequisites, and topic labels to infer what the course teaches.
+The source document is the canonical source for **scope, sequence, emphasis, and what can safely be inferred**. Use headings, slide titles, bullets, speaker notes, sequencing cues, prerequisites, topic labels, paragraph structure, and repeated concepts to infer what the material teaches.
 
-Author complete instructional material suitable for iTELL, but do not treat sparse bullets as permission to invent unsupported content.
+Author complete instructional material suitable for iTELL, but do not treat sparse or fragmented source cues as permission to invent unsupported content.
 
 ### Inference and Scope
 
-1. Infer the likely audience and course level from the course title, prerequisites, terminology, and module naming.
+1. Infer the likely audience and level from the source title, headings, terminology, repetition, and document structure.
 2. If the audience or level is unclear, default to clear undergraduate-level instructional prose.
 3. Use this inference ladder when deciding what to include:
-   - **Explicit in the outline**: Include it directly.
-   - **Strongly implied by multiple nearby outline cues**: Generalize cautiously without adding specific numbers, titles, or logistics.
+   - **Explicit in the source**: Include it directly.
+   - **Strongly implied by multiple nearby source cues**: Generalize cautiously without adding specific numbers, titles, or logistics.
    - **Merely plausible or common for a course like this**: Omit it.
-4. Expand concepts and explanations, not administrative specifics. **Do not generate pages or chunks for non-instructional content** such as course overviews, grading policies, project lists, recommended reading, or resource compilations — even if the outline contains these sections. Only generate content that teaches a concept, skill, or technique.
-5. Never invent grading percentages, schedules, deadlines, textbook titles, software requirements, datasets, case studies, named tools, recommended resources, assignments, labs, or assessment breakdowns unless they are explicitly present or very strongly implied by the outline. Even when present, do not expand them into standalone pages — they are metadata, not instructional content.
+4. Expand concepts and explanations, not administrative specifics. **Do not generate pages or chunks for non-instructional content** such as course overviews, grading policies, project lists, recommended reading, or resource compilations unless the source clearly uses them as instructional context. Only generate content that teaches a concept, skill, or technique.
+5. Never invent grading percentages, schedules, deadlines, textbook titles, software requirements, datasets, case studies, named tools, recommended resources, assignments, labs, or assessment breakdowns unless they are explicitly present or very strongly implied by the source. Even when present, do not expand them into standalone pages unless the source clearly uses them as instructional material.
 
 ### Structure and Planning
 
-1. Before drafting, internally map major outline headings to page titles and chunk headers.
-2. Preserve the outline order.
-3. Usually create one page per major outline section, module, week, or unit, or one page for a clearly related grouping of subtopics.
-4. Merge only very small adjacent outline items when they clearly belong together.
+1. Before drafting, internally map major source headings or repeated themes to page titles and chunk headers.
+2. Preserve the source order when it is meaningful; if the source is fragmented or incomplete, reconstruct only what is clearly supported.
+3. Usually create one page per major source section, module, week, or unit, or one page for a clearly related grouping of subtopics.
+4. Merge only very small adjacent items when they clearly belong together.
 5. If a small item does not support a full page, fold it into an adjacent related page instead of inventing filler.
-6. Do not reorganize the course into a different sequence unless the outline is clearly malformed.
-7. Do not create new major pages or sections unless they are explicitly present in the outline or very strongly implied by repeated outline evidence.
-8. **Omit non-instructional outline sections entirely.** Sections whose sole purpose is administrative — grading breakdowns, assessment weights, project listings, recommended resources/textbooks, office hours, course policies, schedules, prerequisites, and similar logistics — should NOT become pages or chunks. They add no learning value for a student reading the iTELL volume. If any administrative detail is essential context for understanding the instructional content (e.g., "this course uses Python" informs the technical depth), weave that detail briefly into the relevant instructional page rather than giving it its own section.
+6. Do not reorganize the material into a different sequence unless the source is clearly malformed or the evidence strongly supports reordering.
+7. Do not create new major pages or sections unless they are explicitly present in the source or very strongly implied by repeated source evidence.
+8. **Omit non-instructional source sections when they are clearly administrative.** Sections whose sole purpose is administrative — grading breakdowns, assessment weights, project listings, recommended resources/textbooks, office hours, course policies, schedules, prerequisites, and similar logistics — should not become pages or chunks unless the source uses them as instructional context. They add no learning value on their own. If any administrative detail is essential context for understanding the instructional content, weave that detail briefly into the relevant instructional page rather than giving it its own section.
 
 ### CRI Expectations
 
@@ -99,31 +104,31 @@ Volume
 
 **Note: "Page" in iTELL = logical organizational unit, NOT physical PDF page**
 
-For generative mode, a page should represent a major outline section, module, week, unit, or a clearly related grouping of subtopics.
+For generative mode, a page should represent a major source section, module, week, unit, or a clearly related grouping of subtopics.
 
 - [ ] **Rule P1**: Every iTELL page has Title field (string, Title Case)
-- [ ] **Rule P2**: Every iTELL page has Order field (integer, follows outline order)
+- [ ] **Rule P2**: Every iTELL page has Order field (integer, follows the source order when meaningful)
 - [ ] **Rule P3**: Every iTELL page has ReferenceSummary field (string, 1-2 sentences)
 - [ ] **Rule P4**: Every iTELL page has Content field (array with at least 2 chunks, typically 3-6)
 - [ ] **Rule P5**: iTELL pages are divided into multiple chunks by heading/topic, NOT one large chunk
-- [ ] **Rule P6**: Create only as many pages as the outline truly supports; group related outline content into a single page with multiple chunks
-- [ ] **Rule P7**: A single generated iTELL page may cover many outline bullets or subsection items; split only for major outline boundaries or clearly distinct topics
-- [ ] **Rule P8**: Create a new page only for a major module/week/unit boundary or a completely distinct topic
+- [ ] **Rule P6**: Create only as many pages as the source truly supports; group related source content into a single page with multiple chunks
+- [ ] **Rule P7**: A single generated iTELL page may cover many bullets or subsection items; split only for major source boundaries or clearly distinct topics
+- [ ] **Rule P8**: Create a new page only for a major module/week/unit boundary or a completely distinct topic in the source
 - [ ] **Rule P9**: When in doubt, add more chunks to an existing page rather than creating a new page
 
 #### When to Create a New Page
 
 Create a new iTELL page ONLY when:
-1. **Major outline boundary**: Starting a new module, week, unit, or major top-level section
+1. **Major source boundary**: Starting a new module, week, unit, or major top-level section
 2. **Completely unrelated topic**: The content has no meaningful relationship to the previous page
-3. **Very large outline**: The outline has many top-level units and multiple pages are clearly justified
+3. **Very large source**: The source has many top-level units and multiple pages are clearly justified
 
 #### When to Add Chunks to Existing Page
 
 Add chunks to an existing page when:
 1. **Related sections**: All content belongs to the same topic/module/week/unit
 2. **Subsections**: Content sits under the same main heading
-3. **Small or short outline items**: A small section is not substantial enough for a full page
+3. **Small or short source items**: A small section is not substantial enough for a full page
 4. **Related concepts**: Content builds on or directly relates to previous chunks
 
 ### Chunk-Level Validation
@@ -163,7 +168,7 @@ Add chunks to an existing page when:
 
 - [ ] **Rule CS1**: Each iTELL page contains MULTIPLE chunks (minimum 2, typically 3-6)
 - [ ] **Rule CS2**: Each chunk has a DISTINCT header representing one topic/heading
-- [ ] **Rule CS3**: Content is divided by natural headings/subsections from the outline or page plan
+- [ ] **Rule CS3**: Content is divided by natural headings/subsections from the source or page plan
 - [ ] **Rule CS4**: Long sections (>500 words) are split into multiple chunks
 - [ ] **Rule CS5**: Related but distinct topics are in separate chunks
 
@@ -209,13 +214,13 @@ Add chunks to an existing page when:
 
 ### Generative Mode Validation
 
-- [ ] **Rule G1**: Added instructional detail stays within the scope implied by the outline
+- [ ] **Rule G1**: Added instructional detail stays within the scope implied by the source
 - [ ] **Rule G2**: No fabricated logistical or factual details are introduced
 - [ ] **Rule G3**: Unsupported projects, resources, assessments, tools, or policies are omitted rather than invented
-- [ ] **Rule G4**: Non-instructional sections (course overviews, grading, project lists, recommended resources, policies, schedules) are fully omitted — no pages or chunks are generated for them
+- [ ] **Rule G4**: Non-instructional sections (course overviews, grading, project lists, recommended resources, policies, schedules) are fully omitted unless the source clearly uses them as instructional context
 - [ ] **Rule G7**: Every generated page teaches a concept, skill, or technique; no page exists solely to list logistics, resources, or assessments
-- [ ] **Rule G5**: Audience and reading level are inferred reasonably from the outline, or default to clear undergraduate-level prose
-- [ ] **Rule G6**: Each major outline topic appears somewhere in the generated volume
+- [ ] **Rule G5**: Audience and reading level are inferred reasonably from the source, or default to clear undergraduate-level prose
+- [ ] **Rule G6**: Each major source topic appears somewhere in the generated volume
 
 ## Markdown Authoring Rules
 
@@ -266,8 +271,8 @@ Before outputting JSON, verify each category:
 - [ ] No image placeholders or in-text figure references (Q2, I5, T15)
 - [ ] Questions are open-ended (C12)
 - [ ] KeyPhrases come from actual text and contain no duplicates (Q5, Q6)
-- [ ] Added instructional content stays within outline scope (G1-G6)
-- [ ] Content is coherent, teachable, and aligned to the outline
+- [ ] Added instructional content stays within source scope (G1-G6)
+- [ ] Content is coherent, teachable, and aligned to the source
 
 ### Image Validation (If Metadata Provided)
 
@@ -290,18 +295,18 @@ Before outputting JSON, verify each category:
 ## Generation Workflow
 
 1. **Plan Page Structure**:
-   - First, identify and **discard** all non-instructional outline sections (course overview, grading, projects list, recommended resources, policies, office hours, schedules). These will not become pages.
-   - For short or single-page outlines: create only as many iTELL pages as the top-level outline structure supports; often 1 page unless there are multiple major units
-   - For larger course outlines: create one page per major module/week/unit or a clearly related grouping of subtopics
+   - First, identify and **discard** all clearly non-instructional source sections (course overview, grading, projects list, recommended resources, policies, office hours, schedules). These will not become pages.
+   - For short or single-page sources: create only as many iTELL pages as the top-level source structure supports; often 1 page unless there are multiple major units
+   - For larger structured sources: create one page per major module/week/unit or a clearly related grouping of subtopics
    - Aim for 3-6 chunks per page
    - When in doubt, add chunks to an existing page rather than over-splitting into new pages
 2. **Infer Audience and Scope**:
-   - Infer likely audience, depth, and terminology from the outline
+   - Infer likely audience, depth, and terminology from the source
    - Use the inference ladder to decide what can be included vs omitted
 3. **Generate Instructional Content**:
-   - Expand outline items into original, teachable prose
-   - Define important terms introduced by the outline
-   - Keep all added detail within the outline's implied scope
+   - Expand source items into original, teachable prose or adapt existing prose as needed
+   - Define important terms introduced by the source
+   - Keep all added detail within the source's implied scope
 4. **Chunk by Topic**:
    - Divide each page into multiple concept-focused chunks
    - Use `page.plain-chunk` for administrative material, objectives, summaries, and similar non-assessment content

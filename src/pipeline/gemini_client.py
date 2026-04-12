@@ -70,6 +70,29 @@ class OpenAIClient:
         )
         return self._extract_message_text(completion)
 
+    def generate_itell_json_from_text(self, prompt: str) -> str:
+        """Send a text-only prompt to the model and return the JSON response text."""
+        messages = [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": prompt,
+                    },
+                ],
+            }
+        ]
+
+        logger.info("Sending text source to %s", self.model)
+        completion = self.client.chat.completions.create(
+            model=self.model,
+            messages=messages,
+            max_completion_tokens=self.max_completion_tokens,
+            timeout=self.request_timeout,
+        )
+        return self._extract_message_text(completion)
+
     @staticmethod
     def _extract_message_text(completion: Any) -> str:
         """Normalize the response payload into a string for downstream use."""

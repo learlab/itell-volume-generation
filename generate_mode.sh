@@ -1,7 +1,7 @@
 #!/bin/bash
 # iTELL content generation with modular modes
 #
-# Usage: ./generate_mode.sh <mode> <input.pdf> [output.json]
+# Usage: ./generate_mode.sh <mode> <input-file> [output.json]
 #
 # Modes: faithful, simplified, condensed, generative, interaction-heavy
 
@@ -18,23 +18,24 @@ NC='\033[0m'
 if [ "$#" -lt 2 ]; then
     echo -e "${RED}Error: Missing required arguments${NC}"
     echo ""
-    echo "Usage: $0 <mode> <input.pdf> [output.json]"
+    echo "Usage: $0 <mode> <input-file> [output.json]"
     echo ""
     echo "Modes:"
     echo "  faithful          - Exact preservation (400-500w chunks)"
     echo "  simplified        - Grade 9-10 reading level (200-400w chunks)"
     echo "  condensed         - Core concepts only, 60% length (150-300w chunks)"
-    echo "  generative        - Author content from a course outline (3-6 chunks/page)"
+    echo "  generative        - Author content from a course outline PDF or PPTX (3-6 chunks/page)"
     echo "  interaction-heavy - Maximum engagement (100-250w chunks)"
     echo ""
     echo "Examples:"
+    echo "  $0 generative syllabus.pptx"
     echo "  $0 generative syllabus.pdf"
     echo "  $0 condensed chapter1.pdf results/output.json"
     exit 1
 fi
 
 MODE=$1
-INPUT_PDF=$2
+INPUT_FILE=$2
 OUTPUT_JSON=${3:-""}
 
 # Validate mode
@@ -48,15 +49,16 @@ case "$MODE" in
         ;;
 esac
 
-# Check if PDF exists
-if [ ! -f "$INPUT_PDF" ]; then
-    echo -e "${RED}Error: PDF file not found: $INPUT_PDF${NC}"
+# Check if input exists
+if [ ! -f "$INPUT_FILE" ]; then
+    echo -e "${RED}Error: input file not found: $INPUT_FILE${NC}"
     exit 1
 fi
 
 # Generate default output name if not provided
 if [ -z "$OUTPUT_JSON" ]; then
-    BASENAME=$(basename "$INPUT_PDF" .pdf)
+    BASENAME=$(basename "$INPUT_FILE")
+    BASENAME="${BASENAME%.*}"
     OUTPUT_JSON="results/${BASENAME}_${MODE}.json"
 fi
 
@@ -68,7 +70,7 @@ echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}iTELL Generation - $MODE mode${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
-echo "Input:  $INPUT_PDF"
+echo "Input:  $INPUT_FILE"
 echo "Output: $OUTPUT_JSON"
 echo "Mode:   $MODE"
 echo ""
@@ -84,7 +86,7 @@ echo ""
 
 # Run the pipeline
 python -m src.pipeline.main \
-    --pdf "$INPUT_PDF" \
+    --input "$INPUT_FILE" \
     --mode "$MODE" \
     --mode-folder "modular" \
     --output "$OUTPUT_JSON"

@@ -2,14 +2,18 @@ from __future__ import annotations
 
 import base64
 import json
+import re
 import textwrap
+import zipfile
 from pathlib import Path
 from typing import Any, Dict, Optional, Sequence
+from xml.etree import ElementTree
 
 __all__ = [
     "build_conversion_prompt",
     "build_mode_guide_text",
     "encode_pdf_to_base64",
+    "extract_pptx_outline_text",
     "format_image_metadata",
     "load_guide_instructions",
     "load_reference_json",
@@ -95,6 +99,78 @@ def encode_pdf_to_base64(pdf_path: Path) -> str:
         return base64.b64encode(handle.read()).decode("utf-8")
 
 
+def extract_pptx_outline_text(pptx_path: Path) -> str:
+    """Extract slide and speaker-note text from a PPTX outline."""
+    pptx_path = Path(pptx_path)
+    if not pptx_path.exists():
+        raise FileNotFoundError(f"PPTX not found at {pptx_path}")
+    if pptx_path.suffix.lower() != ".pptx":
+        raise ValueError(f"Expected a .pptx file, got '{pptx_path.suffix}'")
+
+    try:
+        with zipfile.ZipFile(pptx_path) as archive:
+            archive_names = set(archive.namelist())
+            slide_names = sorted(
+                (
+                    name
+                    for name in archive_names
+                    if re.fullmatch(r"ppt/slides/slide\d+\.xml", name)
+                ),
+                key=_slide_number,
+            )
+
+            if not slide_names:
+                raise ValueError(f"No slides found in PPTX at {pptx_path}")
+
+            sections = []
+            for slide_name in slide_names:
+                slide_number = _slide_number(slide_name)
+                slide_lines = _extract_pptx_xml_text(archive.read(slide_name))
+
+                note_name = f"ppt/notesSlides/notesSlide{slide_number}.xml"
+                note_lines = []
+                if note_name in archive_names:
+                    note_lines = _extract_pptx_xml_text(archive.read(note_name))
+
+                parts = [f"Slide {slide_number}"]
+                if slide_lines:
+                    parts.append("\n".join(f"- {line}" for line in slide_lines))
+                if note_lines:
+                    parts.append(
+                        "Speaker Notes:\n"
+                        + "\n".join(f"- {line}" for line in note_lines)
+                    )
+                sections.append("\n".join(parts))
+    except zipfile.BadZipFile as exc:
+        raise ValueError(f"Invalid PPTX file at {pptx_path}") from exc
+
+    extracted_text = "\n\n".join(sections).strip()
+    if not extracted_text:
+        raise ValueError(f"No extractable text found in PPTX at {pptx_path}")
+    return extracted_text
+
+
+def _slide_number(slide_path: str) -> int:
+    match = re.search(r"slide(\d+)\.xml$", slide_path)
+    if not match:
+        return 0
+    return int(match.group(1))
+
+
+def _extract_pptx_xml_text(xml_bytes: bytes) -> list[str]:
+    root = ElementTree.fromstring(xml_bytes)
+    lines = []
+    previous = None
+    for element in root.iter():
+        if not (element.tag.endswith("}t") or element.tag == "t") or not element.text:
+            continue
+        text = " ".join(element.text.split())
+        if text and text != previous:
+            lines.append(text)
+            previous = text
+    return lines
+
+
 def select_reference_example(
     reference_json: Dict[str, Any], example_title: Optional[str] = None
 ) -> Any:
@@ -168,7 +244,11 @@ def format_image_metadata(image_metadata: Sequence[Dict[str, Any]]) -> str:
 
 
 def build_conversion_prompt(
-    guide_text: str, example_json: Any, image_metadata_text: Optional[str] = None
+    guide_text: str,
+    example_json: Any,
+    image_metadata_text: Optional[str] = None,
+    source_text: Optional[str] = None,
+    source_name: Optional[str] = None,
 ) -> str:
     """Create the LLM prompt by combining guide instructions with a JSON example."""
     if not guide_text.strip():
@@ -190,6 +270,15 @@ def build_conversion_prompt(
 
     Carefully analyze the provided source document and convert it into iTELL JSON.
     Only return JSON that adheres to the example schema and instructions above."""
+
+    if source_text:
+        source_label = f" ({source_name})" if source_name else ""
+        template += f"""
+
+    SOURCE DOCUMENT TRANSCRIPT{source_label}:
+    ```text
+    {source_text.strip()}
+    ```"""
 
     if image_metadata_text:
         template += f"""

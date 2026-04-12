@@ -12,7 +12,7 @@ Use this repo to test prompt and pipeline behavior before wiring changes into th
 - `generative`
 - `interaction-heavy`
 
-`generative` is intended for **course-outline PDFs** where the model authors iTELL content from the outline rather than extracting textbook prose verbatim.
+`generative` is intended for **course-outline PDFs or PPTX slide decks** where the model authors iTELL content from the outline rather than extracting textbook prose verbatim.
 
 ## Setup
 
@@ -45,25 +45,27 @@ Use this repo to test prompt and pipeline behavior before wiring changes into th
 Run a named mode:
 
 ```bash
-./generate_mode.sh generative path/to/course-outline.pdf
+./generate_mode.sh generative path/to/course-outline.pptx
 ```
 
 Or call the pipeline directly:
 
 ```bash
 python -m src.pipeline.main \
-  --pdf path/to/course-outline.pdf \
+  --input path/to/course-outline.pptx \
   --mode generative \
   --mode-folder modular \
   --reference-json prompts/reference.json \
   --output results/outline_generative.json
 ```
 
+PDF inputs are uploaded to the model as PDFs. PPTX inputs are parsed locally into slide and speaker-note text, then sent to the same prompt as the outline source.
+
 If you want to bypass the modular mode system and provide a custom guide directly, you can still use:
 
 ```bash
 python -m src.pipeline.main \
-  --pdf path/to/input.pdf \
+  --input path/to/input.pdf \
   --guide prompts/guide_strategy3_validation.md \
   --reference-json prompts/reference.json \
   --output results/itell.json

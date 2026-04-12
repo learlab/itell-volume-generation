@@ -14,6 +14,7 @@ try:
         build_conversion_prompt,
         build_mode_guide_text,
         encode_pdf_to_base64,
+        extract_pptx_outline_text,
         format_image_metadata,
         load_guide_instructions,
         load_reference_json,
@@ -30,6 +31,7 @@ except ImportError:  # pragma: no cover
         build_conversion_prompt,
         build_mode_guide_text,
         encode_pdf_to_base64,
+        extract_pptx_outline_text,
         format_image_metadata,
         load_guide_instructions,
         load_reference_json,
@@ -40,16 +42,24 @@ except ImportError:  # pragma: no cover
 
 DEFAULT_GUIDE_PATH = Path("prompts/guide_strategy3_validation.md")
 DEFAULT_REFERENCE_PATH = Path("prompts/reference.json")
-DEFAULT_PDF_PATH = Path("data/input.pdf")
+DEFAULT_INPUT_PATH = Path("data/input.pdf")
 DEFAULT_IMAGE_DIR = Path("results/extracted-images")
 OPENROUTER_DEFAULT_BASE_URL = "https://openrouter.ai/api/v1"
+SUPPORTED_INPUT_SUFFIXES = {".pdf", ".pptx"}
 
 
 def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Convert a PDF into iTELL JSON via OpenAI-compatible APIs."
+        description="Convert a PDF or PPTX outline into iTELL JSON via OpenAI-compatible APIs."
     )
-    parser.add_argument("--pdf", type=Path, default=DEFAULT_PDF_PATH, help="Path to the PDF that should be converted.")
+    parser.add_argument(
+        "--input",
+        "--pdf",
+        dest="input_path",
+        type=Path,
+        default=DEFAULT_INPUT_PATH,
+        help="Path to the PDF or PPTX file that should be converted. --pdf is kept as a backward-compatible alias.",
+    )
     parser.add_argument(
         "--guide",
         type=Path,
@@ -93,7 +103,7 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser.add_argument(
         "--skip-image-extraction",
         action="store_true",
-        help="By default images are extracted to generate coordinate tags. Set this flag to skip extraction.",
+        help="By default images are extracted from PDF inputs to generate coordinate tags. Set this flag to skip extraction.",
     )
     parser.add_argument(
         "--max-tokens",
@@ -107,6 +117,11 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
 def main(argv: Optional[Sequence[str]] = None) -> str:
     load_dotenv()
     args = parse_args(argv)
+    input_path = args.input_path
+    input_suffix = input_path.suffix.lower()
+    if input_suffix not in SUPPORTED_INPUT_SUFFIXES:
+        supported = ", ".join(sorted(SUPPORTED_INPUT_SUFFIXES))
+        raise ValueError(f"Unsupported input format '{input_suffix}'. Expected one of: {supported}")
 
     reference_json = load_reference_json(args.reference_json)
     example_json = select_reference_example(reference_json, args.example_title)
@@ -118,16 +133,23 @@ def main(argv: Optional[Sequence[str]] = None) -> str:
         guide_text = load_guide_instructions(args.guide)
 
     image_metadata_text = None
-    if not args.skip_image_extraction:
-        extractor = ExtractImages(str(args.pdf), str(args.image_dir))
+    if input_suffix == ".pdf" and not args.skip_image_extraction:
+        extractor = ExtractImages(str(input_path), str(args.image_dir))
         image_metadata = extractor.extract_img()
         extractor.save_metadata(str(args.image_dir / "metadata.json"))
         image_metadata_text = format_image_metadata(image_metadata) or None
 
+    source_text = None
+    if input_suffix == ".pptx":
+        source_text = extract_pptx_outline_text(input_path)
+
     prompt = build_conversion_prompt(
-        guide_text, example_json, image_metadata_text=image_metadata_text
+        guide_text,
+        example_json,
+        image_metadata_text=image_metadata_text,
+        source_text=source_text,
+        source_name=input_path.name if source_text else None,
     )
-    pdf_b64 = encode_pdf_to_base64(args.pdf)
 
     openai_key = os.getenv("OPENAI_API_KEY")
     openrouter_key = os.getenv("OPENROUTER_API_KEY")
@@ -177,11 +199,15 @@ def main(argv: Optional[Sequence[str]] = None) -> str:
         default_headers=default_headers,
     )
 
-    result_json = client.generate_itell_json(
-        pdf_filename=args.pdf.name,
-        pdf_base64=pdf_b64,
-        prompt=prompt,
-    )
+    if input_suffix == ".pdf":
+        pdf_b64 = encode_pdf_to_base64(input_path)
+        result_json = client.generate_itell_json(
+            pdf_filename=input_path.name,
+            pdf_base64=pdf_b64,
+            prompt=prompt,
+        )
+    else:
+        result_json = client.generate_itell_json_from_text(prompt=prompt)
 
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
