@@ -207,6 +207,38 @@ class GeminiClient:
                 f"Failed to parse structured output from Gemini: {e}. Raw response (truncated): {snippet}"
             ) from e
 
+    def generate_itell_structured_from_text(
+        self, prompt: str, response_format: Type[T]
+    ) -> T:
+        """Send a text-only prompt to Gemini and return structured output as Pydantic model."""
+        completion = self.client.models.generate_content(
+            model=self.model,
+            contents=[prompt],
+            config=genai.types.GenerateContentConfig(
+                max_output_tokens=self.max_output_tokens,
+                response_mime_type="application/json",
+                response_schema=response_format,
+            ),
+        )
+        parsed = getattr(completion, "parsed", None)
+        if parsed is not None:
+            if isinstance(parsed, BaseModel):
+                return parsed
+            try:
+                return response_format.model_validate(parsed)
+            except ValidationError as e:
+                raise RuntimeError(f"Gemini returned data that failed validation: {e}") from e
+
+        try:
+            cleaned_text = self._extract_json_payload(completion.text or "")
+            response_dict = json.loads(cleaned_text)
+            return response_format.model_validate(response_dict)
+        except (json.JSONDecodeError, ValidationError, ValueError) as e:
+            snippet = (completion.text or "")[:500]
+            raise RuntimeError(
+                f"Failed to parse structured output from Gemini: {e}. Raw response (truncated): {snippet}"
+            ) from e
+
     @staticmethod
     def _extract_json_payload(raw_text: str) -> str:
         """Strip code fences and leading/trailing chatter to isolate JSON."""

@@ -1,0 +1,32 @@
+[
+  {
+    "file": "itell_input_generative.json",
+    "label": "Generative",
+    "note": "Sample output from results/itell_input_generative.json"
+  },
+  {
+    "file": "itell_input_faithful.json",
+    "label": "Faithful",
+    "note": "Sample output from results/itell_input_faithful.json"
+  },
+  {
+    "file": "itell_input_simplified.json",
+    "label": "Simplified",
+    "note": "Sample output from results/itell_input_simplified.json"
+  },
+  {
+    "file": "itell_input_condensed.json",
+    "label": "Condensed",
+    "note": "Sample output from results/itell_input_condensed.json"
+  },
+  {
+    "file": "itell_input_interaction-heavy.json",
+    "label": "Interaction Heavy",
+    "note": "Sample output from results/itell_input_interaction-heavy.json"
+  },
+  {
+    "file": "itell_input_adaptive.json",
+    "label": "Adaptive",
+    "note": "Sample output from results/itell_input_adaptive.json"
+  }
+]

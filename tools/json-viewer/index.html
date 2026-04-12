@@ -1,0 +1,1022 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>iTELL JSON Viewer</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f6f4;
+        --panel: #ffffff;
+        --panel-2: #f1f2ef;
+        --text: #1f2328;
+        --muted: #5f6b76;
+        --border: #d6d9de;
+        --accent: #1f6f8b;
+        --accent-2: #2b8a78;
+        --warning: #8a5a00;
+        --shadow: 0 10px 24px rgba(31, 35, 40, 0.08);
+        --radius: 8px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--text);
+        background: var(--bg);
+      }
+
+      img {
+        display: block;
+        max-width: 100%;
+      }
+
+      .page {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(240px, 320px);
+        gap: 16px;
+        align-items: stretch;
+        margin-bottom: 16px;
+      }
+
+      .hero-card,
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+
+      .hero-card {
+        padding: 18px;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 84px minmax(0, 1fr);
+        gap: 14px;
+        align-items: center;
+      }
+
+      .hero-image {
+        width: 84px;
+        height: 84px;
+        border-radius: var(--radius);
+        background: linear-gradient(135deg, #e7eef2, #f8fbfc);
+        border: 1px solid var(--border);
+        overflow: hidden;
+      }
+
+      .hero-image svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .eyebrow {
+        margin: 0 0 6px;
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 28px;
+        line-height: 1.15;
+      }
+
+      .lede {
+        margin-top: 8px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .toolbar {
+        display: none;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .toolbar-secondary {
+        display: none;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .field {
+        display: grid;
+        gap: 6px;
+      }
+
+      label {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--muted);
+      }
+
+      input[type="file"],
+      select,
+      button,
+      textarea {
+        width: 100%;
+        font: inherit;
+      }
+
+      select,
+      textarea,
+      .ghost-btn,
+      .primary-btn {
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+      }
+
+      select,
+      textarea {
+        background: var(--panel);
+        color: var(--text);
+      }
+
+      select,
+      textarea {
+        padding: 10px 12px;
+      }
+
+      textarea {
+        min-height: 88px;
+        resize: vertical;
+        line-height: 1.45;
+      }
+
+      .primary-btn,
+      .ghost-btn {
+        padding: 10px 12px;
+        cursor: pointer;
+        border-radius: var(--radius);
+        transition: transform 120ms ease, background-color 120ms ease, border-color 120ms ease;
+      }
+
+      .primary-btn {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+
+      .ghost-btn {
+        background: #fff;
+        color: var(--text);
+      }
+
+      .primary-btn:hover,
+      .ghost-btn:hover {
+        transform: translateY(-1px);
+      }
+
+      .meta-grid {
+        display: grid;
+        gap: 10px;
+      }
+
+      .meta-card {
+        padding: 14px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+
+      .meta-label {
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0;
+        margin-bottom: 6px;
+      }
+
+      .meta-value {
+        line-height: 1.5;
+        word-break: break-word;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 16px;
+        align-items: start;
+      }
+
+      .sidebar,
+      .content {
+        min-width: 0;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .stack {
+        display: grid;
+        gap: 12px;
+      }
+
+      .section {
+        padding: 16px;
+      }
+
+      .section h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+
+      .section h3 {
+        font-size: 16px;
+      }
+
+      .sample-list {
+        display: grid;
+        gap: 8px;
+      }
+
+      .sample-item {
+        width: 100%;
+        text-align: left;
+        padding: 10px 12px;
+        background: #fff;
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        cursor: pointer;
+      }
+
+      .sample-item.active {
+        border-color: var(--accent);
+        background: #eef6f8;
+      }
+
+      .sample-item small {
+        display: block;
+        color: var(--muted);
+        margin-top: 4px;
+        line-height: 1.35;
+      }
+
+      .status {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      .status.error {
+        color: #8a1f11;
+      }
+
+      .volume-header {
+        display: grid;
+        gap: 12px;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 10px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--panel-2);
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .pages {
+        display: grid;
+        gap: 14px;
+      }
+
+      .page-card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .page-card header {
+        display: grid;
+        gap: 6px;
+        padding: 16px;
+        background: linear-gradient(180deg, #fbfbfa, #f7f8f6);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .page-card .page-title {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 8px;
+      }
+
+      .page-order {
+        color: var(--accent);
+        font-weight: 700;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0;
+      }
+
+      .page-summary {
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .chunk-list {
+        display: grid;
+        gap: 12px;
+        padding: 16px;
+      }
+
+      .chunk {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 14px;
+        background: #fff;
+      }
+
+      .chunk header {
+        padding: 0;
+        background: none;
+        border: none;
+        margin-bottom: 10px;
+      }
+
+      .chunk-title {
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      .chunk-type {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+
+      .chunk-grid {
+        display: grid;
+        gap: 10px;
+      }
+
+      .block {
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        padding: 10px 12px;
+        background: var(--panel-2);
+      }
+
+      .block .label {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 700;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0;
+      }
+
+      .block .value {
+        white-space: pre-wrap;
+        line-height: 1.55;
+        word-break: break-word;
+      }
+
+      .markdown {
+        white-space: normal;
+      }
+
+      .markdown p,
+      .markdown ul,
+      .markdown ol,
+      .markdown blockquote,
+      .markdown pre {
+        margin: 0 0 10px;
+      }
+
+      .markdown p:last-child,
+      .markdown ul:last-child,
+      .markdown ol:last-child,
+      .markdown blockquote:last-child,
+      .markdown pre:last-child {
+        margin-bottom: 0;
+      }
+
+      .markdown ul,
+      .markdown ol {
+        padding-left: 22px;
+      }
+
+      .markdown li {
+        margin: 4px 0;
+      }
+
+      .markdown blockquote {
+        border-left: 3px solid var(--accent);
+        padding-left: 12px;
+        color: var(--muted);
+      }
+
+      .markdown code {
+        background: #eef0f2;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 1px 4px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+        font-size: 0.92em;
+      }
+
+      .markdown pre {
+        overflow-x: auto;
+        background: #eef0f2;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 10px 12px;
+      }
+
+      .markdown pre code {
+        border: 0;
+        padding: 0;
+        background: transparent;
+      }
+
+      .image-ref {
+        display: inline-flex;
+        max-width: 100%;
+        gap: 6px;
+        align-items: baseline;
+        padding: 2px 6px;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        background: #eef6f8;
+        color: var(--accent);
+        word-break: break-word;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .empty {
+        padding: 18px;
+        text-align: center;
+        color: var(--muted);
+        border: 1px dashed var(--border);
+        border-radius: var(--radius);
+        background: #fff;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      @media (max-width: 980px) {
+        .hero,
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          position: static;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .page {
+          padding: 12px;
+        }
+
+        .hero-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-image {
+          width: 72px;
+          height: 72px;
+        }
+
+        .toolbar,
+        .toolbar-secondary {
+          grid-template-columns: 1fr;
+        }
+
+        h1 {
+          font-size: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <div class="hero-card">
+          <div class="hero-grid">
+            <div class="hero-image" aria-hidden="true">
+              <svg viewBox="0 0 84 84" role="img" aria-label="Document viewer illustration">
+                <rect x="14" y="12" width="38" height="52" rx="5" fill="#ffffff" stroke="#1f6f8b" stroke-width="2"></rect>
+                <path d="M23 24h20M23 32h20M23 40h16M23 48h12" stroke="#2b8a78" stroke-width="2" stroke-linecap="round"></path>
+                <rect x="34" y="22" width="36" height="48" rx="5" fill="#f6f7f8" stroke="#b8c0c8" stroke-width="2"></rect>
+                <path d="M42 34h20M42 42h20M42 50h14" stroke="#1f2328" stroke-width="2" stroke-linecap="round"></path>
+                <circle cx="56" cy="58" r="6" fill="#1f6f8b"></circle>
+              </svg>
+            </div>
+            <div>
+              <p class="eyebrow">iTELL JSON Viewer</p>
+              <h1>Open a generated volume and read it by page and chunk.</h1>
+              <p class="lede">
+                The viewer loads the generated sample output from <code>results/</code>
+                and keeps the volume summary, page order, chunk text, questions,
+                answers, and key phrases visible without collapsing the structure
+                into raw JSON.
+              </p>
+            </div>
+          </div>
+          <div class="toolbar">
+            <div class="field">
+              <label for="fileInput">Load JSON file</label>
+              <input id="fileInput" type="file" accept=".json,application/json" />
+            </div>
+            <button id="loadFileBtn" class="primary-btn" type="button">Load file</button>
+          </div>
+          <div class="toolbar-secondary">
+            <div class="field">
+              <label for="sampleSelect">Sample from results</label>
+              <select id="sampleSelect"></select>
+            </div>
+            <div class="field">
+              <label for="searchInput">Filter pages and chunks</label>
+              <input id="searchInput" type="text" placeholder="Search title, chunk header, question, answer, or key phrase" />
+            </div>
+          </div>
+        </div>
+        <aside class="panel section">
+          <div class="volume-header">
+            <div>
+              <h2>Current Volume</h2>
+              <div class="status" id="status">Choose a sample or load a JSON file.</div>
+            </div>
+            <div class="meta-grid">
+              <div class="meta-card">
+                <div class="meta-label">Pages</div>
+                <div class="meta-value" id="pageCount">-</div>
+              </div>
+              <div class="meta-card">
+                <div class="meta-label">Chunks</div>
+                <div class="meta-value" id="chunkCount">-</div>
+              </div>
+              <div class="meta-card">
+                <div class="meta-label">Interactive Chunks</div>
+                <div class="meta-value" id="interactiveCount">-</div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="layout">
+        <aside class="sidebar">
+          <div class="panel section">
+            <h2>Samples</h2>
+            <p class="status" style="margin-bottom: 12px;">Files are loaded from `results/` when this page is served over HTTP.</p>
+            <div class="sample-list" id="sampleList"></div>
+          </div>
+        </aside>
+
+        <section class="content stack">
+          <div class="panel section">
+            <h2>Volume Summary</h2>
+            <div class="meta-card" style="margin-top: 12px;">
+              <div class="meta-label">Title</div>
+              <div class="meta-value" id="volumeTitle">-</div>
+            </div>
+            <div class="meta-card" style="margin-top: 12px;">
+              <div class="meta-label">Description</div>
+              <div class="meta-value" id="volumeDescription">-</div>
+            </div>
+            <div class="meta-card" style="margin-top: 12px;">
+              <div class="meta-label">Volume Summary</div>
+              <div class="meta-value" id="volumeSummary">-</div>
+            </div>
+          </div>
+
+          <div class="panel section">
+            <h2>Pages</h2>
+            <div id="pageContainer" class="pages" style="margin-top: 12px;"></div>
+            <div id="emptyState" class="empty hidden">No pages match the current filter.</div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script>
+      const SAMPLE_FILE = './samples.json';
+      const RESULTS_PREFIX = '../../results/';
+
+      const el = (id) => document.getElementById(id);
+
+      const state = {
+        volume: null,
+        sourceLabel: '',
+        samples: [],
+        activeSample: '',
+        filter: '',
+      };
+
+      const sampleSelect = el('sampleSelect');
+      const sampleList = el('sampleList');
+      const fileInput = el('fileInput');
+      const loadFileBtn = el('loadFileBtn');
+      const searchInput = el('searchInput');
+
+      function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"]/g, (ch) => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+        }[ch]));
+      }
+
+      function renderInlineMarkdown(value) {
+        return escapeHtml(value)
+          .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_match, alt, src) => {
+            const label = alt ? `${alt} ` : 'Image ';
+            return `<span class="image-ref">${label}<code>${src}</code></span>`;
+          })
+          .replace(/`([^`]+)`/g, '<code>$1</code>')
+          .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+          .replace(/(^|[^\*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+      }
+
+      function renderMarkdown(value) {
+        const text = String(value ?? '').replace(/\r\n/g, '\n').trim();
+        if (!text) return '-';
+
+        const html = [];
+        let paragraph = [];
+        let listItems = [];
+        let orderedList = false;
+        let quoteLines = [];
+        let codeLines = [];
+        let inCodeFence = false;
+
+        const flushParagraph = () => {
+          if (!paragraph.length) return;
+          html.push(`<p>${renderInlineMarkdown(paragraph.join(' '))}</p>`);
+          paragraph = [];
+        };
+
+        const flushList = () => {
+          if (!listItems.length) return;
+          const tag = orderedList ? 'ol' : 'ul';
+          html.push(`<${tag}>${listItems.map((item) => `<li>${renderInlineMarkdown(item)}</li>`).join('')}</${tag}>`);
+          listItems = [];
+          orderedList = false;
+        };
+
+        const flushQuote = () => {
+          if (!quoteLines.length) return;
+          html.push(`<blockquote>${renderMarkdown(quoteLines.join('\n'))}</blockquote>`);
+          quoteLines = [];
+        };
+
+        const flushCode = () => {
+          if (!codeLines.length) return;
+          html.push(`<pre><code>${escapeHtml(codeLines.join('\n'))}</code></pre>`);
+          codeLines = [];
+        };
+
+        const flushBlocks = () => {
+          flushParagraph();
+          flushList();
+          flushQuote();
+        };
+
+        for (const rawLine of text.split('\n')) {
+          const line = rawLine.trimEnd();
+          const trimmed = line.trim();
+
+          if (trimmed.startsWith('```')) {
+            if (inCodeFence) {
+              flushCode();
+              inCodeFence = false;
+            } else {
+              flushBlocks();
+              inCodeFence = true;
+            }
+            continue;
+          }
+
+          if (inCodeFence) {
+            codeLines.push(rawLine);
+            continue;
+          }
+
+          if (!trimmed) {
+            flushBlocks();
+            continue;
+          }
+
+          const quoteMatch = trimmed.match(/^>\s?(.*)$/);
+          if (quoteMatch) {
+            flushParagraph();
+            flushList();
+            quoteLines.push(quoteMatch[1]);
+            continue;
+          }
+
+          const listMatch = trimmed.match(/^((?:[-*])|(?:\d+\.))\s+(.*)$/);
+          if (listMatch) {
+            flushParagraph();
+            flushQuote();
+            const isOrdered = /\d+\./.test(listMatch[1]);
+            if (listItems.length && orderedList !== isOrdered) {
+              flushList();
+            }
+            orderedList = isOrdered;
+            listItems.push(listMatch[2]);
+            continue;
+          }
+
+          flushList();
+          flushQuote();
+          paragraph.push(trimmed);
+        }
+
+        flushBlocks();
+        flushCode();
+        return html.join('');
+      }
+
+      function normalizeText(value) {
+        return String(value ?? '').toLowerCase();
+      }
+
+      function countChunks(volume) {
+        return (volume?.Pages || []).reduce((sum, page) => sum + (page.Content?.length || 0), 0);
+      }
+
+      function countInteractiveChunks(volume) {
+        return (volume?.Pages || []).reduce(
+          (sum, page) =>
+            sum + (page.Content || []).filter((chunk) => chunk.__component === 'page.chunk').length,
+          0,
+        );
+      }
+
+      function buildSampleOptions(samples) {
+        sampleSelect.innerHTML = '';
+        sampleList.innerHTML = '';
+
+        if (!samples.length) {
+          sampleSelect.innerHTML = '<option value="">No samples found</option>';
+          sampleList.innerHTML = '<div class="empty">No sample files were found in `results/`.</div>';
+          return;
+        }
+
+        for (const sample of samples) {
+          const option = document.createElement('option');
+          option.value = sample.file;
+          option.textContent = sample.label;
+          sampleSelect.appendChild(option);
+
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'sample-item';
+          button.dataset.file = sample.file;
+          button.innerHTML = `<strong>${escapeHtml(sample.label)}</strong><small>${escapeHtml(sample.note || '')}</small>`;
+          button.addEventListener('click', () => loadSample(sample.file));
+          sampleList.appendChild(button);
+        }
+      }
+
+      function setActiveSample(file) {
+        state.activeSample = file;
+        sampleSelect.value = file;
+        for (const button of sampleList.querySelectorAll('.sample-item')) {
+          button.classList.toggle('active', button.dataset.file === file);
+        }
+      }
+
+      function setStatus(message, isError = false) {
+        const status = el('status');
+        status.textContent = message;
+        status.classList.toggle('error', isError);
+      }
+
+      function renderVolume(volume) {
+        state.volume = volume;
+
+        el('volumeTitle').textContent = volume?.Title || '-';
+        el('volumeDescription').innerHTML = renderMarkdown(volume?.Description || '-');
+        el('volumeSummary').innerHTML = renderMarkdown(volume?.VolumeSummary || '-');
+
+        el('pageCount').textContent = volume?.Pages?.length ?? 0;
+        el('chunkCount').textContent = countChunks(volume);
+        el('interactiveCount').textContent = countInteractiveChunks(volume);
+
+        renderPages();
+      }
+
+      function renderPages() {
+        const container = el('pageContainer');
+        const emptyState = el('emptyState');
+        container.innerHTML = '';
+
+        const pages = state.volume?.Pages || [];
+        const filteredPages = pages
+          .map((page) => {
+            const filteredContent = (page.Content || []).filter((chunk) => {
+              const haystack = [
+                page.Title,
+                page.ReferenceSummary,
+                chunk.Header,
+                chunk.Text,
+                chunk.Question,
+                chunk.Answer,
+                chunk.KeyPhrase,
+                chunk.__component,
+              ]
+                .map(normalizeText)
+                .join(' ');
+              return !state.filter || haystack.includes(state.filter);
+            });
+            return { ...page, Content: filteredContent };
+          })
+          .filter((page) => {
+            if (!state.filter) return true;
+            const haystack = [page.Title, page.ReferenceSummary, ...page.Content.map((chunk) => chunk.Header)]
+              .map(normalizeText)
+              .join(' ');
+            return haystack.includes(state.filter) || page.Content.length > 0;
+          });
+
+        if (!filteredPages.length) {
+          emptyState.classList.remove('hidden');
+          return;
+        }
+
+        emptyState.classList.add('hidden');
+
+        for (const page of filteredPages) {
+          const pageCard = document.createElement('article');
+          pageCard.className = 'page-card';
+
+          const header = document.createElement('header');
+          header.innerHTML = `
+            <div class="page-title">
+              <span class="page-order">Page ${escapeHtml(page.Order ?? '')}</span>
+              <h3>${escapeHtml(page.Title || '')}</h3>
+            </div>
+            <div class="page-summary markdown">${renderMarkdown(page.ReferenceSummary || '')}</div>
+          `;
+          pageCard.appendChild(header);
+
+          const chunkList = document.createElement('div');
+          chunkList.className = 'chunk-list';
+
+          for (const chunk of page.Content || []) {
+            const chunkCard = document.createElement('section');
+            chunkCard.className = 'chunk';
+            const componentType = chunk.__component || 'page.chunk';
+            const hasCRI = componentType === 'page.chunk';
+            chunkCard.innerHTML = `
+              <header>
+                <div class="chunk-title">${escapeHtml(chunk.Header || '')}</div>
+                <div class="chunk-type">${escapeHtml(componentType)}</div>
+              </header>
+              <div class="chunk-grid">
+                <div class="block">
+                  <span class="label">Text</span>
+                  <div class="value markdown">${renderMarkdown(chunk.Text || '')}</div>
+                </div>
+                ${hasCRI ? `
+                  <div class="block">
+                    <span class="label">Question</span>
+                    <div class="value markdown">${renderMarkdown(chunk.Question || '')}</div>
+                  </div>
+                  <div class="block">
+                    <span class="label">Answer</span>
+                    <div class="value markdown">${renderMarkdown(chunk.Answer || '')}</div>
+                  </div>
+                  <div class="block">
+                    <span class="label">Key Phrase</span>
+                    <div class="value markdown">${renderMarkdown(chunk.KeyPhrase || '')}</div>
+                  </div>
+                ` : ''}
+              </div>
+            `;
+            chunkList.appendChild(chunkCard);
+          }
+
+          pageCard.appendChild(chunkList);
+          container.appendChild(pageCard);
+        }
+      }
+
+      async function loadSample(file) {
+        try {
+          const response = await fetch(`${RESULTS_PREFIX}${file}`);
+          if (!response.ok) {
+            throw new Error(`Failed to load ${file}: ${response.status}`);
+          }
+          const volume = await response.json();
+          setActiveSample(file);
+          setStatus(`Loaded sample ${file}`);
+          renderVolume(volume);
+        } catch (error) {
+          setStatus(String(error.message || error), true);
+        }
+      }
+
+      async function loadFromFile(file) {
+        if (!file) {
+          setStatus('Choose a JSON file first.', true);
+          return;
+        }
+        try {
+          const text = await file.text();
+          const volume = JSON.parse(text);
+          state.sourceLabel = file.name;
+          setStatus(`Loaded local file ${file.name}`);
+          renderVolume(volume);
+          setActiveSample('');
+        } catch (error) {
+          setStatus(`Could not parse ${file.name}: ${error.message}`, true);
+        }
+      }
+
+      async function init() {
+        try {
+          const response = await fetch(SAMPLE_FILE);
+          state.samples = response.ok ? await response.json() : [];
+        } catch {
+          state.samples = [];
+        }
+
+        buildSampleOptions(state.samples);
+
+        sampleSelect.addEventListener('change', () => {
+          if (sampleSelect.value) {
+            loadSample(sampleSelect.value);
+          }
+        });
+
+        loadFileBtn.addEventListener('click', () => {
+          loadFromFile(fileInput.files?.[0]);
+        });
+
+        fileInput.addEventListener('change', () => {
+          if (fileInput.files?.length) {
+            loadFromFile(fileInput.files[0]);
+          }
+        });
+
+        searchInput.addEventListener('input', () => {
+          state.filter = normalizeText(searchInput.value.trim());
+          renderPages();
+        });
+
+        if (state.samples.length) {
+          await loadSample(state.samples[0].file);
+        } else {
+          renderVolume(null);
+        }
+      }
+
+      init();
+    </script>
+  </body>
+</html>
