@@ -42,7 +42,7 @@ Write complete instructional material suitable for iTELL, but do not treat spars
 4. Expand concepts and explanations, not administrative specifics. **Do not generate pages or chunks for non-instructional content** such as course overviews, grading policies, project lists, recommended reading, or resource compilations unless the source clearly uses them as instructional context. Only generate content that teaches a concept, skill, or technique.
 5. Never invent grading percentages, schedules, deadlines, textbook titles, software requirements, datasets, case studies, named tools, recommended resources, assignments, labs, or assessment breakdowns unless they are explicitly present in the source. Even when present, do not expand them into standalone pages.
 
-### Structure and Planning
+## Structure and Planning
 
 1. Before drafting, internally map major source headings or repeated themes to page titles and chunk headers.
 2. Preserve the source order when it is meaningful; if the source is fragmented or incomplete, reconstruct only what is clearly supported.
@@ -53,7 +53,7 @@ Write complete instructional material suitable for iTELL, but do not treat spars
 7. Do not create new major pages or sections unless they are explicitly present in the source or very strongly implied by repeated source evidence.
 8. **Omit non-instructional source sections when they are clearly administrative.** Sections whose sole purpose is administrative — grading breakdowns, assessment weights, project listings, recommended resources/textbooks, office hours, course policies, schedules, prerequisites, and similar logistics — should not become pages or chunks unless the source uses them as instructional context. They add no learning value on their own. If any administrative detail is essential context for understanding the instructional content, weave that detail briefly into the relevant instructional page rather than giving it its own section.
 
-### CRI Expectations
+## CRI Expectations
 
 1. Generate questions that target the most important idea in each chunk.
 2. Rotate across **conceptual**, **application**, **analysis**, **synthesis**, and **evaluation** question types when appropriate.
