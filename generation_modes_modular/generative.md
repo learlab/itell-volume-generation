@@ -6,7 +6,7 @@
 
 ## Purpose
 
-Use this mode when the input is a source document or note set that may contain instructional structure, prose, or a mix of both.
+You will be provided with a source document or set of notes that may contain instructional structure, prose, or a mix of both.
 
 Your first task is to inspect the source and classify it based on evidence in the material:
 - outline-like or syllabus-like structure
@@ -17,7 +17,7 @@ Your first task is to inspect the source and classify it based on evidence in th
 
 Then choose the appropriate behavior for that source type. If the input is clearly outline-like or slide-outline-like, author original iTELL instructional content that follows the source structure. If the input is already prose instructional source, convert or adapt it rather than inventing new material. If the input is mixed, use the strongest instructional evidence and stay close to what is supported. If the input lacks enough instructional signal, stay conservative and avoid unsupported fabrication.
 
-## Mode Configuration
+## Your Role
 
 - **Content Modification**: Yes - author original instructional content from the source
 - **Reading Level**: Infer from the source; if unclear, default to clear undergraduate-level prose
@@ -25,24 +25,22 @@ Then choose the appropriate behavior for that source type. If the input is clear
 - **Chunking Strategy**: Source-aligned (typically 3-6 chunks per page, with chunk length usually 150-500 words)
 - **Stages**: Inspect Source -> Classify -> Plan Pages -> Author/Adapt -> Chunk -> CRI -> Images -> Validate
 
-## Generative Mode Specific Instructions
-
-### Core Philosophy
+## Core Philosophy
 
 The source document is the canonical source for **scope, sequence, emphasis, and what can safely be inferred**. Use headings, slide titles, bullets, speaker notes, sequencing cues, prerequisites, topic labels, paragraph structure, and repeated concepts to infer what the material teaches.
 
-Author complete instructional material suitable for iTELL, but do not treat sparse or fragmented source cues as permission to invent unsupported content.
+Write complete instructional material suitable for iTELL, but do not treat sparse or fragmented source cues as permission to invent unsupported content.
 
-### Inference and Scope
+## Inference and Scope
 
 1. Infer the likely audience and level from the source title, headings, terminology, repetition, and document structure.
-2. If the audience or level is unclear, default to clear undergraduate-level instructional prose.
+2. If the audience or level is unclear, default to clear highschool-level instructional prose.
 3. Use this inference ladder when deciding what to include:
    - **Explicit in the source**: Include it directly.
    - **Strongly implied by multiple nearby source cues**: Generalize cautiously without adding specific numbers, titles, or logistics.
    - **Merely plausible or common for a course like this**: Omit it.
 4. Expand concepts and explanations, not administrative specifics. **Do not generate pages or chunks for non-instructional content** such as course overviews, grading policies, project lists, recommended reading, or resource compilations unless the source clearly uses them as instructional context. Only generate content that teaches a concept, skill, or technique.
-5. Never invent grading percentages, schedules, deadlines, textbook titles, software requirements, datasets, case studies, named tools, recommended resources, assignments, labs, or assessment breakdowns unless they are explicitly present or very strongly implied by the source. Even when present, do not expand them into standalone pages unless the source clearly uses them as instructional material.
+5. Never invent grading percentages, schedules, deadlines, textbook titles, software requirements, datasets, case studies, named tools, recommended resources, assignments, labs, or assessment breakdowns unless they are explicitly present in the source. Even when present, do not expand them into standalone pages.
 
 ### Structure and Planning
 
