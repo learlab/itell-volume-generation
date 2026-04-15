@@ -6,6 +6,7 @@
 
 ### Required Structure
 
+```
 Volume
 ├── Title (string, required)
 ├── Description (string, required, 1-2 sentences)
@@ -21,6 +22,7 @@ Volume
                 ├── Question (string, required for page.chunk only)
                 ├── Answer (string, required for page.chunk only)
                 └── KeyPhrase (string, required for page.chunk only)
+```
 
 ## Validation Rules (Check Each One)
 
@@ -109,16 +111,35 @@ Add chunks to an existing page when:
 - [ ] **Rule M3**: Ampersands use `&` as-is (no encoding needed)
 - [ ] **Rule M4**: Bold (`**text**`) applied appropriately for key terms, emphasis, important concepts
 - [ ] **Rule M5**: Italics (`*text*`) used for book/journal titles, foreign words, definitions
-- [ ] **Rule M6**: List indentation preserved (2 spaces per nested level)
+- [ ] **Rule M6**: **Nested lists are FORBIDDEN.** The downstream CMS (Payload) cannot render nested lists — they will be lost or concatenated into a single garbled line. When the source has a hierarchical/outline structure (e.g. `4.1.`, `4.2.`, `4.1.1.`), flatten it into a SINGLE-LEVEL list and put the original numbering inside a bold prefix on each item. Each item MUST be on its own line, starting with `- `. Example:
+
+  Source text with nested outline:
+
+  ```
+  4. Definitions
+  4.1. MMT: Module Methods Task
+  4.2. TEAMS: The Microsoft TEAMS application
+  4.3. Clustermarket: The online scheduling software
+  ```
+
+  Correct flattened output:
+
+  **4. Definitions**
+
+  - **4.1.** MMT: Module Methods Task
+  - **4.2.** TEAMS: The Microsoft TEAMS application
+  - **4.3.** Clustermarket: The online scheduling software
+
+  Never emit indented sub-bullets, never concatenate items on one line, never use `  -` or `\t-` for a sub-level.
 - [ ] **Rule M7**: Math uses `$...$` for inline
 - [ ] **Rule M8**: Math uses `$$...$$` for block equations
 - [ ] **Rule M9**: Info callouts use blockquote structure:
 
-```markdown
-> **Title**
->
-> Content
-```
+  ```markdown
+  > **Title**
+  >
+  > Content
+  ```
 
 - [ ] **Rule M10**: Images use markdown syntax: `![description](image_page_X_Y)` (standard Markdown)
 - [ ] **Rule M11**: Image paths match image_id from metadata exactly (format: `image_page_X_Y`, e.g., image_page_2_1)
@@ -151,7 +172,7 @@ Apply these rules in order when converting source text to Markdown:
 3. **Rule T3**: Keep ampersands as `&` (no encoding needed)
 4. **Rule T4**: Apply bold `**text**` to key terms, important concepts, names, emphasis
 5. **Rule T5**: Apply italic `*text*` to book/journal titles, foreign words, definitions
-6. **Rule T6**: Preserve list indentation using 2 spaces per nested level
+6. **Rule T6**: **Flatten any nested list into a single-level list.** Payload does not support nested lists. For every hierarchical item in the source (e.g. `4.1.`, `4.1.2.`), emit a single-level bullet whose content begins with a bold prefix holding the original numbering: `- **4.1.** item text`. Each bullet is its own line. If a parent heading precedes the list (e.g. `4. Definitions`), render the heading on its own line as bold text, followed by a blank line, followed by the flat list. Never produce indented sub-bullets.
 7. **Rule T7**: Convert image references to `![caption or description](image_page_X_Y)`
 8. **Rule T8**: Remove all `[cite_start]` and `[cite: N]` markers
 9. **Rule T9**: Convert inline math to `$formula$`
@@ -182,7 +203,7 @@ Before outputting JSON, verify each category:
 - [ ] All Markdown properly formed (M1-M12)
 - [ ] Blank lines only between distinct paragraphs, not within (M1, M2)
 - [ ] Appropriate text formatting applied: **bold** and *italic* (M4, M5)
-- [ ] List indentation preserved (M6)
+- [ ] No nested lists — hierarchical outlines flattened to single-level list with bold number prefix (M6)
 - [ ] Correct bold and italic syntax (M4-M5)
 - [ ] Images use correct format (M10-M12)
 
@@ -213,7 +234,7 @@ Before outputting JSON, verify each category:
 
 ## Generation Workflow
 
-1. **Plan Page Structure**: 
+1. **Plan Page Structure**:
    - For single-page documents: Use exactly 1 page
    - For textbooks: Group related chapters/sections into fewer pages (only create new pages for major topic boundaries)
    - Aim for 3-6 chunks per page
